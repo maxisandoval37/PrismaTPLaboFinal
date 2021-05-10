@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% block titulo %}Formulario de Sucursal{% endblock titulo %} 
+{%block cuerpo %} 
+
+<form method ="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">CREAR O EDITAR</button>
+
+</form>
+
+{% endblock cuerpo %}
+
+
+
