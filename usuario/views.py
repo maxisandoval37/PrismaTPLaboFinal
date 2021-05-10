@@ -6,11 +6,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
+from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, FormView
 from .models import Usuario
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import FormularioLogin, FormularioUsuario
-from .mixins import LoginYStaffMixin, ValidarPermisosRequeridos
+from .mixins import ValidarLoginYPermisosRequeridos
 
 
 
@@ -42,18 +42,18 @@ def logoutUsuario(request):
 class Inicio(TemplateView):
     template_name = 'index.html'
     
-class InicioUsuarios(LoginYStaffMixin, TemplateView):
-    permission_required = ('usuario.view_usuario','usuario.add_usuario','usuario.delete_usuario','usuario.change_usuario')
+class InicioUsuarios(ValidarLoginYPermisosRequeridos, TemplateView):
+    permission_required = ('usuario.view_usuario','usuario.add_usuario','usuario.delete_usuario','usuario.change_usuario',)
     template_name = 'usuarios/listar_usuario.html'
 
     
-class ListadoUsuario(LoginYStaffMixin,ListView):
+class ListadoUsuario(ValidarLoginYPermisosRequeridos,ListView):
      model = Usuario
      template_name = 'usuarios/listar_usuario.html'
-     
+     queryset = Usuario.objects.filter(is_staff = False)
      
     
-class RegistrarUsuario(LoginYStaffMixin,CreateView):
+class RegistrarUsuario(ValidarLoginYPermisosRequeridos,CreateView):
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuarios/crear_usuario.html'
@@ -62,7 +62,7 @@ class RegistrarUsuario(LoginYStaffMixin,CreateView):
    
 
 
-class EditarUsuario(LoginYStaffMixin,UpdateView):
+class EditarUsuario(ValidarLoginYPermisosRequeridos,UpdateView):
     
     model = Usuario
     fields = ['nombre','apellido','email','telefono','rol']
@@ -72,7 +72,7 @@ class EditarUsuario(LoginYStaffMixin,UpdateView):
     
     
 
-class EliminarUsuario(LoginYStaffMixin,DeleteView):
+class EliminarUsuario(ValidarLoginYPermisosRequeridos,DeleteView):
     
     model = Usuario
     template_name = 'usuarios/eliminar_usuario.html'
@@ -80,6 +80,4 @@ class EliminarUsuario(LoginYStaffMixin,DeleteView):
 
 
 
-
-    
     

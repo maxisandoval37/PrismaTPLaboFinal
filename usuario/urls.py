@@ -1,14 +1,13 @@
 from django.urls import path
-from django.contrib import admin
-from django.conf.urls import handler404
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from usuario.views import InicioUsuarios,ListadoUsuario, RegistrarUsuario,EditarUsuario,EliminarUsuario
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    
     path('inicio_usuarios/', login_required(InicioUsuarios.as_view()), name='inicio_usuarios'),
-    path('listado_usuarios/', login_required(ListadoUsuario.as_view()),{'parametro_extra': 'Hola!'},name='listar_usuarios'),
+    path('listado_usuarios/', login_required(ListadoUsuario.as_view()),name='listar_usuarios'),
     path('registrar_usuario/', login_required(RegistrarUsuario.as_view()),name = 'registrar_usuario'),
     path('actualizar_usuario/<int:pk>/', login_required(EditarUsuario.as_view()), name = 'actualizar_usuario'),
     path('eliminar_usuario/<int:pk>/',login_required(EliminarUsuario.as_view()), name='eliminar_usuario'),

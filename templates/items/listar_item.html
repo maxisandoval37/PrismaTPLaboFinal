@@ -1,0 +1,66 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+
+
+{% block content %}
+
+{% if object_list %}
+<div class="bg-gray-100">
+<div class="card">
+    <div class="card-header">
+        <strong class="card-title">Listado de Items</strong>
+    </div>
+   </div>
+       
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Categoria</th>
+                    <th>Estado</th>
+                    <th>Unidad de medida</th>
+                    <th>Ubicación</th>
+                    <th>Stock Minimo</th>
+                    <th>Stock de Seguridad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                <tr>
+                    
+                    <td>{{ item.nombre }}</td>
+                    <td>
+                        {{ item.precio }}
+                    </td> 
+                    <td>{{ item.categoria }}</td>
+                    <td>{{item.estado}}</td>
+                    <td>{{ item.unidad_de_medida }}</td>
+                    <td>{{ item.ubicacion}}</td>
+                    <td>{{ item.stockMinimo }}</td>
+                    <td>{{ item.stockSeguridad }}</td>
+                    <td>
+                        <a href ="{% url 'items:eliminar_item' item.pk %}" class="btn btn-danger"> Eliminar </a>
+                        <a href ="{% url 'items:actualizar_item' item.pk %}" class="btn btn-primary"> Editar </a>
+                        <a href ="{% url 'items:reposicion_item' item.pk %}" class="btn btn-warning"> Configurar reposicion </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+{% else %}
+<h1>No hay items registrados :( </h1>
+{% endif %}
+
+{% endblock %}

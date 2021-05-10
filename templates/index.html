@@ -59,7 +59,7 @@
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
-            {% if user.is_superuser %}
+            
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -76,7 +76,7 @@
                 </div>
             </li>
         
-            {% endif %}
+            
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
@@ -89,9 +89,9 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar items:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Listado de Items</a>
-                        <a class="collapse-item" href="utilities-border.html">Agregar Item</a>
-                        <a class="collapse-item" href="utilities-animation.html">Configurar reposición</a>
+                        <a class="collapse-item" href="{% url 'items:listar_items' %}">Listado de Items</a>
+                        <a class="collapse-item" href="{% url 'items:registrar_item' %}">Agregar Item</a>
+                        <a class="collapse-item" href="#">Configurar reposición</a>
                     </div>
                 </div>
             </li>

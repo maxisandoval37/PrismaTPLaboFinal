@@ -91,10 +91,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email','cuit','telefono','nombre','apellido','rol']
 
-    class Meta:
-        permissions = [('permiso_desde_codigo','Este es un permiso creado desde código'),
-                        ('segundo_permiso_codigo','Segundo permiso creado desde codigo')]
-
+    
     def __str__(self):
         return f'{self.nombre}'
 
@@ -111,8 +108,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         else:
             if self.rol is not None:
                 grupo_antiguo = Usuario.objects.filter(id = self.id).values('rol__rol').first()     # pylint: disable=maybe-no-member
-                #print(grupo_antiguo['rol__rol'])
-                #print(self.rol.rol)
+                
                 if grupo_antiguo['rol__rol'] == self.rol.rol:           # pylint: disable=maybe-no-member
                     print("Entro en igualdad de roles")
                     super().save(*args,**kwargs)

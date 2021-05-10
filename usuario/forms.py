@@ -104,3 +104,5 @@ class FormularioUsuario(forms.ModelForm):
             user.save()
         return user
     
+
+    
