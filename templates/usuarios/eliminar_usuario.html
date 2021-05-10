@@ -1,0 +1,23 @@
+{% extends 'index.html' %} 
+{% load widget_tweaks %}
+
+{% block title %} Eliminar usuario {% endblock title %}
+
+
+{% block content %} 
+<div class="card">
+    <div class="card-header">
+        <strong class="card-tittle">Eliminar Usuario: {{object}}</strong>
+    </div>
+
+<div class="card-body">
+<form class="user" method = "post">
+    {% csrf_token %}
+    <div class="form-group">
+        <h1>¿Desea eliminar el usuario {{object}}?</h1>
+    <a href ="{% url 'usuarios:listar_usuarios' %}" class="btn btn-danger"> Cancelar </a>
+    <button type="submit" class="btn btn-success">Eliminar</button>
+</div>
+</form>   
+</div>
+{% endblock %}

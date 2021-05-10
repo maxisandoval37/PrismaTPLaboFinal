@@ -24,7 +24,7 @@
 
 </head>
 
-<body class="bg-gradient-dark" background = >
+<body class="bg-gradient-dark" >
 
     <div class="container">
 
@@ -45,13 +45,14 @@
                       
                                 <div class="form-group">
                                     {% render_field field class="form-control form-control-user" %}
-                                    </div>
-                                    
+                                   
                                         {% endfor %}
+
+                                    </div>
                                 <button type="submit" id="submit" class="btn btn-primary btn-user btn-block"> Registrar cuenta</button>
                             </form>          
                             <div class="text-center">
-                                <a class="small" href="{% url 'login' %}">Ya tienes una cuenta? Ingresa!</a>
+                                <a class="small" href="#">Ya tienes una cuenta? Ingresa!</a>
                             </div>
                         </div>
                     </div>

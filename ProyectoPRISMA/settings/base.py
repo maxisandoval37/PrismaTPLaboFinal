@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 
 from pathlib import Path
-from django.utils.translation import gettext_lazy
+from django.urls import reverse_lazy
 import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'PrismaApp',
+    'usuario',
 ]
 
 MIDDLEWARE = [
@@ -57,14 +58,14 @@ MIDDLEWARE = [
 
 MATERIAL_ADMIN_SITE = {
     'HEADER':  ('Prisma Technology'),  # Admin site header
-    'TITLE':  ('Administración de Prisma'),  # Admin site title
-    'FAVICON':  'PrismaApp/imgAdmin/logo.ico',  # Admin site favicon (path to static should be specified)
+    'TITLE':  ('Prisma Technology'),  # Admin site title
+    'FAVICON':  'imgAdmin/logo.ico',  # Admin site favicon (path to static should be specified)
     'MAIN_BG_COLOR':  'orange',  # Admin site main color, css color should be specified
     'MAIN_HOVER_COLOR':  'black',  # Admin site main hover color, css color should be specified
-    'PROFILE_PICTURE':  'PrismaApp/imgAdmin/logo.png',  # Admin site profile picture (path to static should be specified)
-    'PROFILE_BG':  'PrismaApp/imgAdmin/fondo.png',  # Admin site profile background (path to static should be specified)
-    'LOGIN_LOGO':  'PrismaApp/imgAdmin/logo.png',  # Admin site logo on login page (path to static should be specified)
-    'LOGOUT_BG':  'PrismaApp/imgAdmin/fondo.png',  # Admin site background on login/logout pages (path to static should be specified)
+    'PROFILE_PICTURE':  'imgAdmin/perfil.png',  # Admin site profile picture (path to static should be specified)
+    'PROFILE_BG':  'imgAdmin/fondo.png',  # Admin site profile background (path to static should be specified)
+    'LOGIN_LOGO':  'imgAdmin/logo.png',  # Admin site logo on login page (path to static should be specified)
+    'LOGOUT_BG':  'imgAdmin/fondo.png',  # Admin site background on login/logout pages (path to static should be specified)
     'SHOW_THEMES':  True,  #  Show default admin themes button
     'TRAY_REVERSE': True,  # Hide object-tools and additional-submit-line by default
     'NAVBAR_REVERSE': True,  # Hide side navbar by default
@@ -77,12 +78,13 @@ MATERIAL_ADMIN_SITE = {
     }
 }
 
+ 
 ROOT_URLCONF = 'ProyectoPRISMA.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,13 +137,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (BASE_DIR,'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGIN_REDIRECT_URL = 'home'
 
-AUTH_USER_MODEL = 'PrismaApp.Usuario'
+#LOGIN_REDIRECT_URL = reverse_lazy('index')
+#LOGOUT_REDIRECT_URL = reverse_lazy('login')
+
+AUTH_USER_MODEL = 'usuario.Usuario'
 
 # config del email
 

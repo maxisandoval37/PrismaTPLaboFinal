@@ -1,0 +1,32 @@
+{% extends 'index.html' %} 
+{% load widget_tweaks %}
+
+{% block title %} Registro de usuarios {% endblock title %}
+
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <strong class="card-tittle">Registro de Usuarios</strong>
+    </div>
+
+<div class="card-body">
+<form class="user" method = "post">
+    {% csrf_token %}
+    
+    {{ form.as_p}}
+    <ol>
+        {% for error in form.non_field_errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+        {% endfor %}
+      </ol>
+    
+        <div class="">
+    <a href ="{% url 'usuarios:listar_usuarios' %}" class="btn btn-danger"> Cancelar </a>
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</div>
+</form>   
+</div>
+</div>
+{% endblock %}
