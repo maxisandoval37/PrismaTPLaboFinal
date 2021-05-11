@@ -40,7 +40,7 @@ class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos,UpdateView):
     
     permission_required = ('item.view_item','item.add_item','item.change_item',)
     model = Item
-    fields = ['stockMinimo','stockSeguridad']
+    fields = ['stockMinimo','stockSeguridad','repo_por_lote']
     template_name = 'items/editar_item.html'
     success_url = reverse_lazy('items:listar_items')    
 

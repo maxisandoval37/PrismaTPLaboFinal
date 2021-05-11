@@ -10,6 +10,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuarios/',include(('usuario.urls','usuarios'))),
     path('items/', include(('item.urls','items'))),
+    path('sucursales/', include(('sucursal.urls','sucursales'))),
+    path('proveedores/', include(('proveedor.urls','proveedores'))),
     path('',login_required(Inicio.as_view()), name = 'index'),
     path('accounts/login/',Login.as_view(), name = 'login'),
     path('logout/',login_required(logoutUsuario),name = 'logout'),

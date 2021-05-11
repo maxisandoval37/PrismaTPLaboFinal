@@ -1,0 +1,58 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Sucursales
+{% endblock title %}
+
+
+
+{% block content %}
+
+{% if object_list %}
+<div class="bg-gray-100">
+<div class="card">
+    <div class="card-header">
+        <strong class="card-title">Listado de Sucursales</strong>
+    </div>
+   </div>
+       
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Direccion</th>
+                
+                </tr>
+            </thead>
+            <tbody>
+                {% for sucursal in object_list %}
+                <tr>
+                    <td>{{sucursal.id}}</td>
+                    <td>{{ sucursal.nombre }}</td>
+                    <td>
+                        {{ sucursal.direccion }}
+                    </td> 
+                
+                    <td>
+                        <a href ="{% url 'sucursales:eliminar_sucursal' sucursal.pk %}" class="btn btn-danger"> Eliminar </a>
+                        <a href ="{% url 'sucursales:actualizar_sucursal' sucursal.pk %}" class="btn btn-primary"> Editar </a>
+                        <a href ="{% url 'sucursales:visualizar_items' sucursal.pk %}" class="btn btn-primary"> Ver items </a>
+                        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+{% else %}
+<h1>No hay Sucursales registradas :( </h1>
+{% endif %}
+
+{% endblock %}

@@ -89,7 +89,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     objects = UsuarioManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email','cuit','telefono','nombre','apellido','rol']
+    REQUIRED_FIELDS = ['email','cuit','telefono','nombre','apellido']
 
     
     def __str__(self):

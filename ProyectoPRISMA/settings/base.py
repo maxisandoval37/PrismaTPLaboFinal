@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'PrismaApp',
     'usuario',
     'item',
+    'sucursal',
+    'proveedor',
 ]
 
 MIDDLEWARE = [

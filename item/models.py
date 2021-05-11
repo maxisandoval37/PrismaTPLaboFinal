@@ -1,4 +1,5 @@
 from django.db import models
+from sucursal.models import Sucursal
 
 # Create your models here.
 
@@ -55,10 +56,14 @@ class Item(models.Model):
     stockMinimo = models.IntegerField('Stock Minimo',  default=0)
     stockSeguridad = models.IntegerField('Stock de Seguridad',  default=1)
     ubicacion = models.CharField('Ubicación', max_length=40, blank=True, null=True)
+    ultima_modificacion = models.DateTimeField('Ultima Modificación', blank=True, null=True)
+    repo_por_lote = models.BooleanField('Reposición por Lote', blank=True, null=True)
        
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, blank=True)
     unidad_de_medida = models.ForeignKey(UnidadDeMedida, on_delete=models.CASCADE, blank=True)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, blank=True)
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.CASCADE, blank=True)
+    
     
     class Meta:
         

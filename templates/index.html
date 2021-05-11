@@ -97,11 +97,50 @@
             </li>
 
             <!-- Divider -->
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Sucursales</span>
+                </a>
+                <div id="collapseOne" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Administrar Sucursales:</h6>
+                        <a class="collapse-item" href="{% url 'sucursales:listar_sucursales' %}">Listado de Sucursales</a>
+                        <a class="collapse-item" href="{% url 'sucursales:registrar_sucursal' %}">Agregar Sucursal</a>
+                        <a class="collapse-item" href="#">Hola :)</a>
+                    </div>
+                </div>
+            </li>
+
+             <!-- Nav Item - Utilities Collapse Menu -->
+             <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+                    aria-expanded="true" aria-controls="collapseFour">
+                    <i class="fas fa-fw fa-wrench"></i>
+                    <span>Proveedores</span>
+                </a>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Administrar Proveedores:</h6>
+                        <a class="collapse-item" href="{% url 'proveedores:listar_proveedores' %}">Listado de Proveedores</a>
+                        <a class="collapse-item" href="{% url 'proveedores:registrar_proveedor' %}">Agregar Proveedor</a>
+                        <a class="collapse-item" href="#">Buen dia ;)</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+
+            <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Addons
+                Ventas y Pedidos
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->

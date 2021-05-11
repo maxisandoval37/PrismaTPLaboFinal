@@ -1,0 +1,61 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+
+
+{% block content %}
+
+{% if lista %}
+<div class="bg-gray-100">
+<div class="card">
+    <div class="card-header">
+        <strong class="card-title">Listado de Items</strong>
+    </div>
+   </div>
+       
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Categoria</th>
+                    <th>Estado</th>
+                    <th>Unidad de medida</th>
+                    <th>Ubicación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lista %}
+                <tr>
+                    <td>{{ item.id}}</td>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.precio }}</td>
+                    <td>{{ item.categoria }}</td>
+                    <td>{{ item.estado }}</td>
+                    <td>{{ item.unidad }}</td>
+                    <td>{{ item.ubicacion }}</td>
+                    
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+</div>
+<div class= "text-center">
+<a href ="{% url 'sucursales:listar_sucursales' %}" class="btn btn-primary"> Volver </a>
+</div>
+{% else %}
+<h1>La sucursal no tiene items :c </h1>
+{% endif %}
+
+{% endblock %}

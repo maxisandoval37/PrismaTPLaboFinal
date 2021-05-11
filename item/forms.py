@@ -17,12 +17,14 @@ class ItemForm(forms.ModelForm):
         self.fields['unidad_de_medida'].widget.attrs['placeholder'] = 'Unidad de medida'
         self.fields['estado'].widget.attrs['class'] = 'form-user'
         self.fields['estado'].widget.attrs['placeholder'] = 'Estado'
+        self.fields['repo_por_lote'].widget.attrs['class'] = 'form-user'
+        self.fields['repo_por_lote'].widget.attrs['placeholder'] = 'Reposición por lote'
     
     
     class Meta:
         
         model = Item
-        fields = ['nombre','precio','ubicacion','categoria','unidad_de_medida','estado']
+        fields = ['nombre','precio','ubicacion','categoria','unidad_de_medida','repo_por_lote','estado','sucursal']
         
 """ 
         self.fields['stockMinimo'].widget.attrs['class'] = 'form-user'
