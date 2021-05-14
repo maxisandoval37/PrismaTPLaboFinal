@@ -17,7 +17,7 @@ class FormularioUsuario(forms.ModelForm):
         - password1:    Contraseña
         - password2:    Verificación de la contraseña
     """
-    password1 = forms.CharField(label = 'Contraseña',widget = forms.PasswordInput(
+    password1 = forms.CharField(min_length=4, max_length= 16, label = 'Contraseña',widget = forms.PasswordInput(
         attrs = {
             'class': 'form-control',
             'placeholder': 'Ingrese su contraseña...',
@@ -26,7 +26,7 @@ class FormularioUsuario(forms.ModelForm):
         }
     ))
 
-    password2 = forms.CharField(label = 'Contraseña de Confirmación', widget = forms.PasswordInput(
+    password2 = forms.CharField(min_length=4, max_length= 16,label = 'Contraseña de Confirmación', widget = forms.PasswordInput(
         attrs={
             'class': 'form-control',
             'placeholder': 'Ingrese nuevamente su contraseña...',
@@ -37,7 +37,7 @@ class FormularioUsuario(forms.ModelForm):
 
     class Meta:
         model = Usuario
-        fields = ('email','cuit','nombre','apellido','rol','telefono','username')
+        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','estado','telefono','username')
         widgets = {
             'email': forms.EmailInput(
                 attrs = {
@@ -57,21 +57,58 @@ class FormularioUsuario(forms.ModelForm):
                     'placeholder': 'Ingrese sus apellidos',
                 }                
             ),
+            'calle': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Ingrese la calle',
+                }                
+            ),
+            'numero': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Ingrese el numero de su domicilio',
+                }                
+            ),
+    
+            'localidad': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Ingrese la localidad',
+                }                
+            ),
+            'provincia': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Ingrese la provincia',
+                }                
+            ),
             
-            'telefono': forms.NumberInput(
+            'cod_postal': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Ingrese el código postal',
+                }                
+            ),
+            
+            'telefono': forms.TextInput(
                 attrs = {
                     'class': 'form-control',
                     'placeholder': 'Ingrese su número telefono',
                 }
             ),
             
-            'cuit': forms.NumberInput(
+            'cuit': forms.TextInput(
                 attrs = {
                     'class': 'form-control',
                     'placeholder': 'Ingrese su cuit',
                 }
             ),
             'rol': forms.Select(
+                attrs = {
+                    'class': 'form-control'
+                }
+            ),
+            'estado': forms.Select(
                 attrs = {
                     'class': 'form-control'
                 }
@@ -83,6 +120,7 @@ class FormularioUsuario(forms.ModelForm):
                 }
             )
         }
+
 
     def clean_password2(self):
         """ Validación de Contraseña

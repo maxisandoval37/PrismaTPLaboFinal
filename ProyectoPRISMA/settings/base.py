@@ -30,6 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
 # Application definition
 
@@ -42,11 +43,11 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'PrismaApp',
     'usuario',
     'item',
     'sucursal',
     'proveedor',
+    'mediodepago',
 ]
 
 MIDDLEWARE = [

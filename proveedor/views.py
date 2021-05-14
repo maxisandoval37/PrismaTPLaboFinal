@@ -24,7 +24,7 @@ class RegistrarProveedor(ValidarLoginYPermisosRequeridos,CreateView):
 class EditarProveedor(ValidarLoginYPermisosRequeridos,UpdateView):
     
     model = Proveedor
-    fields = ['email','telefono','razon_social']
+    fields = ['email','telefono','calle','numero','localidad','cod_postal']
     template_name = 'proveedores/crear_proveedor.html'
     success_url = reverse_lazy('proveedores:listar_proveedores')
     

@@ -1,4 +1,4 @@
-{% extends 'index.html' %} 
+{% extends 'index.html' %}
 {% load widget_tweaks %}
 
 {% block title %} Edición de items {% endblock title %}
@@ -11,24 +11,24 @@
         <strong class="card-tittle">Editar Item: {{object}}</strong>
     </div>
 
-<div class="card-body">
-    <form class="user" method = "post">
-        {% csrf_token %}
-        {% for field in form %} 
-        {{field.label_tag}}
+    <div class="card-body">
+        <form class="user" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            {{field.label_tag}}
 
-        <div class="form-group">
-            {% render_field field class="form-control form-control-user" %}
-           
+            <div class="form-group">
+                {% render_field field class="form-control form-control-user" %}
+
                 {% endfor %}
 
             </div>
-    
-        <div class="">
-    <a href ="{% url 'items:listar_items' %}" class="btn btn-danger"> Cancelar </a>
-    <button type="submit" class="btn btn-success">Actualizar</button>
-</div>
-</form>   
-</div>
+
+            <div class="">
+                <a href="{% url 'items:listar_items' %}" class="btn btn-danger"> Cancelar </a>
+                <button type="submit" class="btn btn-success">Actualizar</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

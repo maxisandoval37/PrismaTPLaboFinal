@@ -1,0 +1,63 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Categorias
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Categorias</strong>
+            <div class="text-center">
+            <a href="/admin/item/categoria/" class="btn btn-info"> Elegir Proveedor </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            
+            <thead>
+
+                <tr>
+                    <th>  </th>
+                    <th>Item</th>
+                    <th>Categoria</th>
+                    <th>SubCategoria</th>
+                    <th>Proveedor</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for item in object_list %}
+
+                <tr>
+                    <td>  </td>
+                    <td>{{ item.nombre}}</td>
+                    <td>{{ item.categoria }}</td>
+                    <td>{{ item.subcategoria }}</td>
+                    <td>{{ item.categoria.prov_preferido}}</td>
+                    <td>
+                       
+
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

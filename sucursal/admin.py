@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Sucursal
+from .models import Sucursal, Caja
 
 @register(Sucursal)
 class sucursalAdmin(ModelAdmin):
@@ -8,3 +8,7 @@ class sucursalAdmin(ModelAdmin):
 
 
 
+@register(Caja)
+class cajaADmin(ModelAdmin):
+    
+    icon_name = 'home'

@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class AdministrarsucursalesConfig(AppConfig):
-    name = 'administrarSucursales'
+class SucursalConfig(AppConfig):
+    name = 'sucursal'

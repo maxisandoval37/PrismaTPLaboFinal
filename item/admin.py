@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Item, Estado, Categoria, UnidadDeMedida
+from .models import Item, Estado, Categoria, UnidadDeMedida, SubCategoria
 
 @register(Item)
 class itemAdmin(ModelAdmin):
@@ -20,3 +20,8 @@ class categoriaAdmin(ModelAdmin):
 class unidadMedidaAdmin(ModelAdmin):
     
     icon_name = 'loop'
+    
+@register(SubCategoria)
+class subcatAdmin(ModelAdmin):
+    
+    icon_name = 'grade'

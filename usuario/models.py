@@ -46,6 +46,18 @@ class Rol(models.Model):
                     )
                 super().save(*args,**kwargs)
         
+class Estado(models.Model):
+    
+    nombre  = models.CharField('Estado del empleado', max_length=20, unique=True)
+
+    class Meta:
+        verbose_name = 'estado'
+        verbose_name_plural = 'estados'
+        
+    def __str__(self):
+        return self.nombre
+
+
 
 
 class UsuarioManager(BaseUserManager):
@@ -63,6 +75,7 @@ class UsuarioManager(BaseUserManager):
             username = username,
             is_staff = is_staff,
             is_superuser = is_superuser,
+           
             **extra_fields
         )
         user.set_password(password)
@@ -76,13 +89,20 @@ class UsuarioManager(BaseUserManager):
         return self._create_user(email, cuit,nombre,apellido,telefono,username, password, True, True, **extra_fields)
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField('Nombre de usuario',unique = True, max_length=100)
-    email = models.EmailField('Correo Electrónico', max_length=254,unique = True)
+    username = models.CharField('Nombre de usuario',unique = True, max_length=20)
+    email = models.EmailField('Correo Electrónico', max_length=30,unique = True)
     cuit = models.CharField('Cuit', max_length=11, unique=True)
-    nombre = models.CharField('Nombre', max_length=200, blank = True, null = True)
-    apellido = models.CharField('Apellido', max_length=200,blank = True, null = True)
-    rol = models.ForeignKey(Rol, on_delete=models.CASCADE,blank = True,null = True)
-    telefono = models.IntegerField('Telefono',blank = True, null = True)
+    nombre = models.CharField('Nombre', max_length=16, blank = True, null = True)
+    apellido = models.CharField('Apellido', max_length=16,blank = True, null = True)
+    rol = models.ForeignKey(Rol, on_delete=models.PROTECT, blank = True, null=True)
+    telefono = models.CharField('Telefono',blank = True, null = True, max_length=13)
+    estado = models.ForeignKey(Estado, on_delete=models.PROTECT,blank = True, null=True)
+    
+    calle = models.CharField('Calle', max_length=20, blank = True,null=True)
+    numero = models.CharField('Numero',blank = True,null=True, max_length=4)
+    localidad = models.CharField('Localidad', max_length=20,blank = True,null=True)
+    provincia = models.CharField('Provincia', max_length= 20,blank = True,null=True)
+    cod_postal = models.CharField('Código postal', blank = True,null=True, max_length= 4)
     
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)

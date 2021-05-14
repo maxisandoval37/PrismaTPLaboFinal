@@ -12,12 +12,12 @@ Listado de Items
 
 {% if lista %}
 <div class="bg-gray-100">
-<div class="card">
-    <div class="card-header">
-        <strong class="card-title">Listado de Items</strong>
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Items</strong>
+        </div>
     </div>
-   </div>
-       
+
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
@@ -41,21 +41,21 @@ Listado de Items
                     <td>{{ item.estado }}</td>
                     <td>{{ item.unidad }}</td>
                     <td>{{ item.ubicacion }}</td>
-                    
+
                 </tr>
                 {% endfor %}
-                
+
             </tbody>
         </table>
     </div>
-    
+
 </div>
 </div>
-<div class= "text-center">
-<a href ="{% url 'sucursales:listar_sucursales' %}" class="btn btn-primary"> Volver </a>
-</div>
+
 {% else %}
 <h1>La sucursal no tiene items :c </h1>
 {% endif %}
-
+<div class="text-center">
+    <a href="{% url 'sucursales:listar_sucursales' %}" class="btn btn-primary"> Volver </a>
+</div>
 {% endblock %}

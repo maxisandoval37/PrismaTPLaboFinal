@@ -10,57 +10,81 @@ Listado de Items
 
 {% block content %}
 
-{% if object_list %}
+
 <div class="bg-gray-100">
-<div class="card">
-    <div class="card-header">
-        <strong class="card-title">Listado de Items</strong>
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Items</strong>
+        </div>
     </div>
-   </div>
-       
+
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
                 <tr>
-                    
+
                     <th>Nombre</th>
                     <th>Precio</th>
+                    <th>Cantidad</th>
                     <th>Categoria</th>
+                    <th>SubCategoria</th>
+                    <th>Proveedor</th>
                     <th>Estado</th>
                     <th>Unidad de medida</th>
                     <th>Ubicación</th>
+                    <th>Sucursal</th>
                     <th>Stock Minimo</th>
                     <th>Stock de Seguridad</th>
+                   
                 </tr>
             </thead>
             <tbody>
+                {% if object_list %}
                 {% for item in object_list %}
+                {% if item.stockMinimo == 0 %}
+
+
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>SIN STOCK!</strong> No hay stock minimo para el item {{item.nombre}}.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
                 <tr>
-                    
+
                     <td>{{ item.nombre }}</td>
                     <td>
                         {{ item.precio }}
-                    </td> 
+                    </td>
+                    <td>{{ item.cantidad}}</td>
                     <td>{{ item.categoria }}</td>
+                    <td>{{ item.subcategoria }}</td>
+                    <td>{{ item.categoria.prov_preferido}}</td>
                     <td>{{item.estado}}</td>
                     <td>{{ item.unidad_de_medida }}</td>
                     <td>{{ item.ubicacion}}</td>
+                    <td>{{ item.sucursal}}</td>
                     <td>{{ item.stockMinimo }}</td>
                     <td>{{ item.stockSeguridad }}</td>
+                    
                     <td>
-                        <a href ="{% url 'items:eliminar_item' item.pk %}" class="btn btn-danger"> Eliminar </a>
-                        <a href ="{% url 'items:actualizar_item' item.pk %}" class="btn btn-primary"> Editar </a>
-                        <a href ="{% url 'items:reposicion_item' item.pk %}" class="btn btn-warning"> Configurar reposicion </a>
+                        <a href="{% url 'items:eliminar_item' item.pk %}" class="btn btn-danger"> Eliminar </a>
+                        <a href="{% url 'items:actualizar_item' item.pk %}" class="btn btn-primary"> Editar </a>
+                        <a href="{% url 'items:reposicion_item' item.pk %}" class="btn btn-warning"> Configurar
+                            reposicion </a>
                     </td>
                 </tr>
                 {% endfor %}
+                {% else %}
+                <h5>No hay items registrados :( </h1>
+                    {% endif %}
             </tbody>
         </table>
     </div>
 </div>
 </div>
-{% else %}
-<h1>No hay items registrados :( </h1>
-{% endif %}
+
+
 
 {% endblock %}

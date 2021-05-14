@@ -72,11 +72,7 @@ class EditarUsuario(ValidarLoginYPermisosRequeridos,UpdateView):
     
     
 
-class EliminarUsuario(ValidarLoginYPermisosRequeridos,DeleteView):
-    
-    model = Usuario
-    template_name = 'usuarios/eliminar_usuario.html'
-    success_url = reverse_lazy('usuarios:listar_usuarios')
+
 
 
 
