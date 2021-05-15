@@ -2,17 +2,24 @@ from django.db import models
 
 class Caja(models.Model):
     
+    codigo = models.CharField('Identificador', max_length= 5, unique=True, null=True)
     saldo_disponible = models.DecimalField('Saldo Disponible', decimal_places=2, max_digits=9)
     egresos = models.DecimalField('Egresos', decimal_places=2, max_digits=9)
     ingresos = models.DecimalField('Ingresos', decimal_places=2, max_digits=9)
     saldo_inicial = models.DecimalField('Saldo Inicial', decimal_places=2, max_digits=9)
     saldo_final = models.DecimalField('Saldo Final', decimal_places=2, max_digits=9)
 
-
+    class Meta:
+        
+        verbose_name = 'caja'
+        verbose_name_plural = 'cajas'
+    
+    def __str__(self):
+       return self.codigo
 
 class Sucursal (models.Model):
     
-    codigo = models.CharField(max_length = 100, unique=True)
+    codigo = models.CharField(max_length = 4, unique=True)
     idCasaCentral = models.IntegerField(default= 1)
     caja = models.ForeignKey(Caja, on_delete=models.PROTECT, null = True)
     

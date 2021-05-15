@@ -13,6 +13,10 @@ Listado de Sucursales
 
 <div class="bg-gray-100">
     <div class="card">
+        <div class= "bg-gray-100 text-center">
+            <a href="{% url 'sucursales:consolidado_sucursales' %}" class="btn btn-info"> Consolidado de Sucursales
+            </a>
+        </div>
         <div class="card-header">
             <strong class="card-title">Listado de Sucursales</strong>
         </div>
@@ -33,11 +37,12 @@ Listado de Sucursales
                 {% if object_list %}
                 {% for sucursal in object_list %}
                 <tr>
+                    
                     <td>{{sucursal.id}}</td>
                     <td>{{ sucursal.codigo }}</td>
-                    <td>
-                        {{ sucursal.direccion }}
-                    </td>
+                
+                    <td>{{ sucursal.calle}}, {{ sucursal.numero}}, {{ sucursal.localidad}}, {{ sucursal.provincia }}, {{ sucursal.cod_postal}}</td>
+                    
 
                     <td>
                         <a href="{% url 'sucursales:eliminar_sucursal' sucursal.pk %}" class="btn btn-danger"> Eliminar
@@ -46,7 +51,7 @@ Listado de Sucursales
 
                         <a href="{% url 'sucursales:visualizar_items' sucursal.pk %}" class="btn btn-primary"> Ver Items
                         </a>
-                        <a href="{% url 'sucursales:visualizar_cajas' sucursal.pk %}" class="btn btn-info"> Ver Cajas
+                        <a href="{% url 'sucursales:visualizar_cajas' sucursal.caja.id %}" class="btn btn-info"> Ver Cajas
                         </a>
 
                     </td>

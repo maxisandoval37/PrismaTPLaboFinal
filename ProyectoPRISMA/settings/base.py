@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'sucursal',
     'proveedor',
     'mediodepago',
+    
 ]
 
 MIDDLEWARE = [
@@ -151,6 +152,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #LOGOUT_REDIRECT_URL = reverse_lazy('login')
 
 AUTH_USER_MODEL = 'usuario.Usuario'
+
+#CELERY CONFIG
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "Argentina/BuenosAires"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZAER = 'json'
+
+
 
 # config del email
 

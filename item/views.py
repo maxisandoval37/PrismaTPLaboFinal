@@ -5,6 +5,8 @@ from usuario.mixins import ValidarLoginYPermisosRequeridos
 from .forms import ItemForm
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.http import HttpResponse
+from ProyectoPRISMA.tasks import sleepy, enviar_correo
 
 
 
@@ -71,7 +73,16 @@ class ListarCategorias(ValidarLoginYPermisosRequeridos,ListView):
      template_name = 'items/elegir_proveedor.html'
 
 
-""" def alertaStock(request, id):
+def prueba(request):
+    
+    enviar_correo()
+    return HttpResponse('<h1>CORREO ENVIADO CORRECTAMENTE</h1>')
+
+
+
+
+""" 
+def alertaStock(request, id):
     
     if request.method == 'POST':
         item = Item.objects.get(id = id)
@@ -79,5 +90,5 @@ class ListarCategorias(ValidarLoginYPermisosRequeridos,ListView):
             messages.success(request, "NO HAY STOCK MINIMO ")
             return redirect(to='items:listar_items')
         
- """
+  """
     

@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView,DeleteView,ListView,UpdateView, DetailView
 from django.urls import reverse_lazy
-from .forms import SucursalForm
+from .forms import SucursalForm, CajaForm
 from .models import Sucursal, Caja
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from item.models import Item
-from django.http import HttpResponseRedirect
+
 
 class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
     model = Sucursal
@@ -23,6 +23,14 @@ class EliminarSucursal(ValidarLoginYPermisosRequeridos,DeleteView):
     template_name = 'sucursales/eliminar.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
     
+class RegistrarCaja(ValidarLoginYPermisosRequeridos,CreateView):
+    
+    model = Caja
+    form_class = CajaForm
+    template_name = 'sucursales/crear_caja.html'
+    success_url = reverse_lazy('sucursales:listar_sucursales')
+
+
 
 
 def idCaja(request, id):
@@ -64,6 +72,26 @@ def idSucursal(request, id):
         }
         lista.append(dic) 
    
-    print(lista)
+    
     return render(request, 'sucursales/visualizar_items.html',locals())
     
+
+def consolidacionSucursales(request):
+    
+    sucursales = Sucursal.objects.all()
+    lista = []
+    egresosTotal = 0
+    ingresosTotal = 0
+    
+    for sucursal in sucursales:
+    
+        egresosTotal += sucursal.caja.egresos
+        ingresosTotal += sucursal.caja.ingresos
+        
+    dic = {
+        "egresos": egresosTotal,
+        "ingresos": ingresosTotal,
+    }
+    lista.append(dic)
+    
+    return render(request, 'sucursales/consolidado.html', locals())

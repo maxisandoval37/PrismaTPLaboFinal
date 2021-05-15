@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListarSucursal, RegistrarSucursal,EliminarSucursal, idSucursal, idCaja
+from .views import ListarSucursal, RegistrarCaja,RegistrarSucursal,EliminarSucursal, idSucursal, idCaja, consolidacionSucursales
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -9,5 +9,6 @@ urlpatterns = [
     path('eliminar_sucursal/<int:pk>/',login_required(EliminarSucursal.as_view()), name='eliminar_sucursal'),
     path('visualizar_items/<int:id>/', login_required(idSucursal), name= 'visualizar_items'),
     path('visualizar_cajas/<int:id>/', login_required(idCaja), name= 'visualizar_cajas'),
-    
+    path('consolidado_sucursales/', login_required(consolidacionSucursales), name = 'consolidado_sucursales'),
+    path('registrar_caja/', login_required(RegistrarCaja.as_view()), name = 'registrar_caja'),
 ]

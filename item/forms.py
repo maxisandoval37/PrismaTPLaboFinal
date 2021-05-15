@@ -4,13 +4,13 @@ from .models import Item
 
 class ItemForm(forms.ModelForm):
     
-    nombre = forms.CharField(max_length=30, required = True)
-    precio = forms.FloatField(min_value=1, max_value=100000)
+    nombre = forms.CharField(min_length=3, max_length=20, required = True)
+    precio = forms.FloatField(min_value=1, max_value=9999999)
     descripcion = forms.Textarea()
-    stockMinimo = forms.IntegerField(min_value= 1, max_value=1000)
-    stockSeguridad = forms.IntegerField(min_value= 1, max_value=1000)
+    stockMinimo = forms.IntegerField(min_value= 1, max_value=9999)
+    stockSeguridad = forms.IntegerField(min_value= 1, max_value=9999)
     ubicacion = forms.CharField(max_length=40)
-    cantidad  = forms.IntegerField( min_value= 0, max_value = 1000)
+    cantidad  = forms.IntegerField( min_value= 0, max_value = 9999)
     
     
 

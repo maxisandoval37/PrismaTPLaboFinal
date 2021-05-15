@@ -91,7 +91,7 @@ class UsuarioManager(BaseUserManager):
 class Usuario(AbstractBaseUser, PermissionsMixin):
     username = models.CharField('Nombre de usuario',unique = True, max_length=20)
     email = models.EmailField('Correo Electrónico', max_length=30,unique = True)
-    cuit = models.IntegerField('Cuit',unique=True)
+    cuit = models.CharField('Cuit',unique=True, max_length=11)
     nombre = models.CharField('Nombre', max_length=16, blank = True, null = True)
     apellido = models.CharField('Apellido', max_length=16,blank = True, null = True)
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, blank = True, null=True)

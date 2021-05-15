@@ -1,14 +1,14 @@
 {% extends 'index.html' %}
 {% load widget_tweaks %}
 
-{% block title %} Registro de sucursales {% endblock title %}
+{% block title %} Registro de Cajas {% endblock title %}
 
 
 {% block content %}
 
 <div class="card">
     <div class="card-header">
-        <strong class="card-tittle">Registro de Sucursales</strong>
+        <strong class="card-tittle">Registro de Cajas</strong>
     </div>
 
     <div class="card-body">
@@ -16,6 +16,7 @@
             {% csrf_token %}
             {% for field in form %}
             {{field.label_tag}}
+
             {% for error in field.errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>

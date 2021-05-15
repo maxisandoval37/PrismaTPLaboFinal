@@ -34,7 +34,7 @@ class EditarMDP(ValidarLoginYPermisosRequeridos,UpdateView):
     permission_required = ('item.view_item','item.add_item','item.change_item',)
     model = MedioDePago
     fields = ['tipo_de_pago']
-    template_name = 'mdps/editar_mdp.html'
+    template_name = 'mdps/crear_mdp.html'
     success_url = reverse_lazy('mdps:listar_mdps')
     
     
