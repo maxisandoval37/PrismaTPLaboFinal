@@ -8,7 +8,7 @@ class ProveedorForm(forms.ModelForm):
     razon_social = forms.CharField(min_length =4 , max_length = 20, required=True)
     email = forms.EmailField(min_length =6 , max_length=30, required=True)
     telefono = forms.IntegerField(min_value= 100 , max_value=9999999999999, required=True)
-    calle = forms.CharField(min_length =2 , max_length=4)
+    calle = forms.CharField(min_length =4 , max_length=20)
     numero = forms.IntegerField(min_value =10, max_value=9999)
     localidad = forms.CharField(min_length =4 , max_length=20)
     provincia = forms.CharField(min_length =4 , max_length=20)
