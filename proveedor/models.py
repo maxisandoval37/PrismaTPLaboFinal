@@ -4,7 +4,7 @@ from django.db import models
 
 class Proveedor(models.Model):
     
-    cuit = models.CharField('Cuit', max_length=11, unique=True)
+    cuit = models.IntegerField('Cuit', unique=True)
     razon_social = models.CharField('Razón Social', max_length = 20, unique=True)
     email = models.EmailField('Correo electronico', max_length=30, unique=True)
     telefono = models.CharField('Telefono', null=True, max_length=13)

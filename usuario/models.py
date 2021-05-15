@@ -91,18 +91,18 @@ class UsuarioManager(BaseUserManager):
 class Usuario(AbstractBaseUser, PermissionsMixin):
     username = models.CharField('Nombre de usuario',unique = True, max_length=20)
     email = models.EmailField('Correo Electrónico', max_length=30,unique = True)
-    cuit = models.CharField('Cuit', max_length=11, unique=True)
+    cuit = models.IntegerField('Cuit',unique=True)
     nombre = models.CharField('Nombre', max_length=16, blank = True, null = True)
     apellido = models.CharField('Apellido', max_length=16,blank = True, null = True)
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, blank = True, null=True)
-    telefono = models.CharField('Telefono',blank = True, null = True, max_length=13)
+    telefono = models.IntegerField('Telefono',blank = True, null = True)
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT,blank = True, null=True)
     
     calle = models.CharField('Calle', max_length=20, blank = True,null=True)
-    numero = models.CharField('Numero',blank = True,null=True, max_length=4)
+    numero = models.IntegerField('Numero',blank = True,null=True)
     localidad = models.CharField('Localidad', max_length=20,blank = True,null=True)
     provincia = models.CharField('Provincia', max_length= 20,blank = True,null=True)
-    cod_postal = models.CharField('Código postal', blank = True,null=True, max_length= 4)
+    cod_postal = models.IntegerField('Código postal', blank = True,null=True)
     
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
