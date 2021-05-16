@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Pedido para el proveedor
+{% endblock title %}
+
+
+
+{% block content %}
+
+{% if queryset %}
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Pedido para el proveedor</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th>Sucursal</th>
+                    <th>Proveedor</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in queryset %}
+                <tr>
+                    <td></td>
+                    <td>{{ pedido.item }}</td>
+                    <td>{{ pedido.sucursal }}</td>
+                    <td>{{ pedido.proveedor }}</td>
+                          
+                </tr>
+                
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</div>
+
+{% else %}
+<h1>NO EXISTE EL PEDIDO >:( </h1>
+{% endif %}
+<div class="text-center">
+    <a href="{% url 'items:listar_items' %}" class="btn btn-primary"> Volver </a>
+</div>
+{% endblock %}

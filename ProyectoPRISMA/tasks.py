@@ -18,7 +18,7 @@ def sleepy(duration):
 def Pedido(email):
 
     queryset = Item.objects.filter(cantidad=F('stockMinimo'))
-    pedidosToSend = []
+    
     for item in queryset:
         if item.solicitud == False:
             pedidos = Pedidos()
@@ -37,13 +37,14 @@ def Pedido(email):
         SELECT id, item_id, proveedor_id, sucursal_id 
         FROM item_pedidos
         """)
-    alreadyListened = []
+    
     for pedido in resultado:
+        alreadyListened = []
         pedidosByProveedores.setdefault(pedido.proveedor_id, []).append(pedido)
 
     
     for pedido in resultado:
-        
+        pedidosToSend = []
         for elPedido in pedidosByProveedores.get(pedido.proveedor_id):
             if(pedido.sucursal_id == elPedido.sucursal_id and elPedido not in alreadyListened):
                 pedidosToSend.append(elPedido)

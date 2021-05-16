@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect, redirect
 from .forms import ProveedorForm
 from .models import Proveedor
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy
+from django.contrib import messages
+from django.db.models import ProtectedError
 
 
 
@@ -36,4 +38,15 @@ class EliminarProveedor(ValidarLoginYPermisosRequeridos,DeleteView):
     template_name = 'proveedores/eliminar_proveedor.html'
     success_url = reverse_lazy('proveedores:listar_proveedores')
                                     
-                                    
+    def delete(self, request, *args, **kwargs):
+        
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Este proveedor esta relacionado.')
+            return redirect('items:listar_items')
+
+        return HttpResponseRedirect(success_url)                                

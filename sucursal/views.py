@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.views.generic import CreateView,DeleteView,ListView,UpdateView, DetailView
 from django.urls import reverse_lazy
 from .forms import SucursalForm, CajaForm
 from .models import Sucursal, Caja
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from item.models import Item
-
+from django.contrib import messages
+from django.db.models import ProtectedError
 
 class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
     model = Sucursal
@@ -22,6 +23,20 @@ class EliminarSucursal(ValidarLoginYPermisosRequeridos,DeleteView):
     model = Sucursal
     template_name = 'sucursales/eliminar.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
+    
+    def delete(self, request, *args, **kwargs):
+        
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Esta sucursal esta relacionado.')
+            return redirect('items:listar_items')
+
+        return HttpResponseRedirect(success_url)
+    
     
 class RegistrarCaja(ValidarLoginYPermisosRequeridos,CreateView):
     

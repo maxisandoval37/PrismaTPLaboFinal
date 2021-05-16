@@ -134,6 +134,11 @@ class Item(models.Model):
         if len(self.ubicacion) < 5 and len(self.ubicacion) > 15:
             raise ValidationError(
                 'La ubicación del item debe tener entre 5 y 15 caracteres.')
+        if self.stockMinimo < 0:
+            raise ValidationError('El stock minimo no puede ser negativo.')
+        if self.stockSeguridad < 0:
+            
+            raise ValidationError('El stock de seguridad no puede ser negativo.')
 
     class Meta:
 

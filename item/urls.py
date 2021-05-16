@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, RegistrarItem,EditarItem,EliminarItem, ConfigurarReposicionItem, ListarCategorias, Pedido,ListarPedidos, CompletarPedido,prueba
+from .views import ListadoItem, RegistrarItem,EditarItem,EliminarItem, ConfigurarReposicionItem, ListarCategorias, Pedido,ListarPedidos, CompletarPedido,prueba, VerPedido
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -12,5 +12,6 @@ urlpatterns = [
     path('listar_categorias/', login_required(ListarCategorias.as_view()), name = 'listar_categorias'),
     path('visualizar_pedidos/', login_required(ListarPedidos.as_view()) ,name='visualizar_pedidos'),
     path('visualizar_pedidos/<int:id>/', login_required(CompletarPedido) ,name='completar_pedido'),
+    path('pedido_proveedor/<int:sucursal>/<int:proveedor>', VerPedido, name= 'pedido_proveedor'),
     path('prueba/', prueba, name='prueba'),
 ]
