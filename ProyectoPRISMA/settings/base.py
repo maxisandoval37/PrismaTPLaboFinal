@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os 
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'proveedor',
     'mediodepago',
     'django_celery_beat',
+    
     
 ]
 
@@ -157,22 +159,11 @@ AUTH_USER_MODEL = 'usuario.Usuario'
 #CELERY CONFIG
 
 # Celery Configuration Options
-from celery.schedules import crontab
 
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZAER = 'json'
+
 
 # Ejecutar cada lunes a las 18 de la tarde
 
-CELERYBEAT_SCHEDULE = {
-    'add-every-10': {
-        'task': 'ProyectoPRISMA.tasks.add',
-        'schedule': 10.0,
-        'args': (16, 16)
-    },
-}
 
 # config del email
 

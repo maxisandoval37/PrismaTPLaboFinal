@@ -78,7 +78,7 @@ class Item(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT, blank=True, null=True)
     subcategoria = models.ForeignKey(SubCategoria, on_delete=models.PROTECT, blank=True, null=True)
     cantidad  = models.IntegerField("Cantidad", default = 0)
-    alerta = models.BooleanField(default= False)
+    solicitud = models.BooleanField(default= False)
     
     
     unidad_de_medida = models.ForeignKey(UnidadDeMedida, on_delete=models.PROTECT)
@@ -95,23 +95,19 @@ class Item(models.Model):
         return self.nombre
 
 
-
-
-""" def alertaStock(sender, instance, **kwargs):  
-    item_id = instance.id 
-    item = Item.objects.get(id = item_id)
-    print(item.cantidad)
-    if item.stockMinimo == 0:
+class Pedidos(models.Model):
+    
+    
+    item = models.ForeignKey(Item, on_delete=models.PROTECT)
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
+    
+    
+    
+    class Meta:
         
-        Item.objects.filter(id = item.id).update(alerta = )
-    else:
-        item.alerta = False
-        item.save()
-        return redirect('index')
-    
-    
+        verbose_name = 'pedido'
+        verbose_name_plural = 'pedidos'
     
         
-    
-post_save.connect(alertaStock, sender=Item)
-   """
+ 

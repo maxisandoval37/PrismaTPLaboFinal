@@ -51,14 +51,14 @@ Listado de Usuarios
                         {{ usuario.nombre }}
                     </td>
                     <td>{{ usuario.apellido }}</td>
-                    <td>{{usuario.domicilio}}</td>
+                    <td>{{ usuario.calle}}, {{ usuario.numero}}, {{ usuario.localidad}}, {{ usuario.provincia}}, {{ usuario.cod_postal}}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.rol}}</td>
                     <td>{{usuario.estado}}</td>
                     <td>{{ usuario.cuit }}</td>
                     <td>{{ usuario.telefono }}</td>
                     <td>
-                        <a href="{% url 'usuarios:eliminar_usuario' usuario.pk %}" class="btn btn-danger"> Eliminar </a>
+                        
                         <a href="{% url 'usuarios:actualizar_usuario' usuario.pk %}" class="btn btn-primary"> Editar
                         </a>
                     </td>

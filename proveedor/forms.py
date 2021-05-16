@@ -9,10 +9,10 @@ class ProveedorForm(forms.ModelForm):
     email = forms.EmailField(min_length =6 , max_length=30, required=True)
     telefono = forms.IntegerField(min_value= 100 , max_value=9999999999999, required=True)
     calle = forms.CharField(min_length =4 , max_length=20)
-    numero = forms.IntegerField(min_value =10, max_value=9999)
+    numero = forms.IntegerField(min_value =0, max_value=9999)
     localidad = forms.CharField(min_length =4 , max_length=20)
     provincia = forms.CharField(min_length =4 , max_length=20)
-    cod_postal = forms.IntegerField(min_value =1000 , max_value= 9999)
+    cod_postal = forms.IntegerField(min_value =0 , max_value= 9999)
     
     
     class Meta:

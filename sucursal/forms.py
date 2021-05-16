@@ -5,10 +5,10 @@ class SucursalForm(forms.ModelForm):
     
     codigo = forms.CharField(min_length=2 , max_length = 10, required=True)
     calle = forms.CharField( min_length =2,max_length=20, required=True)
-    numero = forms.IntegerField(min_value =1000,max_value=9999, required=True)
+    numero = forms.IntegerField(min_value =0,max_value=9999, required=True)
     localidad = forms.CharField(min_length =4 , max_length=20, required=True)
     provincia = forms.CharField(min_length =4 , max_length=20, required=True)
-    cod_postal = forms.IntegerField(min_value =1000 , max_value= 9999, required=True)
+    cod_postal = forms.IntegerField(min_value =0 , max_value= 9999, required=True)
     
     
     

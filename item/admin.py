@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Item, Estado, Categoria, UnidadDeMedida, SubCategoria
+from .models import Item, Estado, Categoria, UnidadDeMedida, SubCategoria, Pedidos
 
 @register(Item)
 class itemAdmin(ModelAdmin):
@@ -25,3 +25,8 @@ class unidadMedidaAdmin(ModelAdmin):
 class subcatAdmin(ModelAdmin):
     
     icon_name = 'grade'
+    
+@register(Pedidos)
+class pedidosAdmin(ModelAdmin):
+    
+    icon_name = 'add_box'

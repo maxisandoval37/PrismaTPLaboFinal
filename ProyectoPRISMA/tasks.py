@@ -12,24 +12,19 @@ def sleepy(duration):
 
 
 @shared_task
-def enviar_correo():
-    sleep(10)
-    send_mail('ESTO FUNCIONA JODER','AHORA HAY QUE FESTEJAR','tmmzprueba@gmail.com',['jabinot887@dvdoto.com'])
+def enviar_correo(email):
     
+    send_mail('FUNCIONA JODER', 'CHUPAME LAS BOLAS DE FELPA', 'tmmzprueba@gmail.com', {email})
+
     return None
-
-
 
 app = Celery()
 
-@app.on_after_configure.connect
+@shared_task
 def setup_periodic_tasks(sender, **kwargs):
     # Calls test('hello') every 10 seconds.
     sender.add_periodic_task(10.0, test.s('Hola!'), name='add every 10')
 
-    # Calls test('world') every 30 seconds
-    sender.add_periodic_task(30.0, test.s('Qué buen día, joder!'), expires=10)
-    
 @app.task
 def test(arg):
     print(arg)

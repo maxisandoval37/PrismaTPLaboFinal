@@ -19,11 +19,11 @@ class FormularioUsuario(forms.ModelForm):
     """
     cuit = forms.CharField(min_length=11, max_length=11, required=True)
     telefono = forms.IntegerField(min_value= 100 , max_value=9999999999, required=True)
-    calle = forms.CharField(min_length =2 , max_length=4)
-    numero = forms.IntegerField(min_value =10, max_value=9999)
-    localidad = forms.CharField(min_length =4 , max_length=20)
-    provincia = forms.CharField(min_length =4 , max_length=20)
-    cod_postal = forms.IntegerField(min_value =1000 , max_value= 9999)
+    calle = forms.CharField(min_length =2 , max_length=4, required=False)
+    numero = forms.IntegerField(min_value =10, max_value=9999,required=False)
+    localidad = forms.CharField(min_length =4 , max_length=20,required=False)
+    provincia = forms.CharField(min_length =4 , max_length=20,required=False)
+    cod_postal = forms.IntegerField(min_value =1000 , max_value= 9999,required=False)
     password1 = forms.CharField(min_length=4, max_length= 16, label = 'Contraseña',widget = forms.PasswordInput(
         attrs = {
             'class': 'form-control',
