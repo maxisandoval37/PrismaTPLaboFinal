@@ -17,13 +17,7 @@ class FormularioUsuario(forms.ModelForm):
         - password1:    Contraseña
         - password2:    Verificación de la contraseña
     """
-    cuit = forms.CharField(min_length=11, max_length=11, required=True)
-    telefono = forms.IntegerField(min_value= 100 , max_value=9999999999, required=True)
-    calle = forms.CharField(min_length =2 , max_length=4, required=False)
-    numero = forms.IntegerField(min_value =10, max_value=9999,required=False)
-    localidad = forms.CharField(min_length =4 , max_length=20,required=False)
-    provincia = forms.CharField(min_length =4 , max_length=20,required=False)
-    cod_postal = forms.IntegerField(min_value =1000 , max_value= 9999,required=False)
+    
     password1 = forms.CharField(min_length=4, max_length= 16, label = 'Contraseña',widget = forms.PasswordInput(
         attrs = {
             'class': 'form-control',
@@ -132,7 +126,7 @@ class FormularioUsuario(forms.ModelForm):
     def clean_password2(self):
         """ Validación de Contraseña
         Metodo que valida que ambas contraseñas ingresadas sean igual, esto antes de ser encriptadas
-        y guardadas en la base dedatos, Retornar la contraseña Válida.
+        y guardadas en la base de datos, Retornar la contraseña Válida.
         Excepciones:
         - ValidationError -- cuando las contraseñas no son iguales muestra un mensaje de error
         """

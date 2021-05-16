@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.exceptions import ValidationError
 
 """ class Efectivo(models.Model):
     cantidad = models.CharField('Cantidad', max_length=10)
@@ -54,7 +54,12 @@ class MercadoPago(models.Model):
 
 class TipoDePago(models.Model):
     
-    nombre = models.CharField("Tipo de pago", max_length=25)
+    nombre = models.CharField("Tipo de pago", max_length=20)
+    
+    def clean(self):
+        
+        if len(self.nombre) < 6 and  len(self.nombre) > 20:
+            raise ValidationError('El tipo de pago debe tener entre 6 y 20 letras.')
     
     def __str__(self):
         return self.nombre

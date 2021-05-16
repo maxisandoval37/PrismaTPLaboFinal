@@ -21,6 +21,8 @@ class RegistrarProveedor(ValidarLoginYPermisosRequeridos,CreateView):
     template_name = 'proveedores/crear_proveedor.html'
     success_url = reverse_lazy('proveedores:listar_proveedores')
     
+    
+    
 class EditarProveedor(ValidarLoginYPermisosRequeridos,UpdateView):
     
     model = Proveedor

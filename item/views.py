@@ -6,8 +6,8 @@ from .forms import ItemForm
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.http import HttpResponse
-from ProyectoPRISMA.tasks import sleepy, enviar_correo, setup_periodic_tasks
-from django.db.models import F, Count
+from ProyectoPRISMA.tasks import Pedido
+from django.db.models import F
 
 
 class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
@@ -84,16 +84,16 @@ def CompletarPedido(request, id):
     return redirect('items:visualizar_pedidos')
 
 
-""" def prueba(request):
+def prueba(request):
 
-    return HttpResponse('<h1>CORREO ENVIADO CORRECTAMENTE</h1>') """
+    
+    return HttpResponse('<h1>CORREO ENVIADO CORRECTAMENTE</h1>')
 
 
 def Pedido(request):
 
     queryset = Item.objects.filter(cantidad=F('stockMinimo'))
 
-    lista = []
     for item in queryset:
         if item.solicitud == False:
             pedidos = Pedidos()
@@ -102,12 +102,27 @@ def Pedido(request):
             pedidos.proveedor = item.categoria.prov_preferido
 
             pedidos.save()
-            lista.append(pedidos)
+           
         item.solicitud = True
         item.save()
 
-    resultado = Pedidos.objects.values('sucursal', 'proveedor').order_by(
-    ).annotate(Count('sucursal'), Count('proveedor'))
-    print(resultado)
+    pedidosByProveedores = {};
 
-    return render(request, 'items/visualizar_pedidos.html', locals())
+    resultado = Pedidos.objects.raw("""
+        SELECT id, item_id, proveedor_id, sucursal_id 
+        FROM item_pedidos
+        """)
+
+    for pedido in resultado:
+        pedidosByProveedores.setdefault(pedido.proveedor_id, []).append(pedido)
+
+    alreadyListened = []
+    for pedido in resultado:
+        pedidosToSend = []
+        for elPedido in pedidosByProveedores.get(pedido.proveedor_id):
+            if(pedido.sucursal_id == elPedido.sucursal_id and elPedido not in alreadyListened):
+                pedidosToSend.append(elPedido)
+                alreadyListened.append(elPedido)
+        print(pedidosToSend) # envio al proveedor
+    
+    return pedidosToSend

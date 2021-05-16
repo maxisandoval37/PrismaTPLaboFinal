@@ -4,16 +4,6 @@ from .models import Item
 
 class ItemForm(forms.ModelForm):
     
-    nombre = forms.CharField(min_length=3, max_length=20, required = True)
-    precio = forms.FloatField(min_value=1, max_value=9999999)
-    descripcion = forms.Textarea()
-    stockMinimo = forms.IntegerField(min_value= 1, max_value=9999, required= False)
-    stockSeguridad = forms.IntegerField(min_value= 1, max_value=9999, required= False)
-    ubicacion = forms.CharField(max_length=40)
-    cantidad  = forms.IntegerField( min_value= 0, max_value = 9999, required= False)
-    
-    
-
     
     def __init__(self, *args, **kwargs):
         super(ItemForm, self).__init__(*args,**kwargs)

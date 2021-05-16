@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin       
 from django.contrib.auth.models import Permission,Group
 from django.contrib.contenttypes.models import ContentType     
+from django.core.exceptions import ValidationError
 
 class Rol(models.Model):
     """Model definition for Rol."""
@@ -95,14 +96,14 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     nombre = models.CharField('Nombre', max_length=16, blank = True, null = True)
     apellido = models.CharField('Apellido', max_length=16,blank = True, null = True)
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, blank = True, null=True)
-    telefono = models.IntegerField('Telefono',blank = True, null = True)
+    telefono = models.CharField('Telefono',blank = True, null = True, max_length=13)
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT,blank = True, null=True)
     
     calle = models.CharField('Calle', max_length=20, blank = True,null=True)
-    numero = models.IntegerField('Numero',blank = True,null=True)
+    numero = models.CharField('Numero',blank = True,null=True, max_length=4)
     localidad = models.CharField('Localidad', max_length=20,blank = True,null=True)
     provincia = models.CharField('Provincia', max_length= 20,blank = True,null=True)
-    cod_postal = models.IntegerField('Código postal', blank = True,null=True)
+    cod_postal = models.CharField('Código postal', blank = True,null=True, max_length=4)
     
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
@@ -112,6 +113,64 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email','cuit','telefono','nombre','apellido']
 
     
+    def clean(self):
+        
+        if not self.username.isalnum():
+            raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
+        if len(self.username) < 6 and len(self.username) > 20:
+            raise ValidationError('El nombre de usuario debe tener entre 6 y 20 caracteres.')
+        
+        if not self.cuit.isdigit():
+            raise ValidationError('Cuit inválido.')
+        
+        if len(self.cuit) != 11:
+            raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
+    
+        if not self.nombre.isalpha():
+            raise ValidationError('Su nombre solo puede contener letras.')
+        
+        if len(self.nombre) < 3 and len(self.nombre) > 16:
+            raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
+            
+        if not self.apellido.isalpha():
+            raise ValidationError('Su apellido solo puede contener letras.') 
+        
+        if len(self.apellido) < 3 and len(self.apellido) > 16:
+            raise ValidationError('El apellido debe tener entre 3 y 16 letras.') 
+        
+        if not self.telefono.isdigit():
+            raise ValidationError('El telefono solo puede contener digitos')
+        
+        if len(self.telefono) < 3 and len(self.telefono) > 13:
+            raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
+        
+        if self.calle is not None:
+            if len(self.calle) < 4 and len(self.calle) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.numero is not None:   
+            if not self.numero.isdigit():
+                raise ValidationError('El número solo puede contener digitos.') 
+            
+            if len(self.numero) < 2 and len(self.numero) > 4:
+                raise ValidationError('El número debe tener entre 1 y 4 digitos.')
+         
+        if self.localidad is not None:   
+            if len(self.localidad) < 4 and len(self.localidad) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.provincia is not None:        
+            if len(self.provincia) < 4 and len(self.provincia) > 20:
+                raise ValidationError('La provincia debe tener entre 4 y 20 letras')
+        
+        if self.cod_postal is not None:    
+            if not self.cod_postal.isdigit():
+                raise ValidationError('El código postal solo puede contener digitos.')
+            
+            if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
+                raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
+            
+            
     def __str__(self):
         return f'{self.nombre}'
 

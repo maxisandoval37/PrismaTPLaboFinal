@@ -17,7 +17,6 @@ Listado de Items
             <strong class="card-title">Listado de Items</strong>
         </div>
     </div>
-
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
@@ -35,7 +34,7 @@ Listado de Items
                     <th>Sucursal</th>
                     <th>Stock Minimo</th>
                     <th>Stock de Seguridad</th>
-                   
+
                 </tr>
             </thead>
             <tbody>
@@ -67,7 +66,7 @@ Listado de Items
                     <td>{{ item.sucursal}}</td>
                     <td>{{ item.stockMinimo }}</td>
                     <td>{{ item.stockSeguridad }}</td>
-                    
+
                     <td>
                         <a href="{% url 'items:eliminar_item' item.pk %}" class="btn btn-danger"> Eliminar </a>
                         <a href="{% url 'items:actualizar_item' item.pk %}" class="btn btn-primary"> Editar </a>
@@ -84,6 +83,7 @@ Listado de Items
     </div>
 </div>
 </div>
+
 
 
 

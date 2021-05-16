@@ -11,7 +11,7 @@ from .models import Usuario
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import FormularioLogin, FormularioUsuario
 from .mixins import ValidarLoginYPermisosRequeridos
-
+from django.core.exceptions import ValidationError
 
 
 class Login(FormView):
@@ -59,7 +59,9 @@ class RegistrarUsuario(ValidarLoginYPermisosRequeridos,CreateView):
     template_name = 'usuarios/crear_usuario.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
     
-   
+    def clean(self):
+        if self.cuit in 'abcdefghijklmnñopqrstuvwxyz':
+            raise ValidationError('Cuit inválido.')
 
 
 class EditarUsuario(ValidarLoginYPermisosRequeridos,UpdateView):

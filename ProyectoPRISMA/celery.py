@@ -21,7 +21,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
     'cada-10-segundos': {
-        'task': 'ProyectoPRISMA.tasks.enviar_correo',
+        'task': 'ProyectoPRISMA.tasks.Pedido',
         'schedule': 10.0,
         'args': ('jabinot887@dvdoto.com',)
     },
