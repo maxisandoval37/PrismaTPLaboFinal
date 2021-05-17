@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, RegistrarItem,EditarItem,EliminarItem, ConfigurarReposicionItem, ListarCategorias, Pedido,ListarPedidos, CompletarPedido,prueba, VerPedido
+from .views import ListadoItem, RegistrarItem,EditarItem,EliminarItem, ConfigurarReposicionItem, ListarCategorias,ListarPedidos,  VerPedido,RecibirStock, MensajeExitoso
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -11,7 +11,9 @@ urlpatterns = [
     path('reposicion_item/<int:pk>/', login_required(ConfigurarReposicionItem.as_view()), name='reposicion_item'),
     path('listar_categorias/', login_required(ListarCategorias.as_view()), name = 'listar_categorias'),
     path('visualizar_pedidos/', login_required(ListarPedidos.as_view()) ,name='visualizar_pedidos'),
-    path('visualizar_pedidos/<int:id>/', login_required(CompletarPedido) ,name='completar_pedido'),
-    path('pedido_proveedor/<int:sucursal>/<int:proveedor>', VerPedido, name= 'pedido_proveedor'),
-    path('prueba/', prueba, name='prueba'),
+    path('pedido_proveedor/<int:id_proveedor>/<int:id_sucursal>/', VerPedido, name= 'pedido_proveedor'),
+    path('pedido_proveedor/<int:id_proveedor>/<int:id_sucursal>/RecibirStock/', RecibirStock, name= 'pedido_proveedor'),
+    path('stock_recibido/', MensajeExitoso.as_view(), name= 'stock_recibido'),
+    
+    
 ]

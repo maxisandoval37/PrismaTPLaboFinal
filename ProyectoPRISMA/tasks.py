@@ -4,7 +4,7 @@ from time import sleep
 import json
 from celery import Celery
 from celery.schedules import crontab
-from item.models import Item, Pedidos
+from item.models import Item, Pedidos, Proveedor
 from django.db.models import F
 
 @shared_task
@@ -16,9 +16,8 @@ def sleepy(duration):
 
 @shared_task
 def Pedido(email):
-
     queryset = Item.objects.filter(cantidad=F('stockMinimo'))
-    
+    # pedidosToSend = []
     for item in queryset:
         if item.solicitud == False:
             pedidos = Pedidos()
@@ -31,42 +30,32 @@ def Pedido(email):
         item.solicitud = True
         item.save()
 
-    pedidosByProveedores = {};
-
     resultado = Pedidos.objects.raw("""
         SELECT id, item_id, proveedor_id, sucursal_id 
         FROM item_pedidos
         """)
-    
-    for pedido in resultado:
-        alreadyListened = []
-        pedidosByProveedores.setdefault(pedido.proveedor_id, []).append(pedido)
 
-    
+    alreadyListened = []
+    emailsByProveedores = {}
+    proveedores = []
     for pedido in resultado:
-        pedidosToSend = []
-        for elPedido in pedidosByProveedores.get(pedido.proveedor_id):
-            if(pedido.sucursal_id == elPedido.sucursal_id and elPedido not in alreadyListened):
-                pedidosToSend.append(elPedido)
-                alreadyListened.append(elPedido)
-       # print(pedidosToSend) # envio al proveedor
-    contenido = ""
-    for info in pedidosToSend:
-           contenido += "  " + str(info) + " "
-    
-    
-    send_mail('CORREO PARA PROVEEDOR', str(pedidosToSend), 'tmmzprueba@gmail.com', {email})
+        proveedores.append(str(pedido.proveedor_id))
+    print(proveedores)
+    proveedores = Proveedor.objects.raw("""
+        SELECT id, email 
+        FROM proveedor_proveedor 
+        WHERE id IN %s
+        """, [tuple(proveedores)])
+
+    for proveedor in proveedores:
+        emailsByProveedores.setdefault(proveedor.id, proveedor.email)
+
+    for pedido in resultado:
+        if(pedido not in alreadyListened):
+            send_mail('SOLICITUD DE STOCK - SUCURSAL ' + str(pedido.sucursal_id), "Buenas tardes, esta es una solicitud de stock automática. Por favor, diríjase al siguiente link para indicar las cantidades que nos puede proveer de cada ítem:\n" + "http://localhost:8000/items/pedido_proveedor/" + str(pedido.proveedor_id) + "/" + str(pedido.sucursal_id), 'tmmzprueba@gmail.com', {emailsByProveedores.get(pedido.proveedor_id)})
+            alreadyListened.append(pedido)
     
     return None
-
-""" @shared_task
-def enviar_correo(email):
-    
-    lista = Pedido()
-    print(lista)
-    send_mail('FUNCIONA JODER', 'CHUPAME LAS BOLAS DE FELPA', 'tmmzprueba@gmail.com', {email})
-
-    return None """
 
 app = Celery()
 
@@ -83,5 +72,4 @@ def test(arg):
 def add(x, y):
     z = x + y
     print(z)
-    
     

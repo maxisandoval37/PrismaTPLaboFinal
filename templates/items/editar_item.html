@@ -16,23 +16,18 @@
             {% csrf_token %}
             {% for field in form %}
             {{field.label_tag}}
-            {% for error in field.errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-            {% endfor %}
             
+        
+            <div class="form-group">
+                {% render_field field class="form-control form-control-user" %}
+
+                {% endfor %}
+            </div>
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
             {% endfor %}
-            <div class="form-group">
-                {% render_field field class="form-control form-control-user" %}
-
-                {% endfor %}
-
-            </div>
 
             <div class="">
                 <a href="{% url 'items:listar_items' %}" class="btn btn-danger"> Cancelar </a>

@@ -36,9 +36,7 @@ Listado de Pedidos
                     <td>{{ pedido.item }}</td>
                     <td>{{ pedido.sucursal }}</td>
                     <td>{{ pedido.proveedor }}</td>
-                    <td>
-                        <a href="{% url 'items:completar_pedido' pedido.item.pk %}" class="btn btn-success">Recibido</button>
-                    </td>        
+                           
                 </tr>
                 
                 {% endfor %}

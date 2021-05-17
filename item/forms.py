@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item
+from .models import Item, Pedidos
 
 
 class ItemForm(forms.ModelForm):
@@ -32,9 +32,4 @@ class ItemForm(forms.ModelForm):
         model = Item
         fields = ['nombre','precio','ubicacion','descripcion','categoria','subcategoria','unidad_de_medida','repo_por_lote','estado','sucursal']
         
-""" 
-        self.fields['stockMinimo'].widget.attrs['class'] = 'form-user'
-        self.fields['stockMinimo'].widget.attrs['placeholder'] = 'Stock Minimo'
-        self.fields['stockSeguridad'].widget.attrs['class'] = 'form-user'
-        self.fields['stockSeguridad'].widget.attrs['placeholder'] = 'Stock de seguridad' 
-        """
+

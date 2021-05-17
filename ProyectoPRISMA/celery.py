@@ -1,5 +1,6 @@
 from celery import Celery
 import os
+from celery.schedules import crontab
 
 app = Celery('ProyectoPRISMA',
              broker='amqp://localhost',
@@ -15,15 +16,15 @@ app = Celery('ProyectoPRISMA')
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys
-#   should have a `CELERY_` prefix.
+#   should have a CELERY_ prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 
 app.conf.beat_schedule = {
-    'cada-10-segundos': {
+    'cada-24-horas': {  #cada dia a las 18:00 cuando cierra la caja
         'task': 'ProyectoPRISMA.tasks.Pedido',
-        'schedule': 10.0,
-        'args': ('jabinot887@dvdoto.com',)
+        'schedule': crontab(hour=18, minute=00),
+        'args': ('fasami6970@o3live.com',)
     },
 }
 

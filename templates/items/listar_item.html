@@ -40,7 +40,7 @@ Listado de Items
             <tbody>
                 {% if object_list %}
                 {% for item in object_list %}
-                {% if item.stockMinimo == 0 %}
+                {% if item.cantidad <= item.stockMinimo %}
 
 
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">

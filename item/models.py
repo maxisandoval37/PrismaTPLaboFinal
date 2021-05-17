@@ -139,6 +139,8 @@ class Item(models.Model):
         if self.stockSeguridad < 0:
             
             raise ValidationError('El stock de seguridad no puede ser negativo.')
+        if not self.cantidad.isdigit():
+            raise ValidationError('Debe indicar un valor para la cantidad.')
 
     class Meta:
 
@@ -154,6 +156,9 @@ class Pedidos(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
+    
+    cantidad = models.IntegerField('Cantidad', null=True)
+    solicitado = models.IntegerField('Solicitado: 5' ,default =5)
 
     def __str__(self):
         return "Item:"+ str(self.item) + " , "+ "Sucursal:"+str(self.sucursal) + " , " + "Proveedor:"+str(self.proveedor)
@@ -162,3 +167,10 @@ class Pedidos(models.Model):
 
         verbose_name = 'pedido'
         verbose_name_plural = 'pedidos'
+
+
+
+
+    
+    
+    

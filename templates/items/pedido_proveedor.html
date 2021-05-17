@@ -24,8 +24,8 @@ Pedido para el proveedor
                 <tr>
                     <th>#</th>
                     <th>Item</th>
-                    <th>Sucursal</th>
-                    <th>Proveedor</th>
+                    <th>Solicitado</th>
+                    <th>Disponible</th>
 
                 </tr>
             </thead>
@@ -34,24 +34,106 @@ Pedido para el proveedor
                 <tr>
                     <td></td>
                     <td>{{ pedido.item }}</td>
-                    <td>{{ pedido.sucursal }}</td>
-                    <td>{{ pedido.proveedor }}</td>
-                          
-                </tr>
-                
-                {% endfor %}
+                    <td>5</td>
+                    <td><input type="Integer" class="input-cantidad" id="{{pedido.item}}" placeholder="0"></td>
 
+                </tr>
+
+                {% endfor %}
+                
             </tbody>
+            
         </table>
+        
     </div>
 
+</div>
+<div class="text-center">
+    <a href="{% url 'items:stock_recibido' %}" onclick="funcionCantidad()" class="btn btn-primary"> Enviar </a>
 </div>
 </div>
 
 {% else %}
 <h1>NO EXISTE EL PEDIDO >:( </h1>
 {% endif %}
-<div class="text-center">
-    <a href="{% url 'items:listar_items' %}" class="btn btn-primary"> Volver </a>
-</div>
+
+
+<script>
+    function funcionCantidad() {
+        var csrftoken = getCookie('csrftoken');
+        const inputsCantidades = document.getElementsByClassName('input-cantidad');
+        for (input of inputsCantidades) {
+            console.log(input.id)
+            console.log(document.getElementById(input.id).value)
+            $.ajax({
+            type: "POST",
+            url: "RecibirStock/",
+            data:{
+                csrfmiddlewaretoken : csrftoken, 
+                item:input.id,
+                cantidad:document.getElementById(input.id).value, 
+            },
+            dataType: "text",
+            success: function(data) {
+            console.log(data);
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+
+                if (jqXHR.status === 0) {
+
+                    alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
+
+                } else if (jqXHR.status == 404) {
+
+                    alert('La Pagina solicitada no fue encontrada [404]');
+
+                } else if (jqXHR.status == 500) {
+
+                    alert('Erro Interno [500]');
+
+                } else if (textStatus === 'parsererror') {
+
+                    alert('Error en el retorno de Datos. [parseJson]');
+
+                } else if (textStatus === 'timeout') {
+
+                    alert('Tiempo de Espera agotado');
+
+                } else if (textStatus === 'abort') {
+                    alert('Solicitud Abortada. [Ajax Request]');
+
+                } else {
+                    alert('Error desconocido: ' + jqXHR.responseText);
+
+                }//end if 
+
+            }//end error
+        }); 
+        }
+    }
+        function getCookie(name) {
+
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            //RETORNANDO EL TOKEN
+            return cookieValue;
+
+        }//end function getCookie
+
+    /*EJEMPLO AJAX HACIA DJANGO*/
+  //token
+
+
+</script>
+
 {% endblock %}
+

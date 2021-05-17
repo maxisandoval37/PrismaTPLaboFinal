@@ -32,7 +32,7 @@ class EliminarSucursal(ValidarLoginYPermisosRequeridos,DeleteView):
         try:
             self.object.delete()
         except ProtectedError:
-            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Esta sucursal esta relacionado.')
+            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Esta sucursal esta relacionada.')
             return redirect('items:listar_items')
 
         return HttpResponseRedirect(success_url)
