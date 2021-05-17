@@ -1,0 +1,838 @@
+{
+  "id": "61ec6be6-8411-4f9e-9954-96c7fb6d2ee9",
+  "version": "2.0",
+  "name": "Administrar medios de pago",
+  "url": "http://127.0.0.1:8000",
+  "tests": [{
+    "id": "c93fcf67-1b39-4985-9133-e17a40812141",
+    "name": "1. Add",
+    "commands": [{
+      "id": "5a04b938-aa18-4a5e-be83-1f47595cbfc5",
+      "comment": "",
+      "command": "open",
+      "target": "/accounts/login/?next=/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "aaec9b39-325a-4981-9a59-b8a0df60fd3d",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1024x720",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d7c944f7-fc6e-47c0-a825-1aef84705f80",
+      "comment": "",
+      "command": "type",
+      "target": "id=id_username",
+      "targets": [
+        ["id=id_username", "id"],
+        ["name=username", "name"],
+        ["css=#id_username", "css:finder"],
+        ["xpath=//input[@id='id_username']", "xpath:attributes"],
+        ["xpath=//div/input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "57f291a5-3a93-4822-a35a-132084e62a96",
+      "comment": "",
+      "command": "type",
+      "target": "id=id_password",
+      "targets": [
+        ["id=id_password", "id"],
+        ["name=password", "name"],
+        ["css=#id_password", "css:finder"],
+        ["xpath=//input[@id='id_password']", "xpath:attributes"],
+        ["xpath=//div/div/input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "b849140b-8c29-4c91-806a-bb30457c1f34",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "id=id_password",
+      "targets": [
+        ["id=id_password", "id"],
+        ["name=password", "name"],
+        ["css=#id_password", "css:finder"],
+        ["xpath=//input[@id='id_password']", "xpath:attributes"],
+        ["xpath=//div/div/input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
+      "id": "6f547179-cc7d-4579-aa0f-1450e904bdc4",
+      "comment": "",
+      "command": "click",
+      "target": "css=.nav-item:nth-child(12) span",
+      "targets": [
+        ["css=.nav-item:nth-child(12) span", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a/span", "xpath:idRelative"],
+        ["xpath=//li[6]/a/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "693180d5-37df-4329-ae24-5535b28f5bb8",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Listado de medios de pago",
+      "targets": [
+        ["linkText=Listado de medios de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Listado de medios de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/listado_mdps/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Listado de medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "641f2165-4bfb-477f-8be0-778a4281b9a9",
+      "comment": "",
+      "command": "click",
+      "target": "css=.nav-item:nth-child(12) span",
+      "targets": [
+        ["css=.nav-item:nth-child(12) span", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a/span", "xpath:idRelative"],
+        ["xpath=//li[6]/a/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "0c850fe4-2d6d-402c-81b2-1d715e1d6fed",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Agregar medio de pago",
+      "targets": [
+        ["linkText=Agregar medio de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Agregar medio de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a[2]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/registrar_mdp/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Agregar medio de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "db7c7f7b-fa58-48c5-9f1f-36b33d823365",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "bc483f14-8751-4c8f-a6ea-6041ee50df43",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_tipo_de_pago",
+      "targets": [],
+      "value": "label=Transferencia bancar"
+    }, {
+      "id": "4960f04a-e226-4dd8-bb99-78660838e534",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "36beba7a-88dd-4169-b6bc-bdb4f259b13a",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(4) > .btn-primary",
+      "targets": [
+        ["css=div:nth-child(4) > .btn-primary", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Registrar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "51cb2a49-e950-4d86-9b59-a624d644a5aa",
+      "comment": "",
+      "command": "click",
+      "target": "css=.nav-item:nth-child(12) span",
+      "targets": [
+        ["css=.nav-item:nth-child(12) span", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a/span", "xpath:idRelative"],
+        ["xpath=//li[6]/a/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "96fa1d59-174e-457f-b84c-85ebd3763dda",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Agregar medio de pago",
+      "targets": [
+        ["linkText=Agregar medio de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Agregar medio de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a[2]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/registrar_mdp/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Agregar medio de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fd924041-6eef-4fa2-982c-6e9ae4204b13",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a74e5091-9a01-44c8-bcaa-ab2ce7e21e77",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_tipo_de_pago",
+      "targets": [],
+      "value": "label=Cheque"
+    }, {
+      "id": "80f67d30-55af-4b55-a5f9-bef6edad0974",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "5909cd63-7b49-4997-81bb-fef7132cbd4e",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(4) > .btn-primary",
+      "targets": [
+        ["css=div:nth-child(4) > .btn-primary", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Registrar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "24f952eb-4b5a-4681-87ab-6ac5477bda83",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Medios de pago",
+      "targets": [
+        ["linkText=Medios de pago", "linkText"],
+        ["css=.nav-item:nth-child(12) > .nav-link", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a", "xpath:idRelative"],
+        ["xpath=(//a[contains(@href, '#')])[6]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,' Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7a4f0f36-a0b0-4dfd-8fc2-299254b0e266",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Agregar medio de pago",
+      "targets": [
+        ["linkText=Agregar medio de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Agregar medio de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a[2]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/registrar_mdp/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Agregar medio de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "13f5d03a-d836-424b-a0ee-7b6362d486dd",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "87726eeb-8973-4e18-ac17-0f1ce8d69833",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_tipo_de_pago",
+      "targets": [],
+      "value": "label=MercadoPago"
+    }, {
+      "id": "afaec2d7-80c3-4d7e-a5e7-b700eed37f53",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "4662a6d5-c26e-407a-9a44-df9bd4ff2153",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(4) > .btn-primary",
+      "targets": [
+        ["css=div:nth-child(4) > .btn-primary", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Registrar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a8726ed5-f432-4817-af4e-51b561aeaa05",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Medios de pago",
+      "targets": [
+        ["linkText=Medios de pago", "linkText"],
+        ["css=.nav-item:nth-child(12) > .nav-link", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a", "xpath:idRelative"],
+        ["xpath=(//a[contains(@href, '#')])[6]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,' Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ab9c51a1-4c6d-4e32-82b1-7d379e50887a",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Agregar medio de pago",
+      "targets": [
+        ["linkText=Agregar medio de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Agregar medio de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a[2]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/registrar_mdp/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Agregar medio de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fb884479-3fad-46f4-b091-5cb499a938b6",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "d737e469-8e28-4dc2-98a6-1f2791c4d834",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_tipo_de_pago",
+      "targets": [],
+      "value": "label=Tarjeta de débito"
+    }, {
+      "id": "26e0654a-7a8c-43be-b9c1-b37848ad71f8",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e3a060d9-ebce-4720-880f-53338c3975cc",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(4) > .btn-primary",
+      "targets": [
+        ["css=div:nth-child(4) > .btn-primary", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Registrar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b29ae85b-f3e4-4db3-b699-a937efb00bca",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Medios de pago",
+      "targets": [
+        ["linkText=Medios de pago", "linkText"],
+        ["css=.nav-item:nth-child(12) > .nav-link", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a", "xpath:idRelative"],
+        ["xpath=(//a[contains(@href, '#')])[6]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,' Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "515d9545-c964-49e3-b38d-ffad9e6cb2d6",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Agregar medio de pago",
+      "targets": [
+        ["linkText=Agregar medio de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(3)", "css:finder"],
+        ["xpath=//a[contains(text(),'Agregar medio de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a[2]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/registrar_mdp/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Agregar medio de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "bd2195db-ce7e-4056-80e9-0dbb32daa7a8",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "dfde6b3c-bdbe-4d07-bcf9-070b36e8a85c",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_tipo_de_pago",
+      "targets": [],
+      "value": "label=Tarjeta de Crédito"
+    }, {
+      "id": "9a8b01c3-8152-430d-a4a7-5f3f17ce84be",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "023e83c1-049c-4333-b2c0-a9ebd871777d",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(4) > .btn-primary",
+      "targets": [
+        ["css=div:nth-child(4) > .btn-primary", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Registrar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2bf1c88a-70b0-4a10-bdb8-58226613892a",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "297f89d6-fae6-4c12-bce2-93a6db246616",
+    "name": "2. Edit",
+    "commands": [{
+      "id": "6ff8536b-d96f-4ec4-b983-360724dc36ba",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8a689086-8aea-4dea-a55f-305ef2f90316",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1024x720",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e9946f42-c2e8-40a5-8a38-1afb0c6e2de5",
+      "comment": "",
+      "command": "click",
+      "target": "css=.nav-item:nth-child(12) span",
+      "targets": [
+        ["css=.nav-item:nth-child(12) span", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a/span", "xpath:idRelative"],
+        ["xpath=//li[6]/a/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "0085acce-4bb3-43ae-9432-1bcbc7f0b7f5",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Listado de medios de pago",
+      "targets": [
+        ["linkText=Listado de medios de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Listado de medios de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/listado_mdps/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Listado de medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "528ec5d2-8f12-49b1-bcea-06af75f9540a",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Editar",
+      "targets": [
+        ["linkText=Editar", "linkText"],
+        ["css=tr:nth-child(1) .btn-primary", "css:finder"],
+        ["xpath=//a[contains(text(),'Editar')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/div[2]/table/tbody/tr/td[3]/a[2]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/actualizar_mdp/9/')]", "xpath:href"],
+        ["xpath=//td[3]/a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'Editar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "99f73a37-b7ce-4fd7-b6b4-5cad635940e5",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9a7a5f94-67af-4e04-8060-20a53f3ec13a",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_tipo_de_pago",
+      "targets": [],
+      "value": "label=Efectivo"
+    }, {
+      "id": "f19072c8-a288-4348-bcc7-0821b961371a",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_tipo_de_pago",
+      "targets": [
+        ["id=id_tipo_de_pago", "id"],
+        ["name=tipo_de_pago", "name"],
+        ["css=#id_tipo_de_pago", "css:finder"],
+        ["xpath=//select[@id='id_tipo_de_pago']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "41be1673-be06-4d57-abae-79a906e4bf87",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(4) > .btn-primary",
+      "targets": [
+        ["css=div:nth-child(4) > .btn-primary", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Registrar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "690aec0d-ffac-447a-8141-d0f9b0046edc",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "2d3bb88f-b8f5-40c0-bde3-712a7440b867",
+    "name": "3. Remove all",
+    "commands": [{
+      "id": "40d42ac3-af5c-4c0e-88db-46eadba34d39",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "afa9a2ed-7c4e-4397-a4cd-9f61376b6c17",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1024x720",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "1ede1c00-3ee2-41e9-8a94-47bfce958a17",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Medios de pago",
+      "targets": [
+        ["linkText=Medios de pago", "linkText"],
+        ["css=.nav-item:nth-child(12) > .nav-link", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[6]/a", "xpath:idRelative"],
+        ["xpath=(//a[contains(@href, '#')])[6]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,' Medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a5fb3922-830f-4970-ab6c-d0d9942b01d4",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Listado de medios de pago",
+      "targets": [
+        ["linkText=Listado de medios de pago", "linkText"],
+        ["css=#collapsePages .collapse-item:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Listado de medios de pago')]", "xpath:link"],
+        ["xpath=//div[@id='collapsePages']/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/listado_mdps/')]", "xpath:href"],
+        ["xpath=//li[6]/div/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Listado de medios de pago')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "768de25d-d7a6-49ce-995f-24fccd86981e",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Eliminar",
+      "targets": [
+        ["linkText=Eliminar", "linkText"],
+        ["css=tr:nth-child(1) .btn-danger", "css:finder"],
+        ["xpath=//a[contains(text(),'Eliminar')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/div[2]/table/tbody/tr/td[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/eliminar_mdp/10/')]", "xpath:href"],
+        ["xpath=//td[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3406357b-0a45-4061-bc1e-abfffc90551f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-primary:nth-child(3)",
+      "targets": [
+        ["css=.btn-primary:nth-child(3)", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/button", "xpath:idRelative"],
+        ["xpath=//form/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "e7b08c4d-a356-483a-a084-2f21b6010aab",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Eliminar",
+      "targets": [
+        ["linkText=Eliminar", "linkText"],
+        ["css=tr:nth-child(1) .btn-danger", "css:finder"],
+        ["xpath=//a[contains(text(),'Eliminar')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/div[2]/table/tbody/tr/td[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/eliminar_mdp/11/')]", "xpath:href"],
+        ["xpath=//td[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c4f366a1-299d-47a0-a32a-56051d80d996",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-primary:nth-child(3)",
+      "targets": [
+        ["css=.btn-primary:nth-child(3)", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/button", "xpath:idRelative"],
+        ["xpath=//form/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2faad217-e397-408b-afa2-27f443d0469d",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Eliminar",
+      "targets": [
+        ["linkText=Eliminar", "linkText"],
+        ["css=tr:nth-child(1) .btn-danger", "css:finder"],
+        ["xpath=//a[contains(text(),'Eliminar')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/div[2]/table/tbody/tr/td[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/eliminar_mdp/12/')]", "xpath:href"],
+        ["xpath=//td[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "118b6f97-9295-4718-88cb-e3f347650361",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-primary:nth-child(3)",
+      "targets": [
+        ["css=.btn-primary:nth-child(3)", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/button", "xpath:idRelative"],
+        ["xpath=//form/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "da3e565d-f40f-4906-b924-efd23a4d2f7d",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Eliminar",
+      "targets": [
+        ["linkText=Eliminar", "linkText"],
+        ["css=tr:nth-child(1) .btn-danger", "css:finder"],
+        ["xpath=//a[contains(text(),'Eliminar')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/div[2]/table/tbody/tr/td[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/eliminar_mdp/13/')]", "xpath:href"],
+        ["xpath=//td[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9d69d652-48ff-4f8f-83b2-79108ad5c57d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-primary:nth-child(3)",
+      "targets": [
+        ["css=.btn-primary:nth-child(3)", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/button", "xpath:idRelative"],
+        ["xpath=//form/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5b4468b7-e014-4d9d-8ea9-8a73b30bb357",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Eliminar",
+      "targets": [
+        ["linkText=Eliminar", "linkText"],
+        ["css=.btn-danger", "css:finder"],
+        ["xpath=//a[contains(text(),'Eliminar')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/div[2]/table/tbody/tr/td[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/mediosdepago/eliminar_mdp/9/')]", "xpath:href"],
+        ["xpath=//td[3]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eaa583b3-2aa4-44ed-a4df-22df60b1e8fe",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-primary:nth-child(3)",
+      "targets": [
+        ["css=.btn-primary:nth-child(3)", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/button", "xpath:idRelative"],
+        ["xpath=//form/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Eliminar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eb1f7ab1-f583-4072-9438-56b7709a6b79",
+      "comment": "",
+      "command": "click",
+      "target": "css=.d-lg-inline",
+      "targets": [
+        ["css=.d-lg-inline", "css:finder"],
+        ["xpath=//a[@id='userDropdown']/span", "xpath:idRelative"],
+        ["xpath=//nav/ul/li[4]/a/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Tomy')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5761e16d-a861-4c10-87a4-815477530634",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Salir",
+      "targets": [
+        ["linkText=Salir", "linkText"],
+        ["css=.dropdown-item:nth-child(5)", "css:finder"],
+        ["xpath=//div[@id='content']/nav/ul/li[4]/div/a[4]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/accounts/login/')]", "xpath:href"],
+        ["xpath=//a[4]", "xpath:position"],
+        ["xpath=//a[contains(.,' Salir')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "bd6eafd4-6ac0-4aa4-9757-daca3b1363d1",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Salir",
+      "targets": [
+        ["linkText=Salir", "linkText"],
+        ["css=.btn:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Salir')]", "xpath:link"],
+        ["xpath=//div[@id='logoutModal']/div/div/div[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/logout/')]", "xpath:href"],
+        ["xpath=//div[3]/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "2405423a-ea0d-4d2f-9027-bc1a23cdaf71",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "33840a08-8885-47d6-bdcc-9ee1ec786356",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["c93fcf67-1b39-4985-9133-e17a40812141"]
+  }],
+  "urls": ["http://127.0.0.1:8000/"],
+  "plugins": []
+}
