@@ -115,7 +115,7 @@
         ["xpath=//div[@id='content']/div/div[2]/form/div/input", "xpath:idRelative"],
         ["xpath=//div[2]/form/div/input", "xpath:position"]
       ],
-      "value": "Caj1"
+      "value": "Caj2"
     }, {
       "id": "73ac5aa3-f4e4-4e01-9643-b9a3c4d7f5be",
       "comment": "",
@@ -290,7 +290,7 @@
       "command": "select",
       "target": "id=id_caja",
       "targets": [],
-      "value": "label=Caj1"
+      "value": "label=Caj2"
     }, {
       "id": "64a29d41-e1da-4af4-a52d-bdfd29d61f5e",
       "comment": "",
@@ -1147,7 +1147,7 @@
       "id": "f668e19b-459b-4590-be30-1263ea028ba1",
       "comment": "",
       "command": "setWindowSize",
-      "target": "1936x1056",
+      "target": "1024x720",
       "targets": [],
       "value": ""
     }, {
