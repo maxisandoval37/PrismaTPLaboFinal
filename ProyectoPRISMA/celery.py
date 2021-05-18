@@ -10,7 +10,7 @@ app = Celery('ProyectoPRISMA',
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ProyectoPRISMA.settings.local')
-SECRET_KEY = '0=k(5)!gnn(3p#z=&%tg7_^t^tz)2mfd24y=4xv96v4w0qe^3h'
+SECRETKEY = '0=k(5)!gnn(3p#z=&%tg7^t^tz)2mfd24y=4xv96v4w0qe^3h'
 app = Celery('ProyectoPRISMA')
 
 # Using a string here means the worker doesn't have to serialize
@@ -23,13 +23,13 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'cada-24-horas': {  #cada dia a las 18:00 cuando cierra la caja
         'task': 'ProyectoPRISMA.tasks.Pedido',
-        'schedule': crontab(hour=18, minute=00),
-        'args': ('fasami6970@o3live.com',)
+        'schedule': 30.0,
+       
     },
 }
 
 # Load task modules from all registered Django apps.
-app.autodiscover_tasks()
+app.autodiscover_tasks(['ProyectoPRISMA.tasks'])
 
 
 # Optional configuration, see the application user guide.
@@ -41,5 +41,5 @@ app.conf.update(
     enable_utc=True,
 )
 
-if __name__ == '__main__':
+if app == 'main':
     app.start()

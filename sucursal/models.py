@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from usuario.models import Usuario
 
 class Caja(models.Model):
     
@@ -9,6 +10,7 @@ class Caja(models.Model):
     ingresos = models.DecimalField('Ingresos', decimal_places=2, max_digits=9)
     saldo_inicial = models.DecimalField('Saldo Inicial', decimal_places=2, max_digits=9)
     saldo_final = models.DecimalField('Saldo Final', decimal_places=2, max_digits=9)
+    sucursal_id = models.ForeignKey('Sucursal', on_delete=models.PROTECT, null=True)
 
     
     def clean(self):
@@ -40,14 +42,14 @@ class Sucursal (models.Model):
     
     codigo = models.CharField(max_length = 4, unique=True)
     idCasaCentral = models.IntegerField(default= 1)
-    caja = models.OneToOneField(Caja, on_delete=models.PROTECT)
+    caja_id = models.OneToOneField('Caja', on_delete=models.PROTECT, blank= True, null=True)
     
     calle = models.CharField('Calle', max_length=20)
     numero = models.CharField('Numero',  max_length=4)
     localidad = models.CharField('Localidad', max_length=20, null=True)
     provincia = models.CharField('Provincia', max_length= 20, null=True)
     cod_postal = models.CharField('Código postal', max_length=4)
-    
+    supervisor = models.ForeignKey(Usuario,  on_delete=models.PROTECT, null=True)
     
     def clean(self):
         if not self.codigo.isalnum():

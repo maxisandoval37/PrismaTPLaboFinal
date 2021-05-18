@@ -50,7 +50,7 @@ class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos, UpdateView):
     permission_required = (
         'item.view_item', 'item.add_item', 'item.change_item',)
     model = Item
-    fields = ['stockMinimo', 'stockSeguridad', 'repo_por_lote']
+    fields = ['stockminimo', 'stockseguridad', 'repo_por_lote']
     template_name = 'items/editar_item.html'
     success_url = reverse_lazy('items:listar_items')
 
@@ -115,8 +115,21 @@ def RecibirStock(request, id_proveedor, id_sucursal):
         
         item = request.POST.get('item', None)
         cantidad = request.POST.get('cantidad', None)
+        print(item)
+        print(cantidad)
+        item1 = Item.objects.filter(nombre = item, sucursal = id_sucursal)
+        print(item1)
         
-        Item.objects.filter(nombre = item).filter(sucursal = id_sucursal).update(cantidad = cantidad)
-        Item.objects.filter(nombre = item).filter(sucursal = id_sucursal).update(solicitud = False)
+        for i in item1:
+            
+            i.cantidad += int(cantidad)
+            i.solicitud = False
+            i.save()
+        
+        
+        
+       
+        
+        
         
     return HttpResponse("Pedido recibido exitosamente!")

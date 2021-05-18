@@ -51,7 +51,9 @@ Listado de Sucursales
 
                         <a href="{% url 'sucursales:visualizar_items' sucursal.pk %}" class="btn btn-primary"> Ver Items
                         </a>
-                        <a href="{% url 'sucursales:visualizar_cajas' sucursal.caja.id %}" class="btn btn-info"> Ver Cajas
+                        <a href="{% url 'sucursales:visualizar_cajas' sucursal.pk %}" class="btn btn-info"> Ver Cajas
+                        </a>
+                        <a href="{% url 'sucursales:consolidado_sucursal' sucursal.pk %}" class="btn btn-success"> Consolidado de Sucursal
                         </a>
 
                     </td>

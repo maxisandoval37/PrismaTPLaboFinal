@@ -50,8 +50,8 @@ class RegistrarCaja(ValidarLoginYPermisosRequeridos,CreateView):
 
 def idCaja(request, id):
     
-    caja = Caja.objects.get(id = id)
-    queryset = Caja.objects.filter(id = caja.id)
+    sucursal = Sucursal.objects.get(id = id)
+    queryset = Caja.objects.filter(sucursal_id = sucursal.id)
     lista = []
     for caja in queryset:
         dic = {
@@ -60,6 +60,7 @@ def idCaja(request, id):
             "ingresos": caja.ingresos,
             "saldo_inicial": caja.saldo_inicial,
             "saldo_final": caja.saldo_final,
+            "sucursal_id": caja.sucursal_id,
             
         }
         lista.append(dic) 
@@ -93,15 +94,15 @@ def idSucursal(request, id):
 
 def consolidacionSucursales(request):
     
-    sucursales = Sucursal.objects.all()
+    cajas = Caja.objects.all()
     lista = []
     egresosTotal = 0
     ingresosTotal = 0
     
-    for sucursal in sucursales:
+    for caja in cajas:
     
-        egresosTotal += sucursal.caja.egresos
-        ingresosTotal += sucursal.caja.ingresos
+        egresosTotal += caja.egresos
+        ingresosTotal += caja.ingresos
         
     dic = {
         "egresos": egresosTotal,
@@ -110,3 +111,23 @@ def consolidacionSucursales(request):
     lista.append(dic)
     
     return render(request, 'sucursales/consolidado.html', locals())
+
+def consolidacionPorSucursal(request, id):
+    
+    sucursal = Sucursal.objects.get(id = id)
+    cajas = Caja.objects.filter(sucursal_id = sucursal.id)
+    egresosTotal = 0
+    ingresosTotal = 0
+    lista = []
+    for caja in cajas:
+        
+        egresosTotal += caja.egresos
+        ingresosTotal += caja.ingresos
+        
+    dic = {
+        "egresos": egresosTotal,
+        "ingresos": ingresosTotal,
+    }
+    lista.append(dic)
+    
+    return render(request, 'sucursales/consolidadoSucursal.html', locals())
