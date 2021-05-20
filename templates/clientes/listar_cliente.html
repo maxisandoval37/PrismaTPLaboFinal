@@ -1,0 +1,69 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Clientes
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Clientes</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cuit</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Telefono</th>
+                    <th>Categoria</th>
+                    <th>Estado</th>
+                    <th>Deuda</th>
+                    <th>Vendedor Asociado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for cliente in object_list %}
+                <tr>
+                    <td>{{ cliente.id }}</td>
+                    <td>{{ cliente.cuit }}</td>
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.apellido}}</td>
+                    <td>{{cliente.email}}</td>
+                    <td>{{ cliente.categoria_cliente }}</td>
+                    <td>{{ cliente.estado_cliente }}</td>
+                    <td>{{ cliente.deuda_cliente }}</td>
+                     <td>{{ cliente.vendedor_asociado }}</td>
+
+                    <td>
+                        <a href="{% url 'clientes:eliminar_cliente' cliente.pk %}" class="btn btn-danger">
+                            Eliminar </a>
+                        <a href="{% url 'clientes:actualizar_cliente' cliente.pk %}" class="btn btn-primary">
+                            Editar </a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay Clientes registrados :( </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

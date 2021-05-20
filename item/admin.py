@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Item, Estado, Categoria, UnidadDeMedida, SubCategoria, Pedidos
+from .models import Item, Estado, Categoria, UnidadDeMedida, SubCategoria, Pedidos #CuentaCorrienteProveedor
 
 @register(Item)
 class itemAdmin(ModelAdmin):
@@ -30,3 +30,7 @@ class subcatAdmin(ModelAdmin):
 class pedidosAdmin(ModelAdmin):
     
     icon_name = 'add_box'
+    
+# @register(CuentaCorrienteProveedor)
+# class cuentacorrienteProvADMIN(ModelAdmin):
+#     icon_name = 'person'

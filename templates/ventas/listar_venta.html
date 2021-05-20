@@ -1,0 +1,66 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Ventas
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Ventas</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Número de comprobante</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Cliente</th>
+                    <th>Vendedor</th>
+                    <th>Sucursal</th>
+                    <th>Item</th>
+                    <th>Medio de pago</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for venta in object_list %}
+                <tr>
+                    <td></td>
+                    <td>{{ venta.numero_comprobante }}</td>
+                    <td>{{ venta.fecha }}</td>
+                    <td>{{ venta.monto }}</td>
+                    <td>{{ venta.cliente_asociado }}</td>
+                    <td>{{ venta.vendedor_asociado }}</td>
+                    <td>{{ venta.sucursal_asociada }}</td>
+                    <td>{{ venta.item_asociado }}</td>
+                    <td>{{ venta.mediodepago }}</td>
+                   
+                    <td>
+                        <a href="{% url 'ventas:eliminar_venta' venta.pk %}" class="btn btn-danger">
+                            Eliminar </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5> No hay Ventas registradas :( </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

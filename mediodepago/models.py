@@ -54,15 +54,19 @@ class MercadoPago(models.Model):
 
 class TipoDePago(models.Model):
     
-    nombre = models.CharField("Tipo de pago", max_length=20)
-    
-    def clean(self):
+    class opcionesDePago(models.TextChoices):
         
-        if len(self.nombre) < 6 and  len(self.nombre) > 20:
-            raise ValidationError('El tipo de pago debe tener entre 6 y 20 letras.')
+        DEBITO = 'DÉBITO'
+        CREDITO =  'CRÉDITO'
+        TRANSFERENCIA = 'TRANSFERENCIA'
+        MERCADOPAGO =  'MERCADOPAGO'
+        EFECTIVO =  'EFECTIVO'
+        CHEQUE = 'CHEQUE'
+    
+    opciones = models.CharField(choices= opcionesDePago.choices, max_length=13)
     
     def __str__(self):
-        return self.nombre
+        return self.opciones
     
     
 class MedioDePago(models.Model):  

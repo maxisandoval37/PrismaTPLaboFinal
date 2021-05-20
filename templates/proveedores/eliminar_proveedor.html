@@ -10,14 +10,14 @@
         <strong class="card-tittle">Eliminar Proveedor: {{object}}</strong>
     </div>
 
-<div class="card-body">
-<form class="user" method = "post">
-    {% csrf_token %}
-    <div class="form-group">
-        <h1>¿Desea eliminar el proveedor {{object}}?</h1>
-    <a href ="{% url 'proveedores:listar_proveedores' %}" class="btn btn-danger"> Cancelar </a>
-    <button type="submit" class="btn btn-primary">Eliminar</button>
-</div>
-</form>   
+    <div class="card-body">
+    <form class="user" method = "post">
+        {% csrf_token %}
+        <div class="form-group">
+            <h1>¿Desea eliminar el proveedor {{object}}?</h1>
+        <a href ="{% url 'proveedores:listar_proveedores' %}" class="btn btn-danger"> Cancelar </a>
+        <button type="submit" class="btn btn-primary">Eliminar</button>
+    </div>
+    </form>   
 </div>
 {% endblock %}

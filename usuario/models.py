@@ -5,21 +5,22 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 
 class Rol(models.Model):
-    """Model definition for Rol."""
-
-    # TODO: Define fields here
+    
     id = models.AutoField(primary_key = True)
-    rol = models.CharField('Rol', max_length=50,unique = True)
-
-    class Meta:
-        """Meta definition for Rol."""
-
-        verbose_name = 'Rol'
-        verbose_name_plural = 'Rols'
-
+    
+    class opcionesRol(models.TextChoices):
+        
+        SUPERVISOR = 'SUPERVISOR'
+        GERENTE_GENERAL = 'GERENTE GENERAL'
+        VENDEDOR = 'VENDEDOR'
+        ADMINISTRATIVO = 'ADMINISTRATIVO'
+        CAJERO = 'CAJERO'
+        
+    opciones = models.CharField(choices = opcionesRol.choices, max_length=15)
+    
     def __str__(self):
-        """Unicode representation of Rol."""
-        return self.rol
+        return self.opciones
+    
     
     def save(self,*args,**kwargs):
         permisos_defecto = ['add','change','delete','view']
@@ -46,19 +47,20 @@ class Rol(models.Model):
                         name = f'Can {permiso_temp} {self.rol}'
                     )
                 super().save(*args,**kwargs)
+   
+   
         
 class Estado(models.Model):
     
-    nombre  = models.CharField('Estado del empleado', max_length=20, unique=True)
-
-    class Meta:
-        verbose_name = 'estado'
-        verbose_name_plural = 'estados'
+    class opcionesEstado(models.TextChoices):
         
+        ACTIVO = 'ACTIVO'
+        INACTIVO = 'INACTIVO'
+    
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length=8)
+
     def __str__(self):
-        return self.nombre
-
-
+        return self.opciones
 
 
 class UsuarioManager(BaseUserManager):

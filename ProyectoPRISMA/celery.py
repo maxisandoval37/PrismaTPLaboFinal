@@ -31,6 +31,8 @@ app.conf.beat_schedule = {
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks(['ProyectoPRISMA.tasks'])
 
+CELERY_TIMEZONE = 'UTC'
+CELERY_ENABLE_UTC = True
 
 # Optional configuration, see the application user guide.
 app.conf.update(

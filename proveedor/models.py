@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 
+
 class Proveedor(models.Model):
     
     cuit = models.CharField('Cuit', unique=True, max_length=11)
@@ -13,6 +14,7 @@ class Proveedor(models.Model):
     localidad = models.CharField('Localidad', max_length=20,blank = True,null=True)
     provincia = models.CharField('Provincia', max_length= 20,blank = True,null=True)
     cod_postal = models.CharField('Código postal', blank = True,null=True, max_length= 4)
+    
    
     def clean(self):
         
@@ -65,5 +67,4 @@ class Proveedor(models.Model):
         
     def __str__(self):
         return self.razon_social
-    
     

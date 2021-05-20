@@ -151,6 +151,49 @@
                 Ventas y Pedidos
             </div>
 
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSix"
+                    aria-expanded="true" aria-controls="collapseSix">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Clientes</span>
+                </a>
+                <div id="collapseSix" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Administrar clientes:</h6>
+
+                        <a class="collapse-item" href="{% url 'clientes:listar_clientes' %}">Listado de Clientes</a>
+                        <a class="collapse-item" href="{% url 'clientes:registrar_cliente' %}">Agregar Cliente</a>
+                        
+                        <div class="collapse-divider"></div>
+                        
+                    </div>
+                </div>
+            </li>
+
+
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
+                    aria-expanded="true" aria-controls="collapseFive">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Ventas</span>
+                </a>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Administrar ventas:</h6>
+
+                        <a class="collapse-item" href="{% url 'ventas:listar_ventas' %}">Listado de Ventas</a>
+                        <a class="collapse-item" href="{% url 'ventas:registrar_venta_local' %}">Agregar Venta Local</a>
+                        <a class="collapse-item" href="{% url 'ventas:registrar_venta_virtual' %}">Agregar Venta Virtual</a>
+
+                        <div class="collapse-divider"></div>
+                        
+                    </div>
+                </div>
+            </li>
+
+          
+
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
@@ -171,13 +214,26 @@
                 </div>
             </li>
 
-            <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Seccion 2</span></a>
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSeven"
+                    aria-expanded="true" aria-controls="collapseSeven">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Presupuestos</span>
+                </a>
+                <div id="collapseSeven" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Administrar presupuestos:</h6>
+
+                        <a class="collapse-item" href="{% url 'presupuestos:listar_presupuestos' %}">Listado de presupuestos</a>
+                        <a class="collapse-item" href="{% url 'presupuestos:registrar_presupuesto' %}">Agregar presupuesto</a>
+                        
+                        <div class="collapse-divider"></div>
+                        
+                    </div>
+                </div>
             </li>
 
+            
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="# .html">

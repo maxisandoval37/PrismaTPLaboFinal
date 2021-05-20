@@ -121,15 +121,10 @@ def RecibirStock(request, id_proveedor, id_sucursal):
         print(item1)
         
         for i in item1:
-            
+            print(i)
             i.cantidad += int(cantidad)
             i.solicitud = False
             i.save()
-        
-        
-        
-       
-        
-        
+            print(i)
         
     return HttpResponse("Pedido recibido exitosamente!")

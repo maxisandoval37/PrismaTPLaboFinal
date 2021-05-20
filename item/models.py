@@ -9,90 +9,137 @@ from django.core.exceptions import ValidationError
 
 class SubCategoria(models.Model):
 
-    nombre = models.CharField('Nombre', max_length=30, unique=True)
+    
     nombre_categoria = models.ForeignKey('Categoria', on_delete=models.PROTECT)
 
-    class Meta:
-
-        verbose_name = 'subcategoria'
-        verbose_name_plural = 'subcategorias'
-
-    def clean(self):
-
-        if len(self.nombre) < 4 and len(self.nombre) > 30:
-            raise ValidationError('El nombre debe tener entre 4 y 30 letras.')
+    class opcionesSubCategoria(models.TextChoices):
+        
+        CARRETILLAS = 'Carretillas'
+        ANDAMIOS = 'Andamios'
+        ELEVADORES = 'Elevadores'
+        CERAMICA = 'Cerámica'
+        PIEDA_NATURAL = 'Piedra natural'
+        PERFILERIA_Y_ACCESORIOS = 'Perfilería y accesorios'
+        TERMOSTATOS = 'Termostatos'
+        TIMBRES = 'Timbres'
+        APERTURA_MOTORIZADA = 'Apertura motorizada'
+        LINTERNAS = 'Linternas'
+        FOCOS = 'Focos'
+        PANTALLAS = 'Pantallas'
+        CABLE = 'Cable'
+        TERMINALES = 'Terminales'
+        MAGNETOTERMICOS_Y_FUSIBLES = 'Magnetotérmicos y fusibles'
+        BOMBILLAS_LED = 'Bombillas led'
+        BOMBILLAS_INCANDESCENTES = 'Bombillas incandescentes'
+        BOMBILLAS_BAJO_CONSUMO = 'Bombillas bajo consumo'
+        HIDROLAVADORES = 'Hidrolavadores'
+        ASPIRADORES = 'Aspiradores'
+        COMPRESORES = 'Compresores'
+        MOTORES = 'Motores'
+        GENERADORES = 'Generadores'
+        ALICATES_Y_TENAZAS = 'Alicates y tenazas'
+        LLAVES = 'Llaves'
+        DESTORNILLADORES = 'Destornilladores'
+        HERRAMIENTAS_ALBANILERIA = 'Herramientas de albañilería'
+        GUANTES = 'Guantes'
+        PROTECCION_VISUAL = 'Protección visual'
+        PROTECCION_AUDITIVA = 'Protección auditiva'
+        PROTECCION_ANTICAIDAS = 'Protección anticaidas'
+        CAJAS_Y_MALETAS = 'Cajas y maletas'
+        CINTURONES_PORTAHERRAMIENTAS = 'Cinturones portaherramientas'
+        CARROS = 'Carros'
+        LAVABO_PEDESTAL = 'Lavabo pedestal'
+        LAVAMANOS = 'Lavamanos'
+        CISTERNAS = 'Cisternas'
+        CRISTAL = 'Cristal'
+        PORCELANA = 'Porcelana'
+        MADERA = 'Madera'
+        TERMOSTATICOS = 'Termostáticos'
+        MONOBLOC = 'Monobloc'
+        MONOMANDO = 'Monomando'
+        MANGUERAS = 'Mangueras'
+        DIFUSORES = 'Difusores'
+        REGADERAS = 'Regaderas'
+        MACETAS = 'Macetas'
+        ESTANQUES = 'Estanques'
+        FUENTES = 'Fuentes'
+        CERRADURAS_PARA_PUERTAS = 'Cerraduras para puertas'
+        SISTEMAS_ANTIRROBO = 'Sistemas antirrobo'
+        CERRADURAS_ELECTRONICAS = 'Cerraduras electrónicas'
+        INTERIOR = 'Interior'
+        EXTERIOR = 'Exterior'
+        RODILLOS = 'Rodillos'
+        PINCELES = 'Pinceles'
+        
+    opciones = models.CharField(choices = opcionesSubCategoria.choices, max_length=40)  
 
     def __str__(self):
-        return self.nombre
-
+       return self.opciones
 
 class Categoria(models.Model):
 
-    nombre_categoria = models.CharField('Nombre', max_length=55, unique=True)
+    
     prov_preferido = models.ForeignKey(
-        Proveedor, on_delete=models.PROTECT, null=True, blank=True)
+    Proveedor, on_delete=models.PROTECT, null=True, blank=True)
 
-    def clean(self):
+    class opcionesCategoria(models.TextChoices):
         
-        if len(self.nombre_categoria) < 4 and len(self.nombre_categoria) > 55:
-            raise ValidationError(
-                'El nombre de la categoria debe tener entre 4 y 55 letras.')
-
-    class Meta:
-
-        verbose_name = 'categoria'
-        verbose_name_plural = 'categorias'
+        UTILES_DE_CONSTRUCCION = 'Útiles de Construcción'
+        REVESTIMIENTOS = 'Revestimientos'
+        CONFORT_Y_DOMOTICA = 'Confort y Domótica'
+        ILUMINACION = 'Iluminación'
+        MATERIAL_DE_INSTALACION = 'Material de instalación'
+        BOMBILLAS_Y_TUBOS = 'Bombillas y tubos'
+        MAQUINARIA = 'Maquinaria'
+        HERRAMIENTA_MANUAL = 'Herramienta manual'
+        EQUIPO_DE_PROTECCION_INDIVIDUAL = 'Equipo de protección individual'
+        ORDENACION_DE_HERRAMIENTAS = 'Ordenación de herramientas'
+        APARATOS_SANITARIOS = 'Aparatos sanitarios'
+        COMPLEMENTOS_DE_BANO = 'Complementos de baño'
+        GRIFERIA = 'Grifería'
+        RIEGO = 'Riego'
+        DECORACION_JARDIN = 'Decoración de jardín'
+        CERRAJERIA = 'Cerrajería'
+        PINTURA = 'Pintura'
+        
+    opciones = models.CharField(choices= opcionesCategoria.choices, max_length=40)
 
     def __str__(self):
-
-        return self.nombre_categoria
-
+        return self.opciones
 
 class UnidadDeMedida(models.Model):
 
-    id = models.AutoField(primary_key=True)
-    unidad_de_medida = models.CharField(
-        'tipo_de_unidad', max_length=10, unique=True)
+    class opcionesUDM(models.TextChoices):
+        
+        TONELADA = 'TONELADA'
+        KG = 'KG'
+        GR = 'GR'
+        MG = 'MG'
+        LT = 'LT'
+        ML = 'ML'
+        M = 'M'
+        CM = 'CM'
+        MM = 'MM'
 
-    def clean(self):
-
-        if not self.unidad_de_medida.isalpha():
-            raise ValidationError(
-                'La unidad de medida solo puede contener letras, no se admiten espacios.')
-        if len(self.unidad_de_medida) < 2 and len(self.unidad_de_medida) > 10:
-            raise ValidationError(
-                'La unidad de medida debe tener entre 2 y 10 letras.')
-
-    class Meta:
-
-        verbose_name = 'unidad_de_medida'
-        verbose_name_plural = 'unidades_de_medida'
-
+    opciones = models.CharField(choices = opcionesUDM.choices, max_length=8)
+    
     def __str__(self):
-
-        return self.unidad_de_medida
+        return self.opciones
 
 
 class Estado(models.Model):
 
-    id = models.AutoField(primary_key=True)
-    estado = models.CharField('Estado', max_length=15, unique=True)
-
-    def clean(self):
-        if not self.estado.isalpha():
-            raise ValidationError('El estado solo puede contener letras, no se admiten espacios.')
-        if len(self.estado) < 4 and len(self.estado) > 15:
-            raise ValidationError('El estado debe tener entre 4 y 15 letras.')
-
-    class Meta:
-
-        verbose_name = 'estado'
-        verbose_name_plural = 'estados'
+    class opcionesEstado(models.TextChoices):
+        
+        ACTIVO = 'ACTIVO' 
+        INACTIVO = 'INACTIVO'
+        PENDIENTE =  'PENDIENTE'
+        DESCONTINUADO = 'DESCONTINUADO'
+        
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length=13)
 
     def __str__(self):
-
-        return self.estado
-
+        return self.opciones
 
 class Item(models.Model):
 
@@ -169,8 +216,6 @@ class Pedidos(models.Model):
 
         verbose_name = 'pedido'
         verbose_name_plural = 'pedidos'
-
-
 
 
     

@@ -1,0 +1,63 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Presupuestos
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Presupuestos</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha de emisión</th>
+                    <th>Fecha de expiración</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Comentarios</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for presupuesto in object_list %}
+                <tr>
+                    <td></td>
+                    <td>{{ presupuesto.fecha_emision }}</td>
+                    <td>{{ presupuesto.fecha_expiracion }}</td>
+                    <td>{{ presupuesto.total}}</td>
+                    <td>{{presupuesto.estado}}</td>
+                    <td>{{ presupuesto.comentarios }}</td>
+                    
+
+                    <td>
+                        <a href="{% url 'presupuestos:eliminar_presupuesto' presupuesto.pk %}" class="btn btn-danger">
+                            Eliminar </a>
+                       
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay presupuestos registrados. </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

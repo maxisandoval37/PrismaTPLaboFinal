@@ -47,6 +47,6 @@ class EliminarProveedor(ValidarLoginYPermisosRequeridos,DeleteView):
             self.object.delete()
         except ProtectedError:
             messages.add_message(request, messages.ERROR, 'No se puede eliminar: Este proveedor esta relacionado.')
-            return redirect('items:listar_items')
+            return redirect('proveedores:listar_proveedores')
 
         return HttpResponseRedirect(success_url)                                
