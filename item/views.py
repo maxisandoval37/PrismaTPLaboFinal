@@ -17,7 +17,7 @@ class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
     permission_required = ('item.view_item',)
     model = Item
     template_name = 'items/listar_item.html'
-
+    
 
 class RegistrarItem(ValidarLoginYPermisosRequeridos, CreateView):
     permission_required = ('item.view_item', 'item.add_item',)
@@ -110,21 +110,20 @@ def VerPedido(request, id_proveedor, id_sucursal):
 
 
 def RecibirStock(request, id_proveedor, id_sucursal):
-    
     if request.is_ajax():
-        
-        item = request.POST.get('item', None)
-        cantidad = request.POST.get('cantidad', None)
-        print(item)
-        print(cantidad)
-        item1 = Item.objects.filter(nombre = item, sucursal = id_sucursal)
-        print(item1)
-        
-        for i in item1:
-            print(i)
-            i.cantidad += int(cantidad)
-            i.solicitud = False
-            i.save()
-            print(i)
-        
+        itemReq = request.POST.get('item', None)
+        cantidadReq = request.POST.get('cantidad', None)
+        print(itemReq)
+        print(cantidadReq)
+
+        itemFromQuery = Item.objects.filter(
+            nombre=itemReq, sucursal=id_sucursal)
+        print(itemFromQuery)
+
+        for item in itemFromQuery:
+            item.cantidad += int(cantidadReq)
+            item.solicitud = False
+            item.save()
+            Pedidos.objects.filter(item_id=item.id).delete()
+
     return HttpResponse("Pedido recibido exitosamente!")

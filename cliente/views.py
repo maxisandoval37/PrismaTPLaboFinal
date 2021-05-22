@@ -1,9 +1,9 @@
 from django.shortcuts import render, HttpResponseRedirect, redirect
-from .forms import ClienteForm
-from .models import Cliente
+from .forms import ClienteForm, MedioDePagoForm
+from .models import Cliente, MedioDePago
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import ProtectedError
 
@@ -51,3 +51,14 @@ class EliminarCliente(ValidarLoginYPermisosRequeridos,DeleteView):
             return redirect('clientes:listar_clientes')
 
         return HttpResponseRedirect(success_url)  
+
+
+class RegistrarMDP(ValidarLoginYPermisosRequeridos,CreateView):
+    permission_required = ('item.view_item','item.add_item',)
+    model = MedioDePago
+    form_class = MedioDePagoForm
+    template_name = 'ventas/crear_mdp.html'
+    
+    def get_success_url(self):
+        return self.request.GET.get('next', reverse('ventas:registrar_venta_local'))
+    

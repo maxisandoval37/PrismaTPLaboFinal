@@ -5,7 +5,7 @@
 
 
 {% block content %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <div class="card">
     <div class="card-header">
         <strong class="card-tittle">Registro de Ventas Virtuales</strong>
@@ -14,22 +14,80 @@
     <div class="card-body">
         <form class="user" method="post">
             {% csrf_token %}
-            {% for field in form %}
-            {{field.label_tag}}
-
+            {{form.numero_comprobante.label_tag}}
             <div class="form-group">
-                {% render_field field class="form-control form-control-user" %}
+                {% render_field form.numero_comprobante class="form-control form-control-user" %}
+            </div>
 
-                {% endfor %}
 
+            {{form.fecha.label_tag}}
+            <div class="form-group">
+                {% render_field form.fecha class="form-control form-control-user" %}
+            </div>
+
+
+            {{form.monto.label_tag}}
+            <div class="form-group">
+                {% render_field form.monto class="form-control form-control-user" %}
+            </div>
+
+        
+
+            <div class="form-group">Cliente asociado</div>
+            <div class="form-group">
+                <select name="clienteasociado" id="id_cliente_asociado" class="form-group form-control">
+                    <option value="0"> - </option>
+                    {% for cli in cliente_asociado %}
+                    <option value="{{cli.id}}">{{cli}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <div class="form-group">Medio de pago</div>
+            <div class="form-group">
+                <select name="mediodepago" id="id_mediodepago" class="form-group form-control">
+                    <option value="0"> - </option>
+                    {% for medio in mediodepago %}
+                    <option value="{{medio.id}}" data-chained="{{medio.cliente.id}}">{{medio}}</option>
+                    {% endfor %}
+                </select>
+               
+            </div>
+
+            {{form.estado.label_tag}}
+            <div class="form-group">
+                {% render_field form.estado class="form-control form-control-user" %}
+            </div>
+
+            {{form.comentarios.label_tag}}
+            <div class="form-group">
+                {% render_field form.comentarios class="form-control form-control-user" %}
+            </div>
+            {{form.vendedor_asociado.label_tag}}
+            <div class="form-group">
+                {% render_field form.vendedor_asociado class="form-control form-control-user" %}
+            </div>
+            {{form.sucursal_asociada.label_tag}}
+            <div class="form-group">
+                {% render_field form.sucursal_asociada class="form-control form-control-user" %}
+            </div>
+            {{form.item_asociado.label_tag}}
+            <div class="form-group">
+                {% render_field form.item_asociado class="form-control form-control-user" %}
+            </div>
+            {{form.cantidad_solicitada.label_tag}}
+            <div class="form-group">
+                {% render_field form.cantidad_solicitada class="form-control form-control-user" %}
             </div>
             
-            
+           
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
             {% endfor %}
+            
             
             <div class="">
                 <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-danger"> Cancelar </a>
@@ -39,4 +97,11 @@
         </form>
     </div>
 </div>
+
+
+<script>
+    $(function () {
+        $("#id_mediodepago").chained("#id_cliente_asociado");
+    });
+</script>
 {% endblock %}

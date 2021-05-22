@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from usuario.models import Usuario
+
 
 class Caja(models.Model):
     
@@ -37,6 +37,8 @@ class Caja(models.Model):
     
     def __str__(self):
        return self.codigo
+   
+
 
 class Sucursal (models.Model):
     
@@ -49,7 +51,7 @@ class Sucursal (models.Model):
     localidad = models.CharField('Localidad', max_length=20, null=True)
     provincia = models.CharField('Provincia', max_length= 20, null=True)
     cod_postal = models.CharField('Código postal', max_length=4)
-    supervisor = models.ForeignKey(Usuario,  on_delete=models.PROTECT, null=True)
+   
     
     def clean(self):
         if not self.codigo.isalnum():
@@ -85,8 +87,5 @@ class Sucursal (models.Model):
 
     def __str__(self):
         return self.codigo
-
-
-
 
 

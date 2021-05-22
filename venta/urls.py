@@ -10,4 +10,5 @@ urlpatterns = [
     path('registrar_venta_virtual/', login_required(RegistrarVentaVirtual.as_view()),name = 'registrar_venta_virtual'),
     path('eliminar_venta/<int:pk>/',login_required(EliminarVenta.as_view()), name='eliminar_venta'),
     
+   
 ]

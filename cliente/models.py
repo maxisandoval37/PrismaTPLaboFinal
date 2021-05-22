@@ -1,6 +1,6 @@
 from django.db import models
 from usuario.models import Usuario
-
+from django.core.exceptions import ValidationError
 
 
 # Create your models here.
@@ -54,21 +54,67 @@ class Deuda(models.Model):
     
     def __str__(self):
         return "Dias: " + str(self.dias) + ", Monto: "+ str(self.monto)    
+
+
     
+class MedioDePago(models.Model):  
+     
+    cliente = models.ForeignKey('Cliente', on_delete= models.PROTECT)
+    
+    class opcionesDePago(models.TextChoices):
+        
+        DEBITO = 'DÉBITO'
+        CREDITO =  'CRÉDITO'
+        TRANSFERENCIA = 'TRANSFERENCIA'
+        MERCADOPAGO =  'MERCADOPAGO'
+        EFECTIVO =  'EFECTIVO'
+        CHEQUE = 'CHEQUE'
+    
+    opciones = models.CharField(choices= opcionesDePago.choices, max_length=13)
+    
+    def __str__(self):
+        return self.opciones
+        
+    
+class CuentaCorriente(models.Model):
+    
+    id = models.AutoField(primary_key=True)
+    cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
+    
+    def __str__(self):
+        return "Número de cuenta: {}".format(self.id)
 
 class Cliente(models.Model):
     
     cuit = models.CharField('Cuit', max_length=11, unique=True)
-    nombre = models.CharField('Nombre', max_length=20, unique=True)
-    apellido = models.CharField('Apellido', max_length=20, unique=True)
+    nombre = models.CharField('Nombre', max_length=20, null=True)
+    apellido = models.CharField('Apellido', max_length=20, null=True)
     email = models.EmailField('Correo electronico', max_length=30, unique=True)
     telefono = models.CharField('Telefono', max_length=13, unique=True)
     categoria_cliente = models.ForeignKey(CategoriaCliente, on_delete=models.PROTECT)
     estado_cliente = models.ForeignKey(EstadoCliente, on_delete=models.PROTECT)
     deuda_cliente =  models.ForeignKey(Deuda, on_delete=models.PROTECT)
-    vendedor_asociado = models.ForeignKey(Usuario, on_delete= models.PROTECT)
+    
     
     def __str__(self):
-        return self.nombre 
+        return self.cuit
     
     
+    def clean(self):
+        
+        if len(self.cuit) != 11:
+            raise ValidationError('El cuit debe tener exactamente 11 digitos.')
+        if not self.cuit.isdigit():
+            raise ValidationError('El cuit solo puede contener números.')
+        if not self.nombre.isalpha():
+            raise ValidationError('El nombre solo puede contener letras.')
+        if len(self.nombre) < 3 or len(self.nombre) > 20:
+            raise ValidationError('El nombre debe tener entre 3 y 20 letras.')
+        if not self.apellido.isalpha():
+            raise ValidationError('El apellido solo puede contener letras.')
+        if len(self.apellido) < 3 or len(self.apellido) > 20:
+            raise ValidationError('El apellido debe tener entre 3 y 20 letras.')
+        if not self.telefono.isalpha():
+            raise ValidationError('El telefono solo puede contener digitos.')
+        if len(self.telefono) < 3 or len(self.telefono) > 13:
+            raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')

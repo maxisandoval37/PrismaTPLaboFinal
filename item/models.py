@@ -4,6 +4,7 @@ from sucursal.models import Sucursal
 from django.db.models.signals import post_save
 from proveedor.models import Proveedor
 from django.core.exceptions import ValidationError
+import random
 # Create your models here.
 
 
@@ -160,6 +161,7 @@ class Item(models.Model):
     unidad_de_medida = models.ForeignKey(UnidadDeMedida, on_delete=models.PROTECT)
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
+    cantidad_lote = models.PositiveIntegerField('Cantidad de reposición por lote', default=0, null=True)
 
     def clean(self):
 
@@ -200,24 +202,20 @@ class Item(models.Model):
 
 
 class Pedidos(models.Model):
-
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
-    
+
     cantidad = models.IntegerField('Cantidad', null=True)
-    solicitado = models.IntegerField('Solicitado 5' ,default =5)
-    
+    solicitadoRandom = random.randint(20, 75)
+    solicitado = models.IntegerField('Solicitado ' + str(solicitadoRandom), default=solicitadoRandom)
 
     def __str__(self):
-        return "Item:"+ str(self.item) + " , "+ "Sucursal:"+str(self.sucursal) + " , " + "Proveedor:"+str(self.proveedor)
-    
-    class Meta:
+        return "Item:" + str(self.item) + " , " + "Sucursal:"+str(self.sucursal) + " , " + "Proveedor:"+str(self.proveedor)
 
+    class Meta:
         verbose_name = 'pedido'
         verbose_name_plural = 'pedidos'
-
-
     
     
     

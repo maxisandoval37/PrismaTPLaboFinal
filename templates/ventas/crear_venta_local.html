@@ -5,7 +5,7 @@
 
 
 {% block content %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <div class="card">
     <div class="card-header">
         <strong class="card-tittle">Registro de Ventas Locales</strong>
@@ -14,14 +14,88 @@
     <div class="card-body">
         <form class="user" method="post">
             {% csrf_token %}
-            {% for field in form %}
-            {{field.label_tag}}
 
+            {{form.numero_comprobante.label_tag}}
             <div class="form-group">
-                {% render_field field class="form-control form-control-user" %}
+                {% render_field form.numero_comprobante class="form-control form-control-user" %}
+            </div>
 
-                {% endfor %}
 
+            {{form.fecha.label_tag}}
+            <div class="form-group">
+                {% render_field form.fecha class="form-control form-control-user" %}
+            </div>
+
+
+            {{form.monto.label_tag}}
+            <div class="form-group">
+                {% render_field form.monto class="form-control form-control-user" %}
+            </div>
+
+        
+
+            <div class="form-group">Cliente asociado</div>
+            <div class="form-group">
+                <select name="cliente_asociado" id="id_cliente_asociado" class="form-group form-control">
+                    <option value="0"> - </option>
+                    
+                    {% for cli in cliente_asociado %}
+                    <option value="{{cli.id}}">{{cli}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <div class="form-group">Medio de pago</div>
+            <div class="form-group">
+                <select name="mediodepago" id="id_mediodepago" class="form-group form-control">
+                    <option value="0"> - </option>
+                    
+                    {% for medio in mediodepago %}
+                    <option value="{{medio.id}}" data-chained="{{medio.cliente.id}}">{{medio}}</option>
+                    {% endfor %}
+                </select>
+                <a href="{% url 'clientes:registrar_mdp' %}?next={{ request.path }}">Registrar medio de pago</a>
+            </div>
+
+            <div class="form-group">Cuenta Corriente</div>
+            <div class="form-group">
+                <select name="cuenta_corriente" id="id_cuenta_corriente" class="form-group form-control">
+                    <option value="0"> - </option>
+                    
+                    {% for cc in cuenta_corriente %}
+                    <option value="{{cc.id}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+           
+            <div class="form-group">Sucursal asociada</div>
+            <div class="form-group">
+                <select name="sucursal_asociada" id="id_sucursal_asociada" class="form-group form-control">
+                    <option value="0"> - </option>
+                    {% for suc in sucursal_asociada %}
+                    <option value="{{suc.id}}">{{suc}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">Vendedor asociado</div>
+            <div class="form-group">
+                <select name="vendedor_asociado" id="id_vendedor_asociado" class="form-group form-control">
+                    <option value="0"> - </option>
+                    {% for vendedor in vendedor_asociado %}
+                    <option value="{{vendedor.id}}" data-chained="{{vendedor.sucursal.id}}">{{vendedor}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {{form.item_asociado.label_tag}}
+            <div class="form-group">
+                {% render_field form.item_asociado class="form-control form-control-user" %}
+            </div>
+            {{form.cantidad_solicitada.label_tag}}
+            <div class="form-group">
+                {% render_field form.cantidad_solicitada class="form-control form-control-user" %}
             </div>
             
             
@@ -31,6 +105,7 @@
             </div>
             {% endfor %}
             
+            
             <div class="">
                 <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-primary">Registrar Venta</button>
@@ -39,4 +114,23 @@
         </form>
     </div>
 </div>
+
+<script>
+    $(function () {
+        $("#id_mediodepago").chained("#id_cliente_asociado");
+    });
+</script>
+
+<script>
+    $(function () {
+        $("#id_cuenta_corriente").chained("#id_cliente_asociado");
+    });
+</script>
+
+<script>
+    $(function () {
+        $("#id_vendedor_asociado").chained("#id_sucursal_asociada");
+    });
+</script>
+
 {% endblock %}

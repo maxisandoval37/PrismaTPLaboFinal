@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-from .views import ListadoCliente, RegistrarCliente, EditarCliente, EliminarCliente
+from .views import ListadoCliente, RegistrarCliente, EditarCliente, EliminarCliente, RegistrarMDP
 
 urlpatterns = [
     
@@ -8,5 +8,5 @@ urlpatterns = [
     path('registrar_cliente/', login_required(RegistrarCliente.as_view()),name = 'registrar_cliente'),
     path('actualizar_cliente/<int:pk>/', login_required(EditarCliente.as_view()), name = 'actualizar_cliente'),
     path('eliminar_cliente/<int:pk>/',login_required(EliminarCliente.as_view()), name='eliminar_cliente'),
-    
+    path('registrar_mdp/', login_required(RegistrarMDP.as_view()),name = 'registrar_mdp'),
 ]
