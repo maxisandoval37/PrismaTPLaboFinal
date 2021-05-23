@@ -206,6 +206,16 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
 
 
+class Supervisor(Usuario):
+    
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
+    
+    
+    class Meta:
+        
+        verbose_name = 'supervisor'
+        verbose_name_plural = 'supervisores'
+
 class Vendedor(Usuario):
     
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
@@ -215,11 +225,4 @@ class Vendedor(Usuario):
         verbose_name = 'vendedor'
         verbose_name_plural = 'vendedores'
         
-class Supervisor(Usuario):
     
-    sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)   
-    
-    class Meta:
-        
-        verbose_name = 'supervisor'
-        verbose_name_plural = 'supervisores'

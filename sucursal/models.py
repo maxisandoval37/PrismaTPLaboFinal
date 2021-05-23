@@ -2,6 +2,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 
+
+
 class Caja(models.Model):
     
     codigo = models.CharField('Identificador', max_length= 4, unique=True)
@@ -44,8 +46,6 @@ class Sucursal (models.Model):
     
     codigo = models.CharField(max_length = 4, unique=True)
     idCasaCentral = models.IntegerField(default= 1)
-    caja_id = models.OneToOneField('Caja', on_delete=models.PROTECT, blank= True, null=True)
-    
     calle = models.CharField('Calle', max_length=20)
     numero = models.CharField('Numero',  max_length=4)
     localidad = models.CharField('Localidad', max_length=20, null=True)

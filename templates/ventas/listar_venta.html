@@ -29,8 +29,8 @@ Listado de Ventas
                     <th>Cliente</th>
                     <th>Vendedor</th>
                     <th>Sucursal</th>
-                    <th>Item</th>
                     <th>Medio de pago</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,12 +44,20 @@ Listado de Ventas
                     <td>{{ venta.cliente_asociado }}</td>
                     <td>{{ venta.vendedor_asociado }}</td>
                     <td>{{ venta.sucursal_asociada }}</td>
-                    <td>{{ venta.item_asociado }}</td>
                     <td>{{ venta.mediodepago }}</td>
+                    <td>{{ venta.estado}}</td>
                    
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.pk %}" class="btn btn-danger">
                             Eliminar </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'ventas:registrar_itemventa' venta.pk venta.sucursal_asociada.id %}" class="btn btn-primary">
+                            Agregar item </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'ventas:listar_itemsventa' venta.pk %}" class="btn btn-warning">
+                            Ver detalle </a>
                     </td>
                 </tr>
                 {% endfor %}

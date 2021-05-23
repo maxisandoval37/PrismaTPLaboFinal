@@ -162,6 +162,7 @@ class Item(models.Model):
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
     cantidad_lote = models.PositiveIntegerField('Cantidad de reposición por lote', default=0, null=True)
+    
 
     def clean(self):
 

@@ -11,6 +11,7 @@ from django.db.models import ProtectedError
 
 class ListadoProveedor(ValidarLoginYPermisosRequeridos,ListView):
     
+    permission_required = ('proveedor.view_proveedor',)
     model = Proveedor
     template_name = 'proveedores/listar_proveedor.html'
 
@@ -18,6 +19,7 @@ class ListadoProveedor(ValidarLoginYPermisosRequeridos,ListView):
 
 class RegistrarProveedor(ValidarLoginYPermisosRequeridos,CreateView):
     
+    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
     model = Proveedor
     form_class = ProveedorForm
     template_name = 'proveedores/crear_proveedor.html'
@@ -27,6 +29,7 @@ class RegistrarProveedor(ValidarLoginYPermisosRequeridos,CreateView):
     
 class EditarProveedor(ValidarLoginYPermisosRequeridos,UpdateView):
     
+    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
     model = Proveedor
     fields = ['email','telefono','calle','numero','localidad','cod_postal']
     template_name = 'proveedores/crear_proveedor.html'
@@ -34,6 +37,7 @@ class EditarProveedor(ValidarLoginYPermisosRequeridos,UpdateView):
     
 class EliminarProveedor(ValidarLoginYPermisosRequeridos,DeleteView):
     
+    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
     model = Proveedor
     template_name = 'proveedores/eliminar_proveedor.html'
     success_url = reverse_lazy('proveedores:listar_proveedores')

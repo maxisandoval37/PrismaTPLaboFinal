@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect, redirect
-from .forms import ClienteForm, MedioDePagoForm
-from .models import Cliente, MedioDePago
+from .forms import ClienteForm, CuentaCorrienteForm, MedioDePagoForm
+from .models import Cliente, CuentaCorriente, MedioDePago
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy, reverse
@@ -11,6 +11,7 @@ from django.db.models import ProtectedError
 
 class ListadoCliente(ValidarLoginYPermisosRequeridos,ListView):
     
+    permission_required = ('cliente.view_cliente',)
     model = Cliente
     template_name = 'clientes/listar_cliente.html'
 
@@ -18,6 +19,7 @@ class ListadoCliente(ValidarLoginYPermisosRequeridos,ListView):
 
 class RegistrarCliente(ValidarLoginYPermisosRequeridos,CreateView):
     
+    permission_required = ('cliente.view_cliente','cliente.add_cliente',)
     model = Cliente
     form_class = ClienteForm
     template_name = 'clientes/crear_cliente.html'
@@ -27,34 +29,36 @@ class RegistrarCliente(ValidarLoginYPermisosRequeridos,CreateView):
     
 class EditarCliente(ValidarLoginYPermisosRequeridos,UpdateView):
     
+    permission_required = ('cliente.view_cliente','cliente.change_cliente',)
     model = Cliente
     fields = ['email','telefono','categoria_cliente','estado_cliente','estado_deuda']
     template_name = 'clientes/crear_cliente.html'
     success_url = reverse_lazy('clientes:listar_clientes')
  
     
-class EliminarCliente(ValidarLoginYPermisosRequeridos,DeleteView):
+# class EliminarCliente(ValidarLoginYPermisosRequeridos,DeleteView):
     
-    model = Cliente
-    template_name = 'clientes/eliminar_proveedor.html'
-    success_url = reverse_lazy('proveedores:listar_clientes')
+#     permission_required = ('cliente.view_cliente','cliente.add_cliente',)
+#     model = Cliente
+#     template_name = 'clientes/eliminar_proveedor.html'
+#     success_url = reverse_lazy('proveedores:listar_clientes')
                                     
-    def delete(self, request, *args, **kwargs):
+#     def delete(self, request, *args, **kwargs):
         
-        self.object = self.get_object()
-        success_url = self.get_success_url()
+#         self.object = self.get_object()
+#         success_url = self.get_success_url()
 
-        try:
-            self.object.delete()
-        except ProtectedError:
-            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Este Cliente esta relacionado.')
-            return redirect('clientes:listar_clientes')
+#         try:
+#             self.object.delete()
+#         except ProtectedError:
+#             messages.add_message(request, messages.ERROR, 'No se puede eliminar: Este Cliente esta relacionado.')
+#             return redirect('clientes:listar_clientes')
 
-        return HttpResponseRedirect(success_url)  
+#         return HttpResponseRedirect(success_url)  
 
 
 class RegistrarMDP(ValidarLoginYPermisosRequeridos,CreateView):
-    permission_required = ('item.view_item','item.add_item',)
+    permission_required = ('cliente.view_mediodepago','cliente.add_mediodepago',)
     model = MedioDePago
     form_class = MedioDePagoForm
     template_name = 'ventas/crear_mdp.html'
@@ -62,3 +66,11 @@ class RegistrarMDP(ValidarLoginYPermisosRequeridos,CreateView):
     def get_success_url(self):
         return self.request.GET.get('next', reverse('ventas:registrar_venta_local'))
     
+class RegistrarCuentaCorriente(ValidarLoginYPermisosRequeridos,CreateView):
+    
+    permission_required = ('cliente.view_cuentacorriente','cliente.add_cuentacorriente',)
+    model = CuentaCorriente
+    form_class = CuentaCorrienteForm
+    template_name = 'clientes/crear_cuenta_corriente.html'
+    def get_success_url(self):
+        return self.request.GET.get('next', reverse('ventas:registrar_venta_local'))

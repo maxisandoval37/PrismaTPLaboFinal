@@ -51,6 +51,7 @@ class Deuda(models.Model):
     dias = models.IntegerField('Dias', null = True)
     monto = models.FloatField('Monto', null=True)
     estado_deuda = models.ForeignKey(EstadoDeuda, on_delete= models.PROTECT)
+    cliete_asociado = models.ForeignKey('Cliente', on_delete=models.PROTECT)
     
     def __str__(self):
         return "Dias: " + str(self.dias) + ", Monto: "+ str(self.monto)    
@@ -93,7 +94,8 @@ class Cliente(models.Model):
     telefono = models.CharField('Telefono', max_length=13, unique=True)
     categoria_cliente = models.ForeignKey(CategoriaCliente, on_delete=models.PROTECT)
     estado_cliente = models.ForeignKey(EstadoCliente, on_delete=models.PROTECT)
-    deuda_cliente =  models.ForeignKey(Deuda, on_delete=models.PROTECT)
+    
+    
     
     
     def __str__(self):
@@ -114,7 +116,8 @@ class Cliente(models.Model):
             raise ValidationError('El apellido solo puede contener letras.')
         if len(self.apellido) < 3 or len(self.apellido) > 20:
             raise ValidationError('El apellido debe tener entre 3 y 20 letras.')
-        if not self.telefono.isalpha():
+        
+        if not self.telefono.isdigit():
             raise ValidationError('El telefono solo puede contener digitos.')
         if len(self.telefono) < 3 or len(self.telefono) > 13:
             raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')

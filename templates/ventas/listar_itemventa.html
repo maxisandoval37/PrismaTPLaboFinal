@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Items</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Número de Venta</th>
+                    <th>Item</th>
+                   <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if lista %}
+                {% for item in lista %}
+                <tr>
+                    <td></td>
+                    <td>{{ item.venta_asociada }}</td>
+                    <td>{{ item.item }}</td>
+                    <td>{{ item.item.cantidad}}</td>
+                    
+                   
+                   
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5> No hay Ventas registradas :( </h1>
+                {% endif %}
+            </tbody>
+        </table>
+        <div class="text-center">
+            <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-primary"> Volver </a>
+        </div>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

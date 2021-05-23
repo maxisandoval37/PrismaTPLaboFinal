@@ -11,6 +11,7 @@ from django.db.models import ProtectedError
 
 class ListadoPresupuesto(ValidarLoginYPermisosRequeridos,ListView):
     
+    permission_required = ('presupuesto.view_presupuesto',)
     model = Presupuesto
     template_name = 'presupuestos/listar_presupuesto.html'
 
@@ -18,6 +19,7 @@ class ListadoPresupuesto(ValidarLoginYPermisosRequeridos,ListView):
 
 class RegistrarPresupuesto(ValidarLoginYPermisosRequeridos,CreateView):
     
+    permission_required = ('presupuesto.view_presupuesto','presupuesto.add_presupuesto',)
     model = Presupuesto
     form_class = PresupuestoForm
     template_name = 'presupuestos/crear_presupuesto.html'
@@ -26,6 +28,7 @@ class RegistrarPresupuesto(ValidarLoginYPermisosRequeridos,CreateView):
     
 class EliminarPresupuesto(ValidarLoginYPermisosRequeridos,DeleteView):
     
+    permission_required = ('presupuesto.view_presupuesto','presupuesto.delete_presupuesto',)
     model = Presupuesto
     template_name = 'presupuestos/eliminar_presupuesto.html'
     success_url = reverse_lazy('presupuestos:listar_presupuestos')

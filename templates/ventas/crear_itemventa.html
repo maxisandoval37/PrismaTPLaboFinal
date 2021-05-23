@@ -1,0 +1,75 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Agregar Item {% endblock title %}
+
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <strong class="card-tittle">Agregar Items a la venta</strong>
+    </div>
+
+    <div class="card-body">
+        <form class="user" method="post">
+            {% csrf_token %}
+
+            
+            {% for field in form %}
+            {{field.label_tag}}
+
+            <div class="form-group">
+                {% render_field field class="form-control form-control-user" %}
+
+                {% endfor %}
+
+            </div>
+            
+            
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+
+            <!-- <div class="form-group">Sucursal asociada</div>
+            <div class="form-group">
+                <select name="sucursal_asociada" id="id_sucursal_asociada" class="form-group form-control">
+                    <option value="0"> - </option>
+                    {% for suc in sucursal_asociada %}
+                    <option value="{{suc.id}}">{{suc}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">Item</div>
+            <div class="form-group">
+                <select name="cuenta_corriente" id="id_cuenta_corriente" class="form-group form-control">
+                    <option value="0"> - </option>
+
+                    {% for cc in cuenta_corriente %}
+                    <option value="{{cc.id}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {{form.venta_asociada.label_tag}}
+            <div class="form-group">
+                {% render_field form.venta_asociada class="form-control form-control-user" %}
+            </div>
+            
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+             -->
+            <div class="">
+                <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-danger"> Cancelar </a>
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

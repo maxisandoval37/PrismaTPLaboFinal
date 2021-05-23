@@ -43,17 +43,22 @@ class Inicio(TemplateView):
     template_name = 'index.html'
     
 class InicioUsuarios(ValidarLoginYPermisosRequeridos, TemplateView):
-    permission_required = ('usuario.view_usuario','usuario.add_usuario','usuario.delete_usuario','usuario.change_usuario',)
+   
+    permission_required = ('usuario.view_usuario',)
     template_name = 'usuarios/listar_usuario.html'
 
     
 class ListadoUsuario(ValidarLoginYPermisosRequeridos,ListView):
+    
+     permission_required = ('usuario.view_usuario',)
      model = Usuario
      template_name = 'usuarios/listar_usuario.html'
      queryset = Usuario.objects.filter(is_staff = False)
      
     
 class RegistrarUsuario(ValidarLoginYPermisosRequeridos,CreateView):
+    
+    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuarios/crear_usuario.html'
@@ -66,6 +71,7 @@ class RegistrarUsuario(ValidarLoginYPermisosRequeridos,CreateView):
 
 class EditarUsuario(ValidarLoginYPermisosRequeridos,UpdateView):
     
+    permission_required = ('usuario.view_usuario','usuario.change_usuario',)
     model = Usuario
     fields = ['nombre','apellido','email','telefono','rol']
     template_name = 'usuarios/editar_usuario.html'

@@ -69,6 +69,10 @@
             <div class="form-group">
                 {% render_field form.sucursal class="form-control form-control-user" %}
             </div>
+            {{form.cantidad_lote.label_tag}}
+            <div class="form-group">
+                {% render_field form.cantidad_lote class="form-control form-control-user" %}
+            </div>
             {% for field in form %}
             
             

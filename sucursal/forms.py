@@ -6,7 +6,7 @@ class SucursalForm(forms.ModelForm):
     
     class Meta:
         model = Sucursal
-        fields = ['codigo','caja_id','calle','numero','localidad','provincia','cod_postal']
+        fields = ['codigo','calle','numero','localidad','provincia','cod_postal']
         
 class CajaForm(forms.ModelForm):
     

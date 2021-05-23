@@ -9,10 +9,14 @@ from django.contrib import messages
 from django.db.models import ProtectedError
 
 class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
+    
+    permission_required = ('sucursal.view_sucursal',)
     model = Sucursal
     template_name = 'sucursales/listar_sucursal.html'
 
 class RegistrarSucursal(ValidarLoginYPermisosRequeridos,CreateView):
+    
+    permission_required = ('sucursal.view_sucursal','sucursal.add_sucursal',)
     model = Sucursal
     form_class = SucursalForm
     template_name = 'sucursales/crear_sucursal.html'
@@ -20,6 +24,8 @@ class RegistrarSucursal(ValidarLoginYPermisosRequeridos,CreateView):
 
 
 class EliminarSucursal(ValidarLoginYPermisosRequeridos,DeleteView):
+    
+    permission_required = ('sucursal.view_sucursal','sucursal.delete_sucursal',)
     model = Sucursal
     template_name = 'sucursales/eliminar.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
@@ -40,6 +46,7 @@ class EliminarSucursal(ValidarLoginYPermisosRequeridos,DeleteView):
     
 class RegistrarCaja(ValidarLoginYPermisosRequeridos,CreateView):
     
+    permission_required = ('sucursal.view_caja','sucursal.add_caja',)
     model = Caja
     form_class = CajaForm
     template_name = 'sucursales/crear_caja.html'

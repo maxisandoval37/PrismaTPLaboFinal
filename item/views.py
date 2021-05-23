@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import  ProtectedError
 from django.http import HttpResponse
-
+from venta.models import Venta
 from django.core.exceptions import ValidationError
 
 
@@ -37,8 +37,7 @@ class RegistrarItem(ValidarLoginYPermisosRequeridos, CreateView):
 
 class EditarItem(ValidarLoginYPermisosRequeridos, UpdateView):
 
-    permission_required = (
-        'item.view_item', 'item.add_item', 'item.change_item',)
+    permission_required = ('item.view_item','item.change_item')
     model = Item
     fields = ['descripcion', 'estado']
     template_name = 'items/editar_item.html'
@@ -47,8 +46,7 @@ class EditarItem(ValidarLoginYPermisosRequeridos, UpdateView):
 
 class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos, UpdateView):
 
-    permission_required = (
-        'item.view_item', 'item.add_item', 'item.change_item',)
+    permission_required = ('item.view_item','item.add_item','item.change_item','item.delete_item',)
     model = Item
     fields = ['stockminimo', 'stockseguridad', 'repo_por_lote']
     template_name = 'items/editar_item.html'
@@ -63,9 +61,8 @@ class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos, UpdateView):
 
 
 class EliminarItem(ValidarLoginYPermisosRequeridos, DeleteView):
-
-    permission_required = ('item.view_item', 'item.add_item',
-                           'item.change_item', 'item.delete_item',)
+    
+    permission_required = ('item.view_item','item.delete_item',)
     model = Item
     template_name = 'items/eliminar_item.html'
     success_url = reverse_lazy('items:listar_items')
@@ -86,14 +83,16 @@ class EliminarItem(ValidarLoginYPermisosRequeridos, DeleteView):
 
 
 class ListarCategorias(ValidarLoginYPermisosRequeridos, ListView):
+    
 
-    permission_required = ('item.view_item',)
+    permission_required = ('item.view_item','item.add_item','item.change_item','item.delete_item',)
     model = Item
     template_name = 'items/elegir_proveedor.html'
 
 
 class ListarPedidos(ValidarLoginYPermisosRequeridos, ListView):
 
+    permission_required = ('item.view_item','item.add_item','item.change_item','item.delete_item',)
     model = Pedidos
     template_name = 'items/visualizar_pedidos.html'
 

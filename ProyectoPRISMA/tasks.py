@@ -3,6 +3,7 @@ from celery import shared_task, Celery
 from django.core.mail import send_mail
 from time import sleep
 import random
+from usuario.models import Supervisor
 
 
 @shared_task
@@ -28,18 +29,18 @@ def Pedido():
     print('****itemsBySucursal: ')
     print(itemsBySucursal)
 
-    sucursales = Sucursal.objects.raw("""
-        SELECT id, supervisor_id
-        FROM sucursal_sucursal
-        WHERE Id IN %s
-        """, [tuple(list(itemsBySucursal.keys()))])
+    supervisores = Supervisor.objects.raw("""
+        SELECT *
+        FROM usuario_supervisor
+        WHERE sucursal_id IN %s
+    """, [tuple(list(itemsBySucursal.keys()))])
 
-    sucursalAlreadyListened = []
-    for sucursal in sucursales:
-        if sucursal.id not in sucursalAlreadyListened:
-            send_mail('ÍTEMS SIN STOCK - SUCURSAL ' + str(sucursal.id), "Buenas tardes " + sucursal.supervisor.nombre + ", a continuación se listan los ítems cuyo stock de riesgo ha sido alcanzado:\n" +
-                      '\n'.join(itemsBySucursal.get(sucursal.id)), 'tmmzprueba@gmail.com', {sucursal.supervisor.email})
-            sucursalAlreadyListened.append(sucursal.id)
+    supervisorAlreadyListened = []
+    for supervisor in supervisores:
+        if supervisor.id not in supervisorAlreadyListened:
+            send_mail('ÍTEMS SIN STOCK - SUCURSAL ' + str(supervisor.sucursal_id), "Buenas tardes " + supervisor.nombre + ", a continuación se listan los ítems cuyo stock de riesgo ha sido alcanzado:\n" +
+                      '\n'.join(itemsBySucursal.get(supervisor.sucursal_id)), 'tmmzprueba@gmail.com', {supervisor.email})
+            supervisorAlreadyListened.append(supervisor.id)
 
     items = Item.objects.raw("""
         SELECT *

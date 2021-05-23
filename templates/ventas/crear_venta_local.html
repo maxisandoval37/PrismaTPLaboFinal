@@ -32,17 +32,19 @@
                 {% render_field form.monto class="form-control form-control-user" %}
             </div>
 
-        
+
 
             <div class="form-group">Cliente asociado</div>
             <div class="form-group">
                 <select name="cliente_asociado" id="id_cliente_asociado" class="form-group form-control">
                     <option value="0"> - </option>
-                    
+
                     {% for cli in cliente_asociado %}
                     <option value="{{cli.id}}">{{cli}}</option>
                     {% endfor %}
                 </select>
+                <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}">Registrar cuenta
+                    corriente</a>
             </div>
 
 
@@ -50,7 +52,7 @@
             <div class="form-group">
                 <select name="mediodepago" id="id_mediodepago" class="form-group form-control">
                     <option value="0"> - </option>
-                    
+
                     {% for medio in mediodepago %}
                     <option value="{{medio.id}}" data-chained="{{medio.cliente.id}}">{{medio}}</option>
                     {% endfor %}
@@ -62,13 +64,13 @@
             <div class="form-group">
                 <select name="cuenta_corriente" id="id_cuenta_corriente" class="form-group form-control">
                     <option value="0"> - </option>
-                    
+
                     {% for cc in cuenta_corriente %}
                     <option value="{{cc.id}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
                     {% endfor %}
                 </select>
             </div>
-           
+
             <div class="form-group">Sucursal asociada</div>
             <div class="form-group">
                 <select name="sucursal_asociada" id="id_sucursal_asociada" class="form-group form-control">
@@ -89,48 +91,44 @@
                 </select>
             </div>
 
-            {{form.item_asociado.label_tag}}
-            <div class="form-group">
-                {% render_field form.item_asociado class="form-control form-control-user" %}
-            </div>
             {{form.cantidad_solicitada.label_tag}}
             <div class="form-group">
                 {% render_field form.cantidad_solicitada class="form-control form-control-user" %}
             </div>
-            
-            
+
+
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
             {% endfor %}
-            
-            
+
+
             <div class="">
                 <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-primary">Registrar Venta</button>
-                <a href="{% url 'clientes:registrar_cliente' %}" class="btn btn-success" target="_blank">Registrar Cliente</a>
+                <a href="{% url 'clientes:registrar_cliente' %}" class="btn btn-success" target="_blank">Registrar
+                    Cliente</a>
             </div>
         </form>
-    </div>
+</div>
 </div>
 
 <script>
     $(function () {
         $("#id_mediodepago").chained("#id_cliente_asociado");
     });
-</script>
 
-<script>
     $(function () {
         $("#id_cuenta_corriente").chained("#id_cliente_asociado");
     });
-</script>
 
-<script>
     $(function () {
         $("#id_vendedor_asociado").chained("#id_sucursal_asociada");
     });
+
+
+
 </script>
 
 {% endblock %}
