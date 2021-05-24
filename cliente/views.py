@@ -5,7 +5,7 @@ from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
-from django.db.models import ProtectedError
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 
@@ -17,14 +17,14 @@ class ListadoCliente(ValidarLoginYPermisosRequeridos,ListView):
 
 
 
-class RegistrarCliente(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarCliente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('cliente.view_cliente','cliente.add_cliente',)
     model = Cliente
     form_class = ClienteForm
     template_name = 'clientes/crear_cliente.html'
     success_url = reverse_lazy('clientes:listar_clientes')
-   
+    success_message = "Cliente registrado con exito."
     
     
 class EditarCliente(ValidarLoginYPermisosRequeridos,UpdateView):
@@ -57,11 +57,12 @@ class EditarCliente(ValidarLoginYPermisosRequeridos,UpdateView):
 #         return HttpResponseRedirect(success_url)  
 
 
-class RegistrarMDP(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarMDP(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     permission_required = ('cliente.view_mediodepago','cliente.add_mediodepago',)
     model = MedioDePago
     form_class = MedioDePagoForm
     template_name = 'ventas/crear_mdp.html'
+    
     
     def get_success_url(self):
         return self.request.GET.get('next', reverse('ventas:registrar_venta_local'))

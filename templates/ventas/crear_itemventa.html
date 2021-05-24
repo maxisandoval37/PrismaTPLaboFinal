@@ -6,70 +6,154 @@
 
 {% block content %}
 
+{% if lista %}
 <div class="card">
     <div class="card-header">
         <strong class="card-tittle">Agregar Items a la venta</strong>
     </div>
 
-    <div class="card-body">
-        <form class="user" method="post">
-            {% csrf_token %}
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Unidad de medida</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lista %}
+                <tr>
+                    <td id="item" >{{ item.id}}</td>
+                    <td>{{ item.nombre }}</td>
+                    <td id="precio">{{ item.precio }}</td>
+                    <td>{{ item.unidad }}</td>
+                    <td hidden id="sucursal">{{ item.sucursal.id }}</td>
+                    <td hidden id="venta">{{item.venta}}</td>
+                    
+                    
+                    
 
-            
-            {% for field in form %}
-            {{field.label_tag}}
-
-            <div class="form-group">
-                {% render_field field class="form-control form-control-user" %}
-
+                    <td>
+                        <button type="submit" onclick="AgregarItem()" class="btn btn-primary">Agregar item</button>
+                    </td>
+                    <td>
+                        <input type="Integer" class="form-control-user" id="cantidad_solicitada" placeholder="Ingrese la cantidad"> 
+                    </td>
+                    
+                </tr>
                 {% endfor %}
 
-            </div>
-            
-            
-            {% for error in form.non_field_errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-            {% endfor %}
-
-            <!-- <div class="form-group">Sucursal asociada</div>
-            <div class="form-group">
-                <select name="sucursal_asociada" id="id_sucursal_asociada" class="form-group form-control">
-                    <option value="0"> - </option>
-                    {% for suc in sucursal_asociada %}
-                    <option value="{{suc.id}}">{{suc}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">Item</div>
-            <div class="form-group">
-                <select name="cuenta_corriente" id="id_cuenta_corriente" class="form-group form-control">
-                    <option value="0"> - </option>
-
-                    {% for cc in cuenta_corriente %}
-                    <option value="{{cc.id}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            {{form.venta_asociada.label_tag}}
-            <div class="form-group">
-                {% render_field form.venta_asociada class="form-control form-control-user" %}
-            </div>
-            
-            {% for error in form.non_field_errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-            {% endfor %}
-             -->
-            <div class="">
-                <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-danger"> Cancelar </a>
-                <button type="submit" class="btn btn-primary">Registrar</button>
-            </div>
-        </form>
+            </tbody>
+        </table>
     </div>
+
 </div>
+</div>
+
+<div class="text-center">
+    <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-info"> Volver </a>
+    
+</div>
+
+{% else %}
+<h1>La sucursal no tiene items :c </h1>
+{% endif %}
+            
+        
+
+<script>
+
+function AgregarItem() {
+         var csrftoken = getCookie('csrftoken');
+        let item_obtenido = document.getElementById("item").innerText;
+        let cantidad_obtenida = document.getElementById("cantidad_solicitada").value;
+        let sucursal_obtenida = document.getElementById("sucursal").innerText;
+        let venta_obtenida = document.getElementById("venta").innerText;
+        let precio_obtenido = document.getElementById("precio").innerText;
+
+        
+            $.ajax({
+            type: "POST",
+            url: "1/AgregarItem/", 
+            data:{
+                csrfmiddlewaretoken : csrftoken, 
+                item:item_obtenido,
+                cantidad: cantidad_obtenida, 
+                sucursal: sucursal_obtenida,
+                venta: venta_obtenida,
+                precio: precio_obtenido,
+            },
+            dataType: "text",
+            success: function(data) {
+                location.reload()
+            console.log(data);
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+
+                if (jqXHR.status === 0) {
+
+                    alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
+
+                } else if (jqXHR.status == 404) {
+
+                    alert('La Pagina solicitada no fue encontrada [404]');
+
+                } else if (jqXHR.status == 500) {
+
+                    alert('Erro Interno [500]');
+
+                } else if (textStatus === 'parsererror') {
+
+                    alert('Error en el retorno de Datos. [parseJson]');
+
+                } else if (textStatus === 'timeout') {
+
+                    alert('Tiempo de Espera agotado');
+
+                } else if (textStatus === 'abort') {
+                    alert('Solicitud Abortada. [Ajax Request]');
+
+                } else {
+                    ErrorCantidad()
+
+                }//end if 
+
+            }//end error
+        }); 
+        }
+    
+        function getCookie(name) {
+
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            
+            return cookieValue;
+
+        }
+
+        function ErrorCantidad() {
+            Swal.fire({
+                "title": "Lo sentimos",
+                "text": "No es posible agregar el item.",
+                "icon": "error",
+            })
+
+        }
+    
+
+</script>
+
+
 {% endblock %}

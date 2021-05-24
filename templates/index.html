@@ -183,6 +183,7 @@
                         <h6 class="collapse-header">Administrar ventas:</h6>
 
                         <a class="collapse-item" href="{% url 'ventas:listar_ventas' %}">Listado de Ventas</a>
+                        <a class="collapse-item" href="{% url 'ventas:listar_ventas_cajero' %}">Procesar Ventas</a>
                         <a class="collapse-item" href="{% url 'ventas:registrar_venta_local' %}">Agregar Venta Local</a>
                         <a class="collapse-item" href="{% url 'ventas:registrar_venta_virtual' %}">Agregar Venta Virtual</a>
 
@@ -395,17 +396,7 @@
                     </ul>
 
                 </nav>
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible text-center" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <strong>{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error{% else %}{{ message.tags|title
-                        }}{% endif %}!</strong> {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
-                <!-- End of Topbar -->
+               
 
                 <!--  -->
                 <!-- Begin Page Content -->
@@ -480,7 +471,19 @@
         <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-
+        {% if messages %} 
+            {% for m in messages %}
+                
+                <script>
+                    Swal.fire({
+                        "title": "Acción realizada",
+                        "text": "{{m}}",
+                        "icon": "success", 
+                    })
+                </script>
+               
+            {% endfor %} 
+        {% endif %}
 
 
 

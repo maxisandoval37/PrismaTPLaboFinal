@@ -36,7 +36,7 @@ Listado de Items
                     <td></td>
                     <td>{{ item.venta_asociada }}</td>
                     <td>{{ item.item }}</td>
-                    <td>{{item.item.precio}}</td>
+                    <td>{{ item.item.precio}}</td>
                     <td>{{ item.cantidad_solicitada}}</td>
                     
                    <td>
@@ -56,7 +56,7 @@ Listado de Items
 </div>
 </div>
 <div class="text-center">
-    <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-info"> Volver </a>
+    <a href="{% url 'ventas:listar_ventas_cajero' %}" class="btn btn-info"> Volver </a>
 </div>
 
 {% endblock %}

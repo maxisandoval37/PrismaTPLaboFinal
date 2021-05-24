@@ -71,6 +71,8 @@ class SubCategoria(models.Model):
         EXTERIOR = 'Exterior'
         RODILLOS = 'Rodillos'
         PINCELES = 'Pinceles'
+        PILAS_RECARGABLES = 'Pilas recargables'
+        PILAS_NO_RECARGABLES = 'Pilas no recargables'
         
     opciones = models.CharField(choices = opcionesSubCategoria.choices, max_length=40)  
 
@@ -102,6 +104,7 @@ class Categoria(models.Model):
         DECORACION_JARDIN = 'Decoración de jardín'
         CERRAJERIA = 'Cerrajería'
         PINTURA = 'Pintura'
+        PILAS = 'Pilas'
         
     opciones = models.CharField(choices= opcionesCategoria.choices, max_length=40)
 
@@ -146,7 +149,7 @@ class Item(models.Model):
 
     id = models.AutoField(primary_key=True)
     nombre = models.CharField('Nombre', max_length=50, unique=True)
-    precio = models.FloatField('Precio')
+    precio = models.DecimalField('Precio',decimal_places=2, max_digits=10, null=True)
     descripcion = models.CharField('Descripción', max_length=50, null=True, blank=True)
     stockminimo = models.IntegerField('Stock Minimo',  default=0)
     stockseguridad = models.IntegerField('Stock de Seguridad',  default=1)

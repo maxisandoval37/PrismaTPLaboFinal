@@ -45,23 +45,20 @@ Listado de Ventas
                     <td>{{ venta.sucursal_asociada }}</td>
                     <td>{{ venta.mediodepago }}</td>
                     <td>{{ venta.estado}}</td>
-                    <td>{{ venta.total}}</td>
+                    <td>{{ venta.total }}</td>
                    
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.pk %}" class="btn btn-danger">
                             Eliminar </a>
                     </td>
                     <td>
-                        <a href="{% url 'ventas:registrar_itemventa' venta.sucursal_asociada.id  venta.pk %}" class="btn btn-primary">
-                            Agregar item </a>
-                    </td>
-                    <td>
-                        <a href="{% url 'ventas:listar_itemsventa' venta.pk %}" class="btn btn-warning">
+                        <a href="{% url 'ventas:ver_items' venta.pk %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
                     <td>
-                        <a href="{% url 'ventas:cambiar_estado' venta.pk %}" class="btn btn-success">Cargar venta</a>
+                        <a href="{% url 'ventas:finalizar_venta' venta.pk %}" class="btn btn-success">Finalizar venta</a> 
                     </td>
+                  
                 </tr>
                 {% endfor %}
                 {% else %}
