@@ -38,5 +38,6 @@ class Presupuesto(models.Model):
             raise ValidationError('Debes completar el campo comentarios.')
         if self.estado.opciones == "APROBADO" and self.comentarios != None:
             raise ValidationError('No es necesario que ingreses comentarios.')
+        
       
             

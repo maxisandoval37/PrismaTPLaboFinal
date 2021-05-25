@@ -6,7 +6,7 @@ class VentaLocalForm(forms.ModelForm):
     
     class Meta:
         model = VentaLocal
-        fields = ['numero_comprobante','cliente_asociado','mediodepago','sucursal_asociada','vendedor_asociado','cuenta_corriente']
+        fields = ['numero_comprobante','estado','cliente_asociado','mediodepago','sucursal_asociada','vendedor_asociado','cuenta_corriente']
         
            
 class VentaVirtualForm(forms.ModelForm):

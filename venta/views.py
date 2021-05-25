@@ -13,6 +13,7 @@ from item.models import Item
 from django.http import HttpResponse, HttpResponseBadRequest
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+import json
 
 
 class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
@@ -145,71 +146,119 @@ def AgregarItem(request, sucursal, venta):
     
     
     if request.is_ajax():
-        item = request.POST.get('item', None)
-        cantidad = request.POST.get('cantidad', None)
-        sucursal = request.POST.get('sucursal', None)
-        venta = request.POST.get('venta', None)
-        precio = request.POST.get('precio', None)
+        object = json.loads(request.POST.get('items'))
+        print(object)
+        lista_items = []
+        lista_ventas = []
+        lista_errores = []
+        lista_success = []
         
-        if cantidad == '':
-            return HttpResponseBadRequest()
+        for info in object:
+            objeto = json.loads(info)
+            
+            item = objeto['item']
+            cantidad = objeto['cantidad']
+            sucursal = objeto['sucursal']
+            venta = objeto['venta']
+            precio = objeto['precio']
+            
+            item_venta = ItemVenta()
+            item_venta.item_id = int(item)
+            item_venta.cantidad_solicitada = int(cantidad)
+            item_venta.sucursal_asociada_id = str(sucursal)
+            item_venta.venta_asociada_id = int(venta)
+            item_venta.monto = Decimal(cantidad.replace(',', '.')) * Decimal(precio.replace(',', '.'))
+            
+            validacion = validar(item_venta)
+            
+            if validacion != None:
+                lista_errores.append(validacion)
+                print(lista_errores)
+            else:
+                lista_success.append(item_venta.item.nombre)
+                print(lista_success)
+            
+            lista_items.append(item_venta.item_id)
+            lista_ventas.append(item_venta.venta_asociada_id)
         
-        item_venta = ItemVenta()
-        item_venta.item_id = int(item)
-        item_venta.cantidad_solicitada = int(cantidad)
-        item_venta.sucursal_asociada_id = str(sucursal)
-        item_venta.venta_asociada_id = int(venta)
-        item_venta.monto = Decimal(cantidad.replace(',', '.')) * Decimal(precio.replace(',', '.'))
+            item_venta.save()
+
+        item_de_venta = Item.objects.raw("""
+            SELECT * 
+            FROM item_item 
+            WHERE id IN %s               
+        """, [tuple(lista_items)])  
         
-       
-         
-        if item_venta.item.cantidad == 0:
-            #messages.error(request, "No hay stock del item solicitado.")
-            return HttpResponseBadRequest() 
-        
-        if item_venta.item.precio != item_venta.monto:
-            #messages.error(request,"El precio del item es: "+str(item_venta.item.precio))
-            return HttpResponseBadRequest() 
-        # if item_venta.item.precio >= 10000:
-        #     raise ValidationError("El cliente debe ser registrado para finalizar la venta.")
-        
-        if item_venta.item.cantidad < item_venta.cantidad_solicitada:
-            #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
-            return HttpResponseBadRequest() 
-              
-        # if item_venta.monto <= 0:
-        #     messages.error(request,"Debe ingresar un monto valido.")
-        #     return HttpResponseBadRequest() 
-       
-        
-        if item_venta.cantidad_solicitada < 0:
-           # messages.error(request,"La cantidad no puede ser negativa.") 
-            return HttpResponseBadRequest() 
-       
-        if item_venta.cantidad_solicitada == None or item_venta.cantidad_solicitada <= 0:
-           # messages.error(request,"Debe ingresar una cantidad para solicitar.")
-            return HttpResponseBadRequest() 
-        
-        item_venta.save()
-        
-        item_de_venta = Item.objects.filter(id = item_venta.item_id)  
         
         for item in item_de_venta:
             
+            
             item.cantidad -= item_venta.cantidad_solicitada
             item.save() 
+        
+        queryset = Venta.objects.raw("""
+            SELECT * 
+            FROM venta_venta
+            WHERE id IN %s               
+        """, [tuple(lista_ventas)])  
             
-        queryset = Venta.objects.filter(id = item_venta.venta_asociada_id)
         
         for venta in queryset:
            
             venta.total += item_venta.monto
             
             venta.save()
+        
+        mensaje = "Se añadieron: "
+        for m in lista_success:
+            mensaje += m + ", "
+        if len(lista_success) == 0:    
+            mensaje = "No se añadieron: "
+        else:
+            mensaje = mensaje[0:len(mensaje)-2] + ".\nNo se añadieron: "
             
-        messages.success(request, "Item agregado correctamente.")
-        return HttpResponse()
+        for m in lista_errores:
+             mensaje += m + ", "
+        
+        if len(lista_errores) == 0:
+            mensaje = mensaje[0:len(mensaje)-18] 
+        else:
+            mensaje = mensaje[0:len(mensaje)-2] + "."
+        #messages.success(request, "Item agregado correctamente.")
+        return HttpResponse(mensaje)
     
+
+def validar(item_venta):
+    
+    if item_venta.item.cantidad == 0:
+            #messages.error(request, "No hay stock del item solicitado.")
+            return item_venta.item.nombre
+        
+        
+    # if item_venta.item.precio >= 10000:
+    #     raise ValidationError("El cliente debe ser registrado para finalizar la venta.")
+    
+    if item_venta.item.cantidad < item_venta.cantidad_solicitada:
+        #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
+        return item_venta.item.nombre 
+            
+    # if item_venta.monto <= 0:
+    #     messages.error(request,"Debe ingresar un monto valido.")
+    #     return item_venta.item.nombre 
+    
+    
+    if item_venta.cantidad_solicitada < 0:
+        # messages.error(request,"La cantidad no puede ser negativa.") 
+        return item_venta.item.nombre 
+    
+    if item_venta.cantidad_solicitada == None or item_venta.cantidad_solicitada == 0:
+        # messages.error(request,"Debe ingresar una cantidad para solicitar.")
+        return item_venta.item.nombre 
+        
+
+
+
+
 
 def CambiarEstado(request, id):
     
@@ -218,8 +267,9 @@ def CambiarEstado(request, id):
     
     for venta in queryset:
        
-        venta.estado = EstadoVenta(2)
         
+        venta.estado = EstadoVenta(2)
+        print(venta.estado)
         venta.save()
     messages.success(request, "Venta lista para su ejecucion.")
     
@@ -285,7 +335,7 @@ def FinalizarVenta(request, venta):
         else:
             caja.saldo_disponible = caja.saldo_disponible - total
             caja.save()
-            instancia.estado = EstadoVenta(3)
+            #instancia.estado = EstadoVenta.opcionesVenta.PAGADA
             instancia.save()
             messages.success(request, "Venta finalizada con éxito.")  
             return redirect('ventas:listar_ventas_cajero')

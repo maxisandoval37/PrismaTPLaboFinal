@@ -59,9 +59,18 @@ Listado de Ventas
                         <a href="{% url 'ventas:listar_itemsventa' venta.pk %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
-                    <td>
-                        <a href="{% url 'ventas:cambiar_estado' venta.pk %}" class="btn btn-success">Cargar venta</a>
-                    </td>
+                    
+                    {% ifnotequal venta.estado_id 2 %}
+                    
+                        <td>
+                            <a href="{% url 'ventas:cambiar_estado' venta.pk %}" class="btn btn-success">Cargar venta</a>
+                        </td>
+                    {% else %} 
+                        <td>
+                            <a class="btn btn-secondary">Cargar venta</a>
+                        </td>
+
+                    {% endifnotequal %}
                 </tr>
                 {% endfor %}
                 {% else %}
@@ -72,6 +81,12 @@ Listado de Ventas
     </div>
 </div>
 </div>
+
+<script>
+
+
+</script>
+
 
 
 {% endblock %}

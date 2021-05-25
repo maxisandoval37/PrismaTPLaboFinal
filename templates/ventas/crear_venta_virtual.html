@@ -35,21 +35,20 @@
 
             <div class="form-group">Cliente asociado</div>
             <div class="form-group">
-                <select name="cliente_asociado" id="id_cliente_asociado" class="form-group form-control">
+                <select name="cliente_asociado" id="id_cliente_asociado" class="select form-control">
                     <option value="0"> - </option>
 
                     {% for cli in cliente_asociado %}
                     <option value="{{cli.id}}">{{cli}}</option>
                     {% endfor %}
                 </select>
-                <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}">Registrar cuenta
-                    corriente</a>
+               
             </div>
 
 
             <div class="form-group">Medio de pago</div>
             <div class="form-group">
-                <select name="mediodepago" id="id_mediodepago" class="form-group form-control">
+                <select name="mediodepago" id="id_mediodepago" class="select form-control">
                     <option value="0"> - </option>
 
                     {% for medio in mediodepago %}
@@ -58,22 +57,24 @@
                 </select>
                 <a href="{% url 'clientes:registrar_mdp' %}?next={{ request.path }}">Registrar medio de pago</a>
             </div>
-
+            
             
             <div class="form-group">Cuenta Corriente</div>
             <div class="form-group">
-                <select name="cuenta_corriente" id="id_cuenta_corriente" class="form-group form-control">
+                <select name="cuenta_corriente" id="id_cuenta_corriente" class="select form-control">
                     <option value="0"> - </option>
 
                     {% for cc in cuenta_corriente %}
                     <option value="{{cc.id}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
                     {% endfor %}
                 </select>
+                <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}">Registrar cuenta
+                    corriente</a>
             </div>
 
             {{form.estado.label_tag}}
             <div class="form-group">
-                {% render_field form.estado class="form-control form-control-user" %}
+                {% render_field form.estado class="select form-control" %}
             </div>
 
             {{form.comentarios.label_tag}}
@@ -82,7 +83,7 @@
             </div>
             <div class="form-group">Sucursal asociada</div>
             <div class="form-group">
-                <select name="sucursal_asociada" id="id_sucursal_asociada" class="form-group form-control">
+                <select name="sucursal_asociada" id="id_sucursal_asociada" class="select form-control">
                     <option value="0"> - </option>
                     {% for suc in sucursal_asociada %}
                     <option value="{{suc.id}}">{{suc}}</option>
@@ -92,7 +93,7 @@
 
             <div class="form-group">Vendedor asociado</div>
             <div class="form-group">
-                <select name="vendedor_asociado" id="id_vendedor_asociado" class="form-group form-control">
+                <select name="vendedor_asociado" id="id_vendedor_asociado" class="select form-control">
                     <option value="0"> - </option>
                     {% for vendedor in vendedor_asociado %}
                     <option value="{{vendedor.id}}" data-chained="{{vendedor.sucursal.id}}">{{vendedor}}</option>
@@ -102,7 +103,7 @@
             
             {{form.cantidad_solicitada.label_tag}}
             <div class="form-group">
-                {% render_field form.cantidad_solicitada class="form-control form-control-user" %}
+                {% render_field form.cantidad_solicitada class="form form-control" %}
             </div>
             
            

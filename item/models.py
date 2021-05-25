@@ -195,6 +195,8 @@ class Item(models.Model):
             raise ValidationError('El stock de seguridad no puede ser negativo.')
         if self.cantidad < 0:
             raise ValidationError('Debe indicar un valor para la cantidad.')
+        if self.cantidad < 0:
+            raise ValidationError('La cantidad del stock no puede ser negativa')
 
     class Meta:
 

@@ -31,7 +31,7 @@ class EditarCliente(ValidarLoginYPermisosRequeridos,UpdateView):
     
     permission_required = ('cliente.view_cliente','cliente.change_cliente',)
     model = Cliente
-    fields = ['email','telefono','categoria_cliente','estado_cliente','estado_deuda']
+    fields = ['email','telefono','categoria_cliente','estado_cliente']
     template_name = 'clientes/crear_cliente.html'
     success_url = reverse_lazy('clientes:listar_clientes')
  
