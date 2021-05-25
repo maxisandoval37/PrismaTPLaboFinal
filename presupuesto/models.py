@@ -2,6 +2,7 @@ from django.db import models
 from item.models import Item
 from sucursal.models import Sucursal
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 # Create your models here.
 class EstadoPresupuesto(models.Model):
@@ -33,11 +34,11 @@ class Presupuesto(models.Model):
     def clean(self):
         if self.total < 0:
             raise ValidationError('El total no puede ser negativo.')
-
         if self.estado.opciones == "RECHAZADO" and self.comentarios == None:
             raise ValidationError('Debes completar el campo comentarios.')
         if self.estado.opciones == "APROBADO" and self.comentarios != None:
             raise ValidationError('No es necesario que ingreses comentarios.')
-        
-      
-            
+        if (self.fecha_expiracion is None):
+            raise ValidationError('El formato de la fecha es inválido')
+        if timezone.now() > self.fecha_expiracion:
+            raise ValidationError('La fecha no puede ser menor a la actual')
