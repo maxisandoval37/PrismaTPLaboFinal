@@ -247,24 +247,15 @@ def eliminarItem(request, presupuesto, item):
     
     item_presupuesto = ItemPresupuesto.objects.filter(presupuesto_asociado = presupuesto, id = item)
     
-    item_asociado = 0
     presupuesto_asociado = 0
-    cantidad_solicitada = 0
     monto = 0
     
     for item in item_presupuesto:
-        item_asociado = item.item_id 
+       
         presupuesto_asociado = item.presupuesto_asociado_id   
-        cantidad_solicitada = item.cantidad_solicitada
         monto = item.monto
         
-    
-    item_de_presupuesto= Item.objects.filter(id = item_asociado)  
    
-    for item in item_de_presupuesto:
-        
-        item.cantidad += cantidad_solicitada
-        item.save() 
         
     queryset = Presupuesto.objects.filter(id = presupuesto_asociado)
     
