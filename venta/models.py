@@ -31,15 +31,15 @@ class EstadoVenta(models.Model):
     
     class opcionesVenta(models.TextChoices):
         
-        CANCELADA_POR_CLIENTE = 'CANCELADO POR EL CLIENTE'
-        CANCELADA_POR_SUCURSAL = 'CANCELADO POR LA SUCURSAL'
+        CANCELADA_POR_CLIENTE = 'CANCELADA POR EL CLIENTE'
+        CANCELADA_POR_SUCURSAL = 'CANCELADA POR LA SUCURSAL'
         PENDIENTE_DE_RETIRO = 'PENDIENTE DE RETIRO'
         EN_PREPARACION = 'EN PREPARACIÓN'
         LISTA = 'LISTA'
         PAGADA = 'PAGADA'
         RETIRADA = 'RETIRADA'
         RECHAZADA = 'RECHAZADA'
-        NO_RETIRADO = 'NO RETIRADO'
+        NO_RETIRADO = 'NO RETIRADA'
         
     opciones = models.CharField(max_length=25, choices=opcionesVenta.choices)
         
@@ -90,9 +90,7 @@ class VentaVirtual(Venta):
     
     # def clean(self):
         
-    #     if self.item_asociado.cantidad == 0:
-    #         raise ValidationError('No hay stock del item solicitado.')
-        
+          
         #if self.estado.opciones == 'PENDIENTE DE RETIRO':
         #if self.estado.opciones == 'NO RETIRADO':
                

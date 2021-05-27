@@ -30,13 +30,19 @@ Pedido para el proveedor
             <tbody>
                 {% for pedido in queryset %}
                 <tr>
-                    <td></td>
+                    <td>{{pedido.item.cantidad_lote}}</td>
                     <td>{{ pedido.item }}</td>
                     <td id="{{pedido.item}}cantitdadLote">{{ pedido.cantidad }}</td>
                     <td hidden id="{{pedido.item}}porLote" class="esPorLoteClass">{{ pedido.item.repo_por_lote }}</td>
-                    <td hidden>{{ pedido.item.cantidad_lote
-                        }}</td>
-                    <td><input type="Integer" class="input-cantidad" id="{{pedido.item}}" placeholder="0"></td>
+                    {% if pedido.item.repo_por_lote %}
+                    <td>
+                        <input type="Number" class="input-cantidad" id="{{pedido.item}}" placeholder="0" min="0"
+                            max="{{ pedido.cantidad }}" step="{{ pedido.item.cantidad_lote }}">
+                    </td>
+                    {% else %}
+                    <td><input type="Integer" class="input-cantidad" id="{{pedido.item}}" placeholder="0" min="0"
+                            max="{{ pedido.cantidad }}"></td>
+                    {% endif %}
                 </tr>
 
                 {% endfor %}
@@ -49,7 +55,7 @@ Pedido para el proveedor
 
 </div>
 <div class="text-center">
-    <a href="{% url 'items:stock_recibido' %}" onclick="funcionCantidad()" class="btn btn-primary"> Enviar </a>
+    <a onclick="funcionCantidad()" class="btn btn-primary"> Enviar </a>
 </div>
 </div>
 
@@ -60,81 +66,53 @@ Pedido para el proveedor
 
 <script>
     function funcionCantidad() {
-        let valido = true;
+        console.log("Con su permiso, paso a enviar todo a Django :D");
+        var csrftoken = getCookie('csrftoken');
+        const inputsCantidades = document.getElementsByClassName('input-cantidad');
 
-        for (item of document.getElementsByClassName("esPorLoteClass")) {
-            let cantidadValida = true;
-            let repoPorLote = document.getElementById(item.id).innerText;
-            let cantidadLote = document.getElementById(item.id.substring(0, item.id.length - 7) + "cantitdadLote").innerText;
-            let cantidadProveedor = document.getElementById(item.id.substring(0, item.id.length - 7)).value;
-
-            if (repoPorLote == "True" && parseInt(cantidadProveedor) % parseInt(cantidadLote)  != 0) {
-                cantidadValida = false;
-            }
-
-            valido &= cantidadValida;
-        }
-
-        if (valido) {
-            console.log("Con su permiso, paso a enviar todo a Django :D");
-            var csrftoken = getCookie('csrftoken');
-            const inputsCantidades = document.getElementsByClassName('input-cantidad');
-            for (input of inputsCantidades) {
-                console.log(input.id)
-                console.log(document.getElementById(input.id).value)
-                $.ajax({
-                    type: "POST",
-                    url: "RecibirStock/",
-                    data: {
-                        csrfmiddlewaretoken: csrftoken,
-                        item: input.id,
-                        cantidad: document.getElementById(input.id).value,
-                    },
-                    dataType: "text",
-                    success: function (data) {
-                        console.log(data);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-
-                        if (jqXHR.status === 0) {
-
-                            alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
-
-                        } else if (jqXHR.status == 404) {
-
-                            alert('La Pagina solicitada no fue encontrada [404]');
-
-                        } else if (jqXHR.status == 500) {
-
-                            alert('Erro Interno [500]');
-
-                        } else if (textStatus === 'parsererror') {
-
-                            alert('Error en el retorno de Datos. [parseJson]');
-
-                        } else if (textStatus === 'timeout') {
-
-                            alert('Tiempo de Espera agotado');
-
-                        } else if (textStatus === 'abort') {
-                            alert('Solicitud Abortada. [Ajax Request]');
-
-                        } else {
-                            alert('Error desconocido: ' + jqXHR.responseText);
-
-                        }//end if 
-
-                    }//end error
-                });
-            }
-        }
-        else {
-            alert("Error");
+        for (input of inputsCantidades) {
+            console.log(input.id)
+            console.log(document.getElementById(input.id).value)
+            $.ajax({
+                type: "POST",
+                url: "RecibirStock/",
+                data: {
+                    csrfmiddlewaretoken: csrftoken,
+                    item: input.id,
+                    cantidad: document.getElementById(input.id).value,
+                },
+                dataType: "text",
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 0) {
+                        alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
+                    }
+                    else if (jqXHR.status == 404) {
+                        alert('La Pagina solicitada no fue encontrada [404]');
+                    }
+                    else if (jqXHR.status == 500) {
+                        alert('Erro Interno [500]');
+                    }
+                    else if (textStatus === 'parsererror') {
+                        alert('Error en el retorno de Datos. [parseJson]');
+                    }
+                    else if (textStatus === 'timeout') {
+                        alert('Tiempo de Espera agotado');
+                    }
+                    else if (textStatus === 'abort') {
+                        alert('Solicitud Abortada. [Ajax Request]');
+                    }
+                    else {
+                        alert('Error desconocido: ' + jqXHR.responseText);
+                    }
+                }
+            });
         }
     }
 
     function getCookie(name) {
-
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
             var cookies = document.cookie.split(';');
@@ -146,7 +124,6 @@ Pedido para el proveedor
                 }
             }
         }
-
         return cookieValue;
     }
 </script>

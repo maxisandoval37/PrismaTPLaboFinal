@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 import json
-
+from django.contrib.messages.views import SuccessMessageMixin
 
 class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
     
@@ -27,9 +27,9 @@ class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('venta.view_venta',)
     model = Venta 
     template_name = 'ventas/listar_venta_cajero.html'
+    queryset = Venta.objects.filter(estado_id = 2)
 
-
-class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('venta.view_venta','venta.add_venta',)
     model = VentaLocal
@@ -37,6 +37,7 @@ class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,CreateView):
     form_class = VentaLocalForm
     template_name = 'ventas/crear_venta_local.html'
     success_url = reverse_lazy('ventas:listar_ventas')
+    success_message = 'Venta local registrada correctamente.'
       
     
     def get_context_data(self, **kwargs):
@@ -51,7 +52,7 @@ class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,CreateView):
     
     
     
-class RegistrarVentaVirtual(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarVentaVirtual(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('venta.view_venta','venta.add_venta',)
     model = VentaVirtual
@@ -59,6 +60,7 @@ class RegistrarVentaVirtual(ValidarLoginYPermisosRequeridos,CreateView):
     form_class = VentaVirtualForm
     template_name = 'ventas/crear_venta_virtual.html'
     success_url = reverse_lazy('ventas:listar_ventas')
+    success_message = 'Venta virtual registrada correctamente.'
     
     def get_context_data(self, **kwargs):
         context = super(RegistrarVentaVirtual, self).get_context_data(**kwargs)
@@ -69,12 +71,13 @@ class RegistrarVentaVirtual(ValidarLoginYPermisosRequeridos,CreateView):
         context["vendedor_asociado"] = Vendedor.objects.all()
         return context
     
-class EliminarVenta(ValidarLoginYPermisosRequeridos,DeleteView):
+class EliminarVenta(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
     permission_required = ('venta.view_venta','venta.delete_venta',)
     model = Venta
     template_name = 'ventas/eliminar_venta.html'
     success_url = reverse_lazy('ventas:listar_ventas')
+    success_message = 'Se eliminó la venta correctamente.'
                                     
     def delete(self, request, *args, **kwargs):
         
@@ -147,7 +150,7 @@ def AgregarItem(request, sucursal, venta):
     
     if request.is_ajax():
         object = json.loads(request.POST.get('items'))
-        print(object)
+        
         lista_items = []
         lista_ventas = []
         lista_errores = []
@@ -169,46 +172,52 @@ def AgregarItem(request, sucursal, venta):
             item_venta.venta_asociada_id = int(venta)
             item_venta.monto = Decimal(cantidad.replace(',', '.')) * Decimal(precio.replace(',', '.'))
             
-            validacion = validar(item_venta)
+            
+            
+            validacion = validar(request, item_venta)
             
             if validacion != None:
                 lista_errores.append(validacion)
-                print(lista_errores)
+                continue
             else:
                 lista_success.append(item_venta.item.nombre)
-                print(lista_success)
-            
+                
             lista_items.append(item_venta.item_id)
             lista_ventas.append(item_venta.venta_asociada_id)
-        
+            
             item_venta.save()
-
-        item_de_venta = Item.objects.raw("""
-            SELECT * 
-            FROM item_item 
-            WHERE id IN %s               
-        """, [tuple(lista_items)])  
-        
-        
-        for item in item_de_venta:
             
-            
-            item.cantidad -= item_venta.cantidad_solicitada
-            item.save() 
-        
-        queryset = Venta.objects.raw("""
-            SELECT * 
-            FROM venta_venta
-            WHERE id IN %s               
-        """, [tuple(lista_ventas)])  
+            queryset = Venta.objects.raw("""
+                SELECT * 
+                FROM venta_venta
+                WHERE id IN %s               
+            """, [tuple(lista_ventas)])  
             
         
-        for venta in queryset:
-           
-            venta.total += item_venta.monto
-            
-            venta.save()
+            for venta in queryset:
+                
+                venta.total += item_venta.monto
+               
+                venta.save()
         
+        
+        if len(lista_items) > 0:
+            item_de_venta = Item.objects.raw("""
+                SELECT * 
+                FROM item_item 
+                WHERE id IN %s               
+            """, [tuple(lista_items)])  
+            
+            
+            for item in item_de_venta:
+                
+                if (item.cantidad - item_venta.cantidad_solicitada) < 0:
+                    return HttpResponseBadRequest()
+                else:
+                    item.cantidad -= item_venta.cantidad_solicitada
+                    item.save() 
+            
+            
         mensaje = "Se añadieron: "
         for m in lista_success:
             mensaje += m + ", "
@@ -218,7 +227,7 @@ def AgregarItem(request, sucursal, venta):
             mensaje = mensaje[0:len(mensaje)-2] + ".\nNo se añadieron: "
             
         for m in lista_errores:
-             mensaje += m + ", "
+            mensaje += m + ", "
         
         if len(lista_errores) == 0:
             mensaje = mensaje[0:len(mensaje)-18] 
@@ -228,31 +237,28 @@ def AgregarItem(request, sucursal, venta):
         return HttpResponse(mensaje)
     
 
-def validar(item_venta):
+def validar(request, item_venta):
     
     if item_venta.item.cantidad == 0:
-            #messages.error(request, "No hay stock del item solicitado.")
+            messages.error(request, "No hay stock del item solicitado.")
             return item_venta.item.nombre
         
         
-    # if item_venta.item.precio >= 10000:
-    #     raise ValidationError("El cliente debe ser registrado para finalizar la venta.")
+    if item_venta.venta_asociada.cliente_asociado.nombre == 'CONSUMIDOR FINAL' and item_venta.item.precio >= 10000:
+         messages.error(request, "Es necesario registrar al cliente para agregar el item.")
+         return item_venta.item.nombre
     
     if item_venta.item.cantidad < item_venta.cantidad_solicitada:
-        #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
+        messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
         return item_venta.item.nombre 
-            
-    # if item_venta.monto <= 0:
-    #     messages.error(request,"Debe ingresar un monto valido.")
-    #     return item_venta.item.nombre 
     
     
     if item_venta.cantidad_solicitada < 0:
-        # messages.error(request,"La cantidad no puede ser negativa.") 
+        messages.error(request,"La cantidad no puede ser negativa.") 
         return item_venta.item.nombre 
     
     if item_venta.cantidad_solicitada == None or item_venta.cantidad_solicitada == 0:
-        # messages.error(request,"Debe ingresar una cantidad para solicitar.")
+        messages.error(request,"Debe ingresar una cantidad para solicitar.")
         return item_venta.item.nombre 
         
 
@@ -264,13 +270,16 @@ def CambiarEstado(request, id):
     
     queryset = Venta.objects.filter(id = id)
     
-    
+    ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
+    nuevo_estado = ""
+    for id in ids:
+        nuevo_estado = id.id
+              
     for venta in queryset:
        
-        
-        venta.estado = EstadoVenta(2)
-        print(venta.estado)
+        venta.estado.opciones = nuevo_estado
         venta.save()
+       
     messages.success(request, "Venta lista para su ejecucion.")
     
     return redirect('ventas:listar_ventas')
@@ -323,19 +332,32 @@ def FinalizarVenta(request, venta):
         
         instancia = venta
         sucursal_asociada = venta.sucursal_asociada
-        total = venta.total
+        total += venta.total
         
-    cajas = Caja.objects.filter(sucursal_id = sucursal_asociada)
+    cajas = Caja.objects.filter(sucursal_id = sucursal_asociada.id)
+    
+    if instancia.total <= 0:
+        messages.error(request, "No es posible realizar una venta sin agregar items.")
+        return redirect('ventas:listar_ventas_cajero')
         
-    for caja in cajas:   
+    for caja in cajas: 
+        
         if caja.saldo_disponible < total:
             messages.error(request, "Saldo insuficiente en las cajas de la sucursal.")
-            return redirect('ventas:listar_ventas_cajero')
-        
+            
         else:
             caja.saldo_disponible = caja.saldo_disponible - total
             caja.save()
-            #instancia.estado = EstadoVenta.opcionesVenta.PAGADA
+            ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
+            nuevo_estado = ""
+            for id in ids:
+                nuevo_estado = id.id
+              
+            instancia.estado_id = nuevo_estado
+           
             instancia.save()
+            
             messages.success(request, "Venta finalizada con éxito.")  
-            return redirect('ventas:listar_ventas_cajero')
+            break
+        
+    return redirect('ventas:listar_ventas_cajero')

@@ -96,9 +96,6 @@ class Cliente(models.Model):
     estado_cliente = models.ForeignKey(EstadoCliente, on_delete=models.PROTECT)
     
     
-    
-    
-    
     def __str__(self):
         return self.cuit
     

@@ -121,6 +121,8 @@ class FormularioUsuario(forms.ModelForm):
                 }
             )
         }
+        
+        
 
 
     def clean_password2(self):

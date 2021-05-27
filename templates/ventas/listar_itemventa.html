@@ -39,10 +39,16 @@ Listado de Items
                     <td>{{item.item.precio}}</td>
                     <td>{{ item.cantidad_solicitada}}</td>
                     
+
+                    {% if item.venta.estado.opciones == 'EN PREPARACION' %}
                    <td>
                        <a href="{% url 'ventas:eliminar_item' venta item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>
-                   
+                   {% else %} 
+                   <td>
+                    <a  class="btn btn-secondary">Quitar Item</a>
+                    </td>
+                   {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}

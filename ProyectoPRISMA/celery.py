@@ -1,6 +1,5 @@
 from celery import Celery
 import os
-from celery.schedules import crontab
 
 app = Celery('ProyectoPRISMA',
              broker='amqp://localhost',
@@ -9,7 +8,8 @@ app = Celery('ProyectoPRISMA',
 
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ProyectoPRISMA.settings.local')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE',
+                      'ProyectoPRISMA.settings.local')
 SECRETKEY = '0=k(5)!gnn(3p#z=&%tg7^t^tz)2mfd24y=4xv96v4w0qe^3h'
 app = Celery('ProyectoPRISMA')
 
@@ -21,13 +21,30 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 
 app.conf.beat_schedule = {
-    'cada-24-horas': {  #cada dia a las 18:00 cuando cierra la caja
+    'cada-24-horas': {  # cada dia a las 18:00 cuando cierra la caja
         'task': 'ProyectoPRISMA.tasks.Pedido',
-        'schedule': 30.0,
-       
+        'schedule': 60.0,
+    },
+    'cada-1-hora': {
+        'task': 'ProyectoPRISMA.tasks.receiveVentasVirtuales',
+        'schedule': 60.0,
     },
 }
 
+app.conf.beat_schedule = {
+    'cada-24-horas': {  # cada dia a las 18:00 cuando cierra la caja
+        'task': 'ProyectoPRISMA.tasks.Pedido',
+        'schedule': 60.0,
+    },
+    'cada-1-hora': {
+        'task': 'ProyectoPRISMA.tasks.receiveVentasVirtuales',
+        'schedule': 60.0,
+    },
+    'aviso-disposicion-cada-dia-clientes': {
+        'task': 'ProyectoPRISMA.tasks.enviarAvisoDisposicion',
+        'schedule': 15.0,
+    },
+}
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks(['ProyectoPRISMA.tasks'])
 

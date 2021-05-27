@@ -1,0 +1,79 @@
+{
+    "ventas": [
+        {
+            "numero_comprobante": "100",
+            "cliente_asociado_id": "1",
+            "cuenta_corriente_id": "1",
+            "estado_id": "3",
+            "mediopago_id": "1",
+            "sucursal_asociada_id": "1",
+            "vendedor_asociado_id": "2",
+            "items": [
+                {
+                    "item_id": "1",
+                    "cantidad_solicitada": "1",
+                    "monto": "100,00",
+                    "sucursal_asociada_id": "1",
+                    "venta_asociada_id": "1"
+                },
+                {
+                    "item_id": "2",
+                    "cantidad_solicitada": "10",
+                    "monto": "1520,00",
+                    "sucursal_asociada_id": "1",
+                    "venta_asociada_id": "1"
+                }
+            ]
+        },
+        {
+            "numero_comprobante": "101",
+            "cliente_asociado_id": "1",
+            "cuenta_corriente_id": "1",
+            "estado_id": "3",
+            "mediopago_id": "1",
+            "sucursal_asociada_id": "1",
+            "vendedor_asociado_id": "2",
+            "items": [
+                {
+                    "item_id": "1",
+                    "cantidad_solicitada": "36",
+                    "monto": "15269,00",
+                    "sucursal_asociada_id": "1",
+                    "venta_asociada_id": "1"
+                },
+                {
+                    "item_id": "2",
+                    "cantidad_solicitada": "10",
+                    "monto": "17000,00",
+                    "sucursal_asociada_id": "1",
+                    "venta_asociada_id": "1"
+                },
+                {
+                    "item_id": "1",
+                    "cantidad_solicitada": "5",
+                    "monto": "1500,00",
+                    "sucursal_asociada_id": "1",
+                    "venta_asociada_id": "1"
+                }
+            ]
+        },
+        {
+            "numero_comprobante": "102",
+            "cliente_asociado_id": "1",
+            "cuenta_corriente_id": "1",
+            "estado_id": "3",
+            "mediopago_id": "1",
+            "sucursal_asociada_id": "1",
+            "vendedor_asociado_id": "2",
+            "items": [
+                {
+                    "item_id": "2",
+                    "cantidad_solicitada": "10",
+                    "monto": "2000,00",
+                    "sucursal_asociada_id": "1",
+                    "venta_asociada_id": "1"
+                }
+            ]
+        }
+    ]
+}

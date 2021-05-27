@@ -14,7 +14,7 @@ class PresupuestoForm(forms.ModelForm):
     class Meta:
         
         model = Presupuesto
-        fields = ['responsable_inscripto','fecha_expiracion','total','estado','items','sucursal','comentarios']
+        fields = ['responsable_inscripto','fecha_expiracion','estado','sucursal_asociada','vendedor_asociado','comentarios']
         
          
         

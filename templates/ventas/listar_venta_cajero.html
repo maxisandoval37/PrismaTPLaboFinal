@@ -55,10 +55,15 @@ Listado de Ventas
                         <a href="{% url 'ventas:ver_items' venta.pk %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
+                    {% ifnotequal venta.estado.opciones 'PAGADA' %}
                     <td>
                         <a href="{% url 'ventas:finalizar_venta' venta.pk %}" class="btn btn-success">Finalizar venta</a> 
                     </td>
-                  
+                    {% else %}
+                    <td>
+                        <a  class="btn btn-secondary">Finalizar venta</a>
+                    </td>
+                    {% endifnotequal %}
                 </tr>
                 {% endfor %}
                 {% else %}

@@ -1,0 +1,68 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Items</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Número de Presupuesto</th>
+                    <th>Item</th>
+                    <th>Precio</th>
+                   <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if lista %}
+                {% for item in lista %}
+                <tr>
+                    <td></td>
+                    <td>{{ item.presupuesto_asociado.id }}</td>
+                    <td>{{ item.item }}</td>
+                    <td>{{item.item.precio}}</td>
+                    <td>{{ item.cantidad_solicitada}}</td>
+                    
+
+                    {% if item.presupuesto_asociado.estado.opciones == 'EN EVALUACION' %}
+                   <td>
+                       <a href="{% url 'presupuestos:eliminar_item' presupuesto item.id %}" class="btn btn-danger">Quitar Item</a>
+                   </td>
+                   {% else %} 
+                   <td>
+                    <a  class="btn btn-secondary">Quitar Item</a>
+                    </td>
+                   {% endif %}
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5> No hay items agregados. </h1>
+                {% endif %}
+            </tbody>
+        </table>
+        
+    </div>
+    
+</div>
+</div>
+<div class="text-center">
+    <a href="{% url 'presupuestos:listar_presupuestos' %}" class="btn btn-info"> Volver </a>
+</div>
+
+{% endblock %}

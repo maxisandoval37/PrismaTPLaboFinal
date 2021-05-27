@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import FormularioLogin, FormularioUsuario
 from .mixins import ValidarLoginYPermisosRequeridos
 from django.core.exceptions import ValidationError
-
+from django.contrib.messages.views import SuccessMessageMixin
 
 class Login(FormView):
     template_name = 'login.html'
@@ -56,27 +56,28 @@ class ListadoUsuario(ValidarLoginYPermisosRequeridos,ListView):
      queryset = Usuario.objects.filter(is_staff = False)
      
     
-class RegistrarUsuario(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('usuario.view_usuario','usuario.add_usuario',)
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuarios/crear_usuario.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
+    success_message = 'Usuario registrado correctamente.'
     
     def clean(self):
         if self.cuit in 'abcdefghijklmnñopqrstuvwxyz':
             raise ValidationError('Cuit inválido.')
 
 
-class EditarUsuario(ValidarLoginYPermisosRequeridos,UpdateView):
+class EditarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
     
     permission_required = ('usuario.view_usuario','usuario.change_usuario',)
     model = Usuario
     fields = ['nombre','apellido','email','telefono','rol']
     template_name = 'usuarios/editar_usuario.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
-    
+    success_message = 'Se editó al usuario correctamente.'
     
     
 

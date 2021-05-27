@@ -1,9 +1,15 @@
-from item.models import Item, Pedidos, Proveedor, Sucursal
+from item.models import Item, Pedidos, Proveedor
+from venta.models import Venta, ItemVenta, EstadoVenta
 from celery import shared_task, Celery
 from django.core.mail import send_mail
+from usuario.models import Supervisor
+from cliente.models import Cliente
+from sucursal.models import Caja
+from decimal import Decimal
+from datetime import date
 from time import sleep
 import random
-from usuario.models import Supervisor
+import json
 
 
 @shared_task
@@ -72,7 +78,7 @@ def Pedido():
             pedido.proveedor = item.categoria.prov_preferido
             print(item.repo_por_lote)
             if item.repo_por_lote:
-                pedido.cantidad = item.cantidad_lote
+                pedido.cantidad = item.cantidad_lote * 2
             pedido.save()
         elif(item.reintentos < 2):
             item.reintentos += 1
@@ -135,10 +141,164 @@ def Pedido():
     return None
 
 
+@shared_task
+def receiveVentasVirtuales():
+    body = open('body.json',)
+
+    # print('****************')
+    for i in range(0, len(json.loads(body)['ventas'])):
+        venta = json.loads(body)['ventas'][i]
+        numero_comprobante = venta['numero_comprobante']
+        cliente_asociado_id = venta['cliente_asociado_id']
+        cuenta_corriente_id = venta['cuenta_corriente_id']
+        estado_id = venta['estado_id']
+        mediopago_id = venta['mediopago_id']
+        sucursal_asociada_id = venta['sucursal_asociada_id']
+        vendedor_asociado_id = venta['vendedor_asociado_id']
+        # print('****************')
+        # print('Venta: ' + str(i))
+        # print('numero_comprobante: ' + numero_comprobante)
+        # print('cliente_asociado_id: ' + cliente_asociado_id)
+        # print('cuenta_corriente_id: ' + cuenta_corriente_id)
+        # print('estado_id: ' + estado_id)
+        # print('mediopago_id: ' + mediopago_id)
+        # print('sucursal_asociada_id: ' + sucursal_asociada_id)
+        # print('vendedor_asociado_id: ' + vendedor_asociado_id)
+
+        try:
+            ventaToInsert = Venta()
+            ventaToInsert.numero_comprobante = int(numero_comprobante)
+            ventaToInsert.cliente_asociado_id = int(cliente_asociado_id)
+            ventaToInsert.vendedor_asociado_id = int(vendedor_asociado_id)
+            ventaToInsert.sucursal_asociada_id = int(sucursal_asociada_id)
+            ventaToInsert.mediodepago_id = int(mediopago_id)
+            ventaToInsert.cuenta_corriente_id = int(cuenta_corriente_id)
+            ventaToInsert.estado_id = int(estado_id)
+            ventaToInsert.save()
+        except Exception as e:
+            print("Exception:")
+            print(e)
+
+        # print('****************')
+        for k in range(0, len(venta['items'])):
+            item = venta['items'][k]
+            print('\titem_venta: ' + str(k))
+            cargarItemVenta(item, numero_comprobante)
+
+    # print('****************')
+
+    body.close()
+
+    return None
+
+
+def cargarItemVenta(objeto, numero_comprobante):
+    ventaFromQuery = Venta.objects.raw("""
+        SELECT id
+        FROM venta_venta
+        WHERE numero_comprobante = %s
+    """, [str(numero_comprobante)])
+
+    for v in ventaFromQuery:
+        venta = v.id
+
+    lista_items = []
+    lista_ventas = []
+    item = objeto['item_id']
+    cantidad = objeto['cantidad_solicitada']
+    sucursal = objeto['sucursal_asociada_id']
+    precio = objeto['monto']
+
+    # print('\titem: ' + item)
+    # print('\tcantidad: ' + cantidad)
+    # print('\tprecio: ' + precio)
+    # print('\tsucursal: ' + sucursal)
+    # print('\tventa: ' + str(venta))
+
+    item_venta = ItemVenta()
+    item_venta.item_id = int(item)
+    item_venta.cantidad_solicitada = int(cantidad)
+    item_venta.sucursal_asociada_id = str(sucursal)
+    item_venta.venta_asociada_id = int(venta)
+    item_venta.monto = Decimal(cantidad.replace(
+        ',', '.')) * Decimal(precio.replace(',', '.'))
+
+    lista_items.append(item_venta.item_id)
+    lista_ventas.append(item_venta.venta_asociada_id)
+
+    item_venta.save()
+
+    item_de_venta = Item.objects.raw("""
+        SELECT * 
+        FROM item_item 
+        WHERE id IN %s               
+    """, [tuple(lista_items)])
+
+    for item in item_de_venta:
+        item.cantidad -= item_venta.cantidad_solicitada
+        item.save()
+
+    ventas = Venta.objects.raw("""
+        SELECT * 
+        FROM venta_venta
+        WHERE id IN %s               
+    """, [tuple(lista_ventas)])
+
+    for venta in ventas:
+        venta.total += item_venta.monto
+        venta.save()
+
+    return None
+
+
+@shared_task
+def enviarAvisoDisposicion():
+    ventas = Venta.objects.raw("""
+        SELECT *
+        FROM venta_venta
+    """)
+
+    ventasAAvisar = []
+    ventasADisponer = []
+
+    for venta in ventas:
+        print("DIAS: " + str(abs(date.today() - venta.fecha.date()).days))
+        if venta.estado.opciones == EstadoVenta.opcionesVenta.PAGADA and abs(date.today() - venta.fecha.date()).days == 7:
+            ventasAAvisar.append(venta)
+        elif venta.estado.opciones == EstadoVenta.opcionesVenta.PAGADA and abs(date.today() - venta.fecha.date()).days == 8:
+            ventasADisponer.append(venta)
+
+    print("ventasAAvisar: ")
+    print(ventasAAvisar)
+
+    print("ventasADisponer: ")
+    print(ventasADisponer)
+
+    for venta in ventasAAvisar:
+        print("ENVIANDO EMAIL")
+        send_mail('AVISO DISPOSICIÓN DE COMPRA - ' + venta.cliente_asociado.nombre, "Buenas tardes, " + venta.cliente_asociado.nombre + " este es un aviso automático de que su venta realizada el " + str(venta.fecha.date()) +
+                  " va a ser dispuesta. Por favor, diríjase a la sucursal N°" + str(venta.sucursal_asociada_id) + " dentro de las siguientes 24hs para poder retirarla.\nDe otra forma, se le devolverá sólo el 75" + '%' + " de su dinero.\n\n--\nSaludos.", 'tmmzprueba@gmail.com', {venta.cliente_asociado.email})
+
+    ids = EstadoVenta.objects.filter(opciones = 'CANCELADA POR LA SUCURSAL')
+    nuevo_estado = ""
+    for id in ids:
+        
+        nuevo_estado = id.id
+
+    for venta in ventasADisponer:
+        
+        
+        cajas = Caja.objects.filter(sucursal_id = venta.sucursal_asociada_id)
+        venta.estado_id = nuevo_estado
+        venta.save()
+        
+        for caja in cajas:
+            
+            caja.saldo_disponible += (venta.total * Decimal("0.75".replace(',', '.')))
+            caja.save()
+            
+            break
+        
+    return None
+
 app = Celery()
-
-
-
-
-
-

@@ -25,9 +25,10 @@ Listado de Presupuestos
                     <th>#</th>
                     <th>Fecha de emisión</th>
                     <th>Fecha de expiración</th>
-                    <th>Total</th>
                     <th>Estado</th>
-                    <th>Comentarios</th>
+                    <th>Vendedor asociado</th>
+                    <th>Sucursal asociada</th>
+                    <th>Total</th>
                     
                 </tr>
             </thead>
@@ -38,16 +39,46 @@ Listado de Presupuestos
                     <td></td>
                     <td>{{ presupuesto.fecha_emision }}</td>
                     <td>{{ presupuesto.fecha_expiracion }}</td>
-                    <td>{{ presupuesto.total}}</td>
                     <td>{{presupuesto.estado}}</td>
-                    <td>{{ presupuesto.comentarios }}</td>
-                    
+                    <td>{{ presupuesto.vendedor_asociado}}</td>
+                    <td>{{ presupuesto.sucursal_asociada}}</td>
+                    <td>{{ presupuesto.total}}</td>                    
 
                     <td>
                         <a href="{% url 'presupuestos:eliminar_presupuesto' presupuesto.pk %}" class="btn btn-danger">
                             Eliminar </a>
-                       
                     </td>
+                    {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
+                    <td>
+                        <a href="{% url 'presupuestos:registrar_itempresupuesto' presupuesto.sucursal_asociada.id  presupuesto.pk %}" class="btn btn-primary">
+                            Agregar item </a>
+                    </td>
+                    {% else %} 
+                    <td>
+                        <a class="btn btn-secondary">Agregar item </a>
+                    </td>
+                    {% endif %}
+                    <td>
+                        <a href="{% url 'presupuestos:listar_itemspresupuesto' presupuesto.pk %}" class="btn btn-warning">
+                            Ver detalle </a>
+                    </td>
+                    
+                    {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
+                        <td>
+                            <a href="{% url 'presupuestos:rechazar_presupuesto' presupuesto.pk %}" class="btn btn-danger">Rechazar presupuesto</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'presupuestos:aprobar_presupuesto' presupuesto.pk %}" class="btn btn-success">Aprobar presupuesto</a>
+                        </td>
+                    {% else %}
+                        
+                        <td>
+                            <a class="btn btn-secondary">Rechazar presupuesto</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary">Aprobar presupuesto</a>
+                        </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}

@@ -27,11 +27,12 @@ class RegistrarCliente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Creat
     success_message = "Cliente registrado con exito."
     
     
-class EditarCliente(ValidarLoginYPermisosRequeridos,UpdateView):
+class EditarCliente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
     
     permission_required = ('cliente.view_cliente','cliente.change_cliente',)
     model = Cliente
     fields = ['email','telefono','categoria_cliente','estado_cliente']
+    success_message = 'Se editó al cliente correctamente.'
     template_name = 'clientes/crear_cliente.html'
     success_url = reverse_lazy('clientes:listar_clientes')
  
@@ -61,17 +62,19 @@ class RegistrarMDP(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateVie
     permission_required = ('cliente.view_mediodepago','cliente.add_mediodepago',)
     model = MedioDePago
     form_class = MedioDePagoForm
+    success_message = 'Se registró el medio de pago.'
     template_name = 'ventas/crear_mdp.html'
     
     
     def get_success_url(self):
         return self.request.GET.get('next', reverse('ventas:registrar_venta_local'))
     
-class RegistrarCuentaCorriente(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarCuentaCorriente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('cliente.view_cuentacorriente','cliente.add_cuentacorriente',)
     model = CuentaCorriente
     form_class = CuentaCorrienteForm
+    success_message = 'Se registró la cuenta corriente.'
     template_name = 'clientes/crear_cuenta_corriente.html'
     def get_success_url(self):
         return self.request.GET.get('next', reverse('ventas:registrar_venta_local'))

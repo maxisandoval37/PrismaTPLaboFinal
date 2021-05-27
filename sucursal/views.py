@@ -7,6 +7,7 @@ from usuario.mixins import ValidarLoginYPermisosRequeridos
 from item.models import Item
 from django.contrib import messages
 from django.db.models import ProtectedError
+from django.contrib.messages.views import SuccessMessageMixin
 
 class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
     
@@ -14,21 +15,23 @@ class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
     model = Sucursal
     template_name = 'sucursales/listar_sucursal.html'
 
-class RegistrarSucursal(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('sucursal.view_sucursal','sucursal.add_sucursal',)
     model = Sucursal
     form_class = SucursalForm
     template_name = 'sucursales/crear_sucursal.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
+    success_message = 'Sucursal registrada correctamente.'
 
 
-class EliminarSucursal(ValidarLoginYPermisosRequeridos,DeleteView):
+class EliminarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
     permission_required = ('sucursal.view_sucursal','sucursal.delete_sucursal',)
     model = Sucursal
     template_name = 'sucursales/eliminar.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
+    success_message = 'Se eliminó la sucursal correctamente.'
     
     def delete(self, request, *args, **kwargs):
         
@@ -44,14 +47,14 @@ class EliminarSucursal(ValidarLoginYPermisosRequeridos,DeleteView):
         return HttpResponseRedirect(success_url)
     
     
-class RegistrarCaja(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('sucursal.view_caja','sucursal.add_caja',)
     model = Caja
     form_class = CajaForm
     template_name = 'sucursales/crear_caja.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
-
+    success_message = 'Caja registrada correctamente.'
 
 
 

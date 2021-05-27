@@ -5,7 +5,8 @@
 
 
 {% block content %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<div class="card">
 <div class="card">
     <div class="card-header">
         <strong class="card-tittle">Registro de Presupuestos</strong>
@@ -14,14 +15,45 @@
     <div class="card-body">
         <form class="user" method="post">
             {% csrf_token %}
-            {% for field in form %}
-            {{field.label_tag}}
-
+            
+            {{form.responsable_inscripto.label_tag}}
             <div class="form-group">
-                {% render_field field class="form-control form-control-user" %}
+                {% render_field form.responsable_inscripto class="select form-control" %}
+            </div>
 
-                {% endfor %}
+            {{form.fecha_expiracion.label_tag}}
+            <div class="form-group">
+                {% render_field form.fecha_expiracion class="select form-control" %}
+            </div>
 
+            {{form.estado.label_tag}}
+            <div class="form-group">
+                {% render_field form.estado class="select form-control" %}
+            </div>
+
+            {{form.comentarios.label_tag}}
+            <div class="form-group">
+                {% render_field form.comentarios class="select form-control" %}
+            </div>
+
+            <div class="form-group">Sucursal asociada</div>
+            <div class="form-group">
+                <select name="sucursal_asociada" id="id_sucursal_asociada" class="select form-control">
+                    <option value="0"> - </option>
+                    {% for suc in sucursal_asociada %}
+                    <option value="{{suc.id}}">{{suc}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">Vendedor asociado</div>
+            <div class="form-group">
+                <select name="vendedor_asociado" id="id_vendedor_asociado" class="select form-control">
+                    <option value="0"> - </option>
+                    {% for vendedor in vendedor_asociado %}
+                    <option value="{{vendedor.id}}" data-chained="{{vendedor.sucursal.id}}">{{vendedor}}</option>
+                    {% endfor %}
+                </select>
             </div>
             
             {{ form.errors}}
@@ -38,4 +70,11 @@
         </form>
     </div>
 </div>
+
+<script>
+    $(function () {
+        $("#id_vendedor_asociado").chained("#id_sucursal_asociada");
+    });
+</script>
+
 {% endblock %}

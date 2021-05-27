@@ -36,21 +36,23 @@
                     
                     
 
-                    <td>
-                        <button type="submit" onclick="AgregarItem()" class="btn btn-primary">Agregar item</button>
-                    </td>
+                    
                     <td>
                         <input value="0" type="Integer" class="form-control-user" id="{{item.id}}cantidad_solicitada" placeholder="Ingrese la cantidad"> 
                     </td>
                     
                 </tr>
                 {% endfor %}
-
+                
             </tbody>
         </table>
     </div>
-
+    
 </div>
+<div class="text-center">
+              
+    <button type="submit" onclick="AgregarItem()" class="btn btn-primary">Agregar items</button>   
+ </div>
 </div>
 
 <div class="text-center">

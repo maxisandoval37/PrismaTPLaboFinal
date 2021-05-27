@@ -9,6 +9,7 @@ from django.db.models import  ProtectedError
 from django.http import HttpResponse
 from venta.models import Venta
 from django.core.exceptions import ValidationError
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 
@@ -17,13 +18,20 @@ class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
     permission_required = ('item.view_item',)
     model = Item
     template_name = 'items/listar_item.html'
-    
+    items = Item.objects.raw("""
+        SELECT item_id, COUNT(item_id) 
+        FROM venta_itemventa
+        GROUP BY(item_id)
+        ORDER BY COUNT(item_id) DESC
+        LIMIT 20
+""")
 
-class RegistrarItem(ValidarLoginYPermisosRequeridos, CreateView):
+class RegistrarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,CreateView):
     permission_required = ('item.view_item', 'item.add_item',)
     model = Item
     context_object_name = 'obj'
     form_class = ItemForm
+    success_message = 'Item registrado correctamente.'
     template_name = 'items/crear_item.html'
 
     success_url = reverse_lazy('items:listar_items')
@@ -35,21 +43,23 @@ class RegistrarItem(ValidarLoginYPermisosRequeridos, CreateView):
         return context
 
 
-class EditarItem(ValidarLoginYPermisosRequeridos, UpdateView):
+class EditarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,UpdateView):
 
     permission_required = ('item.view_item','item.change_item')
     model = Item
     fields = ['descripcion', 'estado']
     template_name = 'items/editar_item.html'
+    success_message = 'Se editó el item correctamente.'
     success_url = reverse_lazy('items:listar_items')
 
 
-class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos, UpdateView):
+class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,UpdateView):
 
     permission_required = ('item.view_item','item.add_item','item.change_item','item.delete_item',)
     model = Item
     fields = ['stockminimo', 'stockseguridad', 'repo_por_lote']
     template_name = 'items/editar_item.html'
+    success_message = 'Se configuró la reposición correctamente.'
     success_url = reverse_lazy('items:listar_items')
 
     def clean(self):
@@ -60,12 +70,13 @@ class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos, UpdateView):
                 'EL STOCK DE SEGURIDAD NO PUEDE SER NEGATIVO!')
 
 
-class EliminarItem(ValidarLoginYPermisosRequeridos, DeleteView):
+class EliminarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,DeleteView):
     
     permission_required = ('item.view_item','item.delete_item',)
     model = Item
     template_name = 'items/eliminar_item.html'
     success_url = reverse_lazy('items:listar_items')
+    success_message = 'Se eliminó el item.'
 
     def delete(self, request, *args, **kwargs):
 

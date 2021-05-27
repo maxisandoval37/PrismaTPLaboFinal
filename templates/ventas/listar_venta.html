@@ -51,26 +51,33 @@ Listado de Ventas
                         <a href="{% url 'ventas:eliminar_venta' venta.pk %}" class="btn btn-danger">
                             Eliminar </a>
                     </td>
+
+                    {% if venta.estado.opciones == 'EN PREPARACION' %}
                     <td>
                         <a href="{% url 'ventas:registrar_itemventa' venta.sucursal_asociada.id  venta.pk %}" class="btn btn-primary">
                             Agregar item </a>
                     </td>
+                    {% else %} 
+                    <td>
+                        <a class="btn btn-secondary">Agregar item </a>
+                    </td>
+                    {% endif %}
                     <td>
                         <a href="{% url 'ventas:listar_itemsventa' venta.pk %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
                     
-                    {% ifnotequal venta.estado_id 2 %}
-                    
+                    {% if venta.estado.opciones == 'EN PREPARACION' %}
                         <td>
                             <a href="{% url 'ventas:cambiar_estado' venta.pk %}" class="btn btn-success">Cargar venta</a>
                         </td>
-                    {% else %} 
+                    {% else %}
+                        
                         <td>
                             <a class="btn btn-secondary">Cargar venta</a>
                         </td>
-
-                    {% endifnotequal %}
+                    {% endif %}
+                    
                 </tr>
                 {% endfor %}
                 {% else %}

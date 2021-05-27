@@ -6,7 +6,7 @@ from .forms import MedioDePagoForm
 from django.urls import reverse_lazy
 from django.db.models import ProtectedError
 from django.contrib import messages
-
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 
@@ -18,33 +18,36 @@ class ListadoMDP(ValidarLoginYPermisosRequeridos,ListView):
      
      
     
-class RegistrarMDP(ValidarLoginYPermisosRequeridos,CreateView):
+class RegistrarMDP(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     permission_required = ('item.view_item','item.add_item',)
     model = MedioDePago
     form_class = MedioDePagoForm
     template_name = 'mdps/crear_mdp.html'
+    success_message = 'Medio de pago registrado con éxito.'
     success_url = reverse_lazy('mdps:listar_mdps')
     
 
     
 
 
-class EditarMDP(ValidarLoginYPermisosRequeridos,UpdateView):
+class EditarMDP(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
     
     permission_required = ('item.view_item','item.add_item','item.change_item',)
     model = MedioDePago
     fields = ['tipo_de_pago']
     template_name = 'mdps/crear_mdp.html'
+    success_message = 'Se editó el medio de pago correctamente.'
     success_url = reverse_lazy('mdps:listar_mdps')
     
     
             
     
-class EliminarMDP(ValidarLoginYPermisosRequeridos,DeleteView):
+class EliminarMDP(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
     permission_required = ('item.view_item','item.add_item','item.change_item','item.delete_item',)
     model = MedioDePago
     template_name = 'mdps/eliminar_mdp.html'
+    success_message = 'Se eliminó el medio de pago.'
     success_url = reverse_lazy('mdps:listar_mdps')
 
 

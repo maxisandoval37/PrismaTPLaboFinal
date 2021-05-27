@@ -4,6 +4,7 @@ from sucursal.models import Sucursal
 from django.db.models.signals import post_save
 from proveedor.models import Proveedor
 from django.core.exceptions import ValidationError
+from cliente.models import CuentaCorriente
 import random
 # Create your models here.
 
@@ -151,8 +152,8 @@ class Item(models.Model):
     nombre = models.CharField('Nombre', max_length=50, unique=True)
     precio = models.DecimalField('Precio',decimal_places=2, max_digits=10, null=True)
     descripcion = models.CharField('Descripción', max_length=50, null=True, blank=True)
-    stockminimo = models.IntegerField('Stock Minimo',  default=0)
-    stockseguridad = models.IntegerField('Stock de Seguridad',  default=1)
+    stockminimo = models.IntegerField('Stock Minimo',  default=1)
+    stockseguridad = models.IntegerField('Stock de Seguridad',  default=0)
     ubicacion = models.CharField('Ubicación', max_length=15)
     ultima_modificacion = models.DateTimeField('Ultima Modificación', blank=True, null=True)
     repo_por_lote = models.BooleanField('Reposición por Lote')
@@ -194,8 +195,6 @@ class Item(models.Model):
             
             raise ValidationError('El stock de seguridad no puede ser negativo.')
         if self.cantidad < 0:
-            raise ValidationError('Debe indicar un valor para la cantidad.')
-        if self.cantidad < 0:
             raise ValidationError('La cantidad del stock no puede ser negativa')
 
     class Meta:
@@ -211,7 +210,7 @@ class Pedidos(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
-
+    cuenta_corriente = models.ForeignKey(CuentaCorriente, on_delete= models.PROTECT)
     cantidad = models.IntegerField('Cantidad', null=True)
     solicitadoRandom = random.randint(20, 75)
     solicitado = models.IntegerField('Solicitado ' + str(solicitadoRandom), default=solicitadoRandom)
