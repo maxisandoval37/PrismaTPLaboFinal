@@ -4,6 +4,8 @@ from django.contrib.auth.models import Permission,Group
 from django.contrib.contenttypes.models import ContentType     
 from django.core.exceptions import ValidationError
 from sucursal.models import Sucursal
+import re
+
 
 class Rol(models.Model):
     
@@ -118,6 +120,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     
     def clean(self):
         
+        patron = '^[^ ][a-zA-Z ]+$'
+        
         if not self.username.isalnum():
             raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
         if len(self.username) < 6 and len(self.username) > 20:
@@ -129,14 +133,14 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         if len(self.cuit) != 11:
             raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
     
-        if not self.nombre.isalpha():
-            raise ValidationError('Su nombre solo puede contener letras.')
+        if not (bool(re.search(patron,self.nombre))):
+            raise ValidationError('El/los nombre solo puede contener letras.')
+        
+        if not (bool(re.search(patron,self.apellido))):
+            raise ValidationError('El/los apellido solo puede contener letras.')
         
         if len(self.nombre) < 3 and len(self.nombre) > 16:
             raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
-            
-        if not self.apellido.isalpha():
-            raise ValidationError('Su apellido solo puede contener letras.') 
         
         if len(self.apellido) < 3 and len(self.apellido) > 16:
             raise ValidationError('El apellido debe tener entre 3 y 16 letras.') 
@@ -172,6 +176,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
             
             if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
                 raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
+            
+        
             
             
     def __str__(self):

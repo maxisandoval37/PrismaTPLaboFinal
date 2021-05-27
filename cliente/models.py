@@ -1,7 +1,7 @@
 from django.db import models
 from usuario.models import Usuario
 from django.core.exceptions import ValidationError
-
+import re
 
 # Create your models here.
 
@@ -102,16 +102,18 @@ class Cliente(models.Model):
     
     def clean(self):
         
+        patron = '^[^ ][a-zA-Z ]+$'
+        
         if len(self.cuit) != 11:
             raise ValidationError('El cuit debe tener exactamente 11 digitos.')
         if not self.cuit.isdigit():
             raise ValidationError('El cuit solo puede contener números.')
-        if not self.nombre.isalpha():
-            raise ValidationError('El nombre solo puede contener letras.')
+        if not (bool(re.search(patron,self.nombre))):
+            raise ValidationError('El/los nombre solo puede contener letras.')
         if len(self.nombre) < 3 or len(self.nombre) > 20:
             raise ValidationError('El nombre debe tener entre 3 y 20 letras.')
-        if not self.apellido.isalpha():
-            raise ValidationError('El apellido solo puede contener letras.')
+        if not (bool(re.search(patron,self.apellido))):
+            raise ValidationError('El/los apellido solo puede contener letras.')
         if len(self.apellido) < 3 or len(self.apellido) > 20:
             raise ValidationError('El apellido debe tener entre 3 y 20 letras.')
         
