@@ -24,8 +24,17 @@ class ItemVenta(models.Model):
     def __str__(self):
         return "Item: {}, Venta: {}".format(self.item, self.venta_asociada)
 
+class TipoVenta(models.Model):
     
-  
+    class opcionesTipo(models.TextChoices):
+        
+        LOCAL = 'LOCAL'
+        VIRTUAL = 'VIRTUAL'
+        
+    opciones = models.CharField(max_length=7, choices= opcionesTipo.choices)
+    
+    def __str__(self):
+        return self.opciones
     
 class EstadoVenta(models.Model):
     
@@ -59,6 +68,7 @@ class Venta(models.Model):
     cuenta_corriente = models.ForeignKey(CuentaCorriente, on_delete=models.PROTECT)
     estado = models.ForeignKey(EstadoVenta, on_delete=models.PROTECT)
     total = models.DecimalField('Total',decimal_places=2, max_digits=10, default=0)
+    tipo_de_venta = models.ForeignKey(TipoVenta, on_delete=models.PROTECT, default= 'LOCAL')
     
     
     class Meta:
@@ -71,6 +81,9 @@ class Venta(models.Model):
     
   
     def clean(self):
+        
+        if not self.numero_comprobante.isdigit():
+            raise ValidationError('El número de comprobante solo puede tener digitos.')
         
         if len(self.numero_comprobante) < 1 or len(self.numero_comprobante) > 25:
             raise ValidationError('El número de comprobante debe tener entre 1 y 25 digitos.')

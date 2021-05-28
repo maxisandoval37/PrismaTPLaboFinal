@@ -185,7 +185,6 @@
                         <a class="collapse-item" href="{% url 'ventas:listar_ventas' %}">Listado de Ventas</a>
                         <a class="collapse-item" href="{% url 'ventas:listar_ventas_cajero' %}">Procesar Ventas</a>
                         <a class="collapse-item" href="{% url 'ventas:registrar_venta_local' %}">Agregar Venta Local</a>
-                        <a class="collapse-item" href="{% url 'ventas:registrar_venta_virtual' %}">Agregar Venta Virtual</a>
 
                         <div class="collapse-divider"></div>
                         
@@ -401,6 +400,7 @@
                 <!--  -->
                 <!-- Begin Page Content -->
                 {% block content %}
+               
                 <div class="text-center">
                     <img class="img" src="{% static 'img/logo_prisma.png' %}">
                 </div>

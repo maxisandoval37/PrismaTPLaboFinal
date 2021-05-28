@@ -27,7 +27,7 @@ class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('venta.view_venta',)
     model = Venta 
     template_name = 'ventas/listar_venta_cajero.html'
-    queryset = Venta.objects.filter(estado_id = 2)
+    #queryset = Venta.objects.filter(estado_id = 2)
 
 class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
@@ -270,14 +270,14 @@ def CambiarEstado(request, id):
     
     queryset = Venta.objects.filter(id = id)
     
-    ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
+    ids = EstadoVenta.objects.filter(opciones = 'LISTA')
     nuevo_estado = ""
     for id in ids:
         nuevo_estado = id.id
               
     for venta in queryset:
        
-        venta.estado.opciones = nuevo_estado
+        venta.estado_id = nuevo_estado
         venta.save()
        
     messages.success(request, "Venta lista para su ejecucion.")
