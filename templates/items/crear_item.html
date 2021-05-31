@@ -31,7 +31,7 @@
 
             <div class="form-group">Categoria</div>
             <div class="form-group">
-                <select name="categoria" id="id_categoria" class="form-group form-control">
+                <select name="categoria" id="id_categoria" class="select form-control">
                     <option value="0"> - </option>
                     {% for item in categoria %}
                     <option value="{{item.id}}">{{item}}</option>
@@ -42,7 +42,7 @@
 
             <div class="form-group">Sub Categoria</div>
             <div class="form-group">
-                <select name="subcategoria" id="id_subcategoria" class="form-group form-control">
+                <select name="subcategoria" id="id_subcategoria" class="select form-control">
                     <option value="0"> - </option>
                     {% for item in subcategoria %}
                     <option value="{{item.id}}" data-chained="{{item.nombre_categoria.id}}">{{item}}</option>
@@ -52,26 +52,26 @@
 
             {{form.estado.label_tag}}
             <div class="form-group">
-                {% render_field form.estado class="form-control form-control-user" %}
+                {% render_field form.estado class="select form-control" %}
             </div>
 
             {{form.unidad_de_medida.label_tag}}
             <div class="form-group">
-                {% render_field form.unidad_de_medida class="form-control form-control-user" %}
+                {% render_field form.unidad_de_medida class="select form-control" %}
             </div>
 
             {{form.repo_por_lote.label_tag}}
             <div class="form-group">
-                {% render_field form.repo_por_lote class="form-control form-control-user" %}
+                {% render_field form.repo_por_lote class="form-control form-control" %}
             </div>
 
             {{form.sucursal.label_tag}}
             <div class="form-group">
-                {% render_field form.sucursal class="form-control form-control-user" %}
+                {% render_field form.sucursal class="select form-control" %}
             </div>
             {{form.cantidad_lote.label_tag}}
             <div class="form-group">
-                {% render_field form.cantidad_lote class="form-control form-control-user" %}
+                {% render_field form.cantidad_lote class="form-control form-control" %}
             </div>
             {% for field in form %}
             

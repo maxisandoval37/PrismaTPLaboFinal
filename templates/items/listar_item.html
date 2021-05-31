@@ -38,18 +38,28 @@ Listado de Items
                 </tr>
             </thead>
             <tbody>
-                {% if lista %}
-                {% for item in lista %}
-                {% if item.cantidad <= item.stockminimo %}
+                {% if object_list %}
+                {% for item in object_list %}
+                {% if item.cantidad <= item.stockminimo and item.cantidad > item.stockseguridad %}
 
 
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>SIN STOCK!</strong> No hay stock minimo para el item {{item.nombre}}.
+                    <strong>STOCK MINIMO!</strong> Se ha alcanzado el stock minimo para el item {{item.nombre}}.
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 {% endif %}
+
+                {% if item.cantidad <= item.stockseguridad %} 
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>STOCK DE SEGURIDAD!</strong> Se ha alcanzado el stock de seguridad para el item {{item.nombre}}.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+               
                 <tr>
 
                     <td>{{ item.nombre }}</td>

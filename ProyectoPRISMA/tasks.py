@@ -10,7 +10,7 @@ from datetime import date
 from time import sleep
 import random
 import json
-
+from django.db.models import Count
 
 @shared_task
 def sleepy(duration):
@@ -327,5 +327,27 @@ def enviarAvisoDisposicion():
             break
         
     return None
+
+@shared_task()
+def ListaItemsPorCriterio():
+    
+    items_venta = ItemVenta.objects.values('item_id').annotate(Count('item_id')).order_by()[:5]
+    items = []
+    
+    for item in items_venta:
+        items.append(item.get('item_id'))
+        
+    item_obtenido = Item.objects.raw("""
+    SELECT *
+    FROM item_item
+    WHERE id IN %s                                                                                 
+    """, [tuple(items)])
+    
+    for item in item_obtenido:
+        
+        item.stockminimo = 10
+        item.stockseguridad = 5
+        item.save()
+     
 
 app = Celery()
