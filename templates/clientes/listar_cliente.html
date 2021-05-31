@@ -29,8 +29,7 @@ Listado de Clientes
                     <th>Telefono</th>
                     <th>Categoria</th>
                     <th>Estado</th>
-                    <th>Deuda</th>
-                    <th>Vendedor Asociado</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -44,9 +43,7 @@ Listado de Clientes
                     <td>{{cliente.email}}</td>
                     <td>{{ cliente.categoria_cliente }}</td>
                     <td>{{ cliente.estado_cliente }}</td>
-                    <td>{{ cliente.deuda_cliente }}</td>
-                     <td>{{ cliente.vendedor_asociado }}</td>
-
+            
                     <td>
                         
                         <a href="{% url 'clientes:actualizar_cliente' cliente.pk %}" class="btn btn-primary">

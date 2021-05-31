@@ -40,7 +40,7 @@ Listado de Items
                     <td>{{ item.cantidad_solicitada}}</td>
                     
 
-                    {% if item.venta.estado.opciones == 'EN PREPARACION' %}
+                    {% if item.venta_asociada.estado.opciones == 'EN PREPARACION' %}
                    <td>
                        <a href="{% url 'ventas:eliminar_item' venta item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>

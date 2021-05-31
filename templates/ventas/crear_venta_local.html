@@ -43,8 +43,7 @@
                     <option value="{{cli.id}}">{{cli}}</option>
                     {% endfor %}
                 </select>
-                <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}">Registrar cuenta
-                    corriente</a>
+                
             </div>
 
 
@@ -69,6 +68,8 @@
                     <option value="{{cc.id}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
                     {% endfor %}
                 </select>
+                <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}">Registrar cuenta
+                    corriente</a>
             </div>
 
             <div class="form-group">Sucursal asociada</div>

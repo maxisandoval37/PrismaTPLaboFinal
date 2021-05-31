@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Venta, EstadoVenta, VentaVirtual, VentaLocal, ItemVenta
+from .models import Venta, EstadoVenta, VentaLocal, ItemVenta
 # Register your models here.
 
 
@@ -11,9 +11,6 @@ class ventaADMIN(ModelAdmin):
 class estadoventavirtualADMIN(ModelAdmin):
     icon_name = 'person'
     
-@register(VentaVirtual)
-class ventavirtualADMIN(ModelAdmin):
-    icon_name = 'person'
 
 @register(VentaLocal)
 class ventalocalADMIN(ModelAdmin):
@@ -24,3 +21,4 @@ class itemventaADMIN(ModelAdmin):
     
     icon_name = 'person'
     
+

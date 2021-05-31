@@ -6,8 +6,6 @@
 Listado de Items
 {% endblock title %}
 
-
-
 {% block content %}
 
 
@@ -39,10 +37,15 @@ Listado de Items
                     <td>{{ item.item.precio}}</td>
                     <td>{{ item.cantidad_solicitada}}</td>
                     
+                    {% if venta.estado.opciones == 'LISTA' %}
                    <td>
-                       <a href="{% url 'ventas:eliminar_item' venta item.id %}" class="btn btn-danger">Quitar Item</a>
+                       <a href="{% url 'ventas:eliminar_item_cajero' venta item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>
-                   
+                   {% else %} 
+                   <td>
+                    <a class="btn btn-secondary">Quitar Item</a>
+                </td>
+                {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}

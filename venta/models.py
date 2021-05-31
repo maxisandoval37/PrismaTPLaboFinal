@@ -5,6 +5,8 @@ from usuario.models import Vendedor
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from item.models import Item
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 
@@ -24,17 +26,6 @@ class ItemVenta(models.Model):
     def __str__(self):
         return "Item: {}, Venta: {}".format(self.item, self.venta_asociada)
 
-class TipoVenta(models.Model):
-    
-    class opcionesTipo(models.TextChoices):
-        
-        LOCAL = 'LOCAL'
-        VIRTUAL = 'VIRTUAL'
-        
-    opciones = models.CharField(max_length=7, choices= opcionesTipo.choices)
-    
-    def __str__(self):
-        return self.opciones
     
 class EstadoVenta(models.Model):
     
@@ -68,7 +59,8 @@ class Venta(models.Model):
     cuenta_corriente = models.ForeignKey(CuentaCorriente, on_delete=models.PROTECT)
     estado = models.ForeignKey(EstadoVenta, on_delete=models.PROTECT)
     total = models.DecimalField('Total',decimal_places=2, max_digits=10, default=0)
-    tipo_de_venta = models.ForeignKey(TipoVenta, on_delete=models.PROTECT, default= 'LOCAL')
+    tipo_de_venta = models.CharField('Tipo de venta', default= 'LOCAL', null=True, blank=True, max_length=7)
+    #dinero_deuda = models.DecimalField(...)
     
     
     class Meta:
@@ -79,7 +71,7 @@ class Venta(models.Model):
     def __str__(self):
         return self.numero_comprobante
     
-  
+
     def clean(self):
         
         if not self.numero_comprobante.isdigit():
@@ -116,3 +108,18 @@ class VentaLocal(Venta):
         
     def __str__(self):
         return "Venta local, número de comprobrante {}".format(self.numero_comprobante)
+
+
+
+# def definirTipoVenta(sender, instance, **kwargs):
+        
+#     queryset = TipoVenta.objects.filter(opciones = 'LOCAL')
+#     venta = instance
+#     for id in queryset:
+#         venta.tipo_de_venta_id = id.id 
+#         venta.save()
+#         break
+        
+    
+# pre_save.connect(definirTipoVenta, sender = Venta)
+

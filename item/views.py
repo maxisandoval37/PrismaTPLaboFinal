@@ -7,24 +7,12 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import  ProtectedError
 from django.http import HttpResponse
-from venta.models import Venta
+from venta.models import Venta, ItemVenta
 from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Count
 
 
-
-
-class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
-    permission_required = ('item.view_item',)
-    model = Item
-    template_name = 'items/listar_item.html'
-    items = Item.objects.raw("""
-        SELECT item_id, COUNT(item_id) 
-        FROM venta_itemventa
-        GROUP BY(item_id)
-        ORDER BY COUNT(item_id) DESC
-        LIMIT 20
-""")
 
 class RegistrarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,CreateView):
     permission_required = ('item.view_item', 'item.add_item',)
@@ -137,3 +125,32 @@ def RecibirStock(request, id_proveedor, id_sucursal):
             Pedidos.objects.filter(item_id=item.id).delete()
 
     return HttpResponse("Pedido recibido exitosamente!")
+
+
+def ListaItemsPorCriterio(request):
+    
+    items_venta = ItemVenta.objects.values('item_id').annotate(Count('item_id')).order_by()[:20]
+    items = []
+    
+    for item in items_venta:
+        items.append(item.get('item_id'))
+        
+    print(items)
+    lista = []
+    
+    item_obtenido = Item.objects.raw("""
+    SELECT *
+    FROM item_item
+    WHERE id IN %s                                                                                 
+    """, [tuple(items)])
+    
+    for item in item_obtenido:
+        
+        item.stockminimo = 10
+        item.stockseguridad = 5
+        item.save()
+        lista.append(item)
+        
+    print(lista)
+        
+    return render(request, 'items/listar_item.html', locals())

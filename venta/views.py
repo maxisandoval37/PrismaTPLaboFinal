@@ -240,30 +240,28 @@ def AgregarItem(request, sucursal, venta):
 def validar(request, item_venta):
     
     if item_venta.item.cantidad == 0:
-            messages.error(request, "No hay stock del item solicitado.")
-            return item_venta.item.nombre
+            #messages.error(request, "No hay stock del item solicitado.")
+            return item_venta.item.nombre + " (No hay stock del item solicitado)"
         
         
     if item_venta.venta_asociada.cliente_asociado.nombre == 'CONSUMIDOR FINAL' and item_venta.item.precio >= 10000:
-         messages.error(request, "Es necesario registrar al cliente para agregar el item.")
-         return item_venta.item.nombre
+         #messages.error(request, "Es necesario registrar al cliente para agregar el item.")
+         return item_venta.item.nombre + " (Es necesario registrar al cliente para agregar el item)"
+    
+    if item_venta.venta_asociada.total >= 10000 and item_venta.venta_asociada.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
+        return item_venta.item.nombre + " (Es necesario registrar al cliente para realizar la venta)"
     
     if item_venta.item.cantidad < item_venta.cantidad_solicitada:
-        messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
-        return item_venta.item.nombre 
+        #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
+        return item_venta.item.nombre + " (No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad) + ")"
     
     
     if item_venta.cantidad_solicitada < 0:
-        messages.error(request,"La cantidad no puede ser negativa.") 
-        return item_venta.item.nombre 
+        #messages.error(request,"La cantidad no puede ser negativa.") 
+        return item_venta.item.nombre + " (La cantidad no puede ser negativa)"
     
-    if item_venta.cantidad_solicitada == None or item_venta.cantidad_solicitada == 0:
-        messages.error(request,"Debe ingresar una cantidad para solicitar.")
-        return item_venta.item.nombre 
-        
-
-
-
+    if item_venta.cantidad_solicitada == 0:
+        return item_venta.item.nombre + " (Debe seleccionar una cantidad)"
 
 
 def CambiarEstado(request, id):
@@ -320,6 +318,40 @@ def eliminarItem(request, venta, item):
     messages.error(request, "Se ha quitado el item de la venta.")
     return redirect('ventas:listar_ventas')
 
+def eliminarItemCajero(request, venta, item):
+    
+    item_venta = ItemVenta.objects.filter(venta_asociada = venta, id = item)
+    
+    item_asociado = 0
+    venta_asociada = 0
+    cantidad_solicitada = 0
+    monto = 0
+    
+    for item in item_venta:
+        item_asociado = item.item_id 
+        venta_asociada = item.venta_asociada_id   
+        cantidad_solicitada = item.cantidad_solicitada
+        monto = item.monto
+        
+    
+    item_de_venta = Item.objects.filter(id = item_asociado)  
+   
+    for item in item_de_venta:
+        
+        item.cantidad += cantidad_solicitada
+        item.save() 
+        
+    queryset = Venta.objects.filter(id = venta_asociada)
+    
+    for venta in queryset:
+        
+        venta.total -= monto
+        venta.save()
+        
+    item_venta.delete()
+    
+    messages.error(request, "Se ha quitado el item de la venta.")
+    return redirect('ventas:listar_ventas_cajero')
 
 def FinalizarVenta(request, venta):
     
@@ -343,10 +375,22 @@ def FinalizarVenta(request, venta):
     for caja in cajas: 
         
         if caja.saldo_disponible < total:
-            messages.error(request, "Saldo insuficiente en las cajas de la sucursal.")
+            caja.saldo_disponible = caja.saldo_disponible + total
+            caja.save()
+            ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
+            nuevo_estado = ""
+            for id in ids:
+                nuevo_estado = id.id
+              
+            instancia.estado_id = nuevo_estado
+           
+            instancia.save()
+            
+            messages.success(request, "Venta finalizada con éxito.")  
+            break
             
         else:
-            caja.saldo_disponible = caja.saldo_disponible - total
+            caja.saldo_disponible = caja.saldo_disponible + total
             caja.save()
             ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
             nuevo_estado = ""

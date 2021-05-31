@@ -144,6 +144,31 @@ def Pedido():
 @shared_task
 def receiveVentasVirtuales():
     body = open('body.json',)
+#     body = """{
+#     "ventas": [
+#         {
+#             "numero_comprobante": "100",
+#             "cliente_asociado_id": "1",
+#             "cuenta_corriente_id": "1",
+#             "estado_id": "3",
+#             "mediopago_id": "1",
+#             "sucursal_asociada_id": "1",
+#             "vendedor_asociado_id": "2",
+#             "tipo_de_venta":"VIRTUAL",
+#             "items": [
+#                 {
+#                     "item_id": "1",
+#                     "cantidad_solicitada": "1",
+#                     "monto": "1500,00",
+#                     "sucursal_asociada_id": "1",
+#                     "venta_asociada_id": "1"
+#                 }
+                
+#             ]
+#         }
+
+#     ]
+# }"""
 
     # print('****************')
     for i in range(0, len(json.loads(body)['ventas'])):
@@ -155,6 +180,7 @@ def receiveVentasVirtuales():
         mediopago_id = venta['mediopago_id']
         sucursal_asociada_id = venta['sucursal_asociada_id']
         vendedor_asociado_id = venta['vendedor_asociado_id']
+        tipo_de_venta = venta['tipo_de_venta']
         # print('****************')
         # print('Venta: ' + str(i))
         # print('numero_comprobante: ' + numero_comprobante)
@@ -174,6 +200,7 @@ def receiveVentasVirtuales():
             ventaToInsert.mediodepago_id = int(mediopago_id)
             ventaToInsert.cuenta_corriente_id = int(cuenta_corriente_id)
             ventaToInsert.estado_id = int(estado_id)
+            ventaToInsert.tipo_de_venta = str(tipo_de_venta)
             ventaToInsert.save()
         except Exception as e:
             print("Exception:")
