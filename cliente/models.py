@@ -79,11 +79,11 @@ class MedioDePago(models.Model):
     
 class CuentaCorriente(models.Model):
     
-    id = models.AutoField(primary_key=True)
+    numero_cuenta = models.BigIntegerField("Número de cuenta")
     cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
     
     def __str__(self):
-        return "Número de cuenta: {}".format(self.id)
+        return "Cliente: {}, Cuenta: {}".format(self.cliente.nombre, self.numero_cuenta)
 
 class Cliente(models.Model):
     

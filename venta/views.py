@@ -167,7 +167,12 @@ def AgregarItem(request, sucursal, venta):
             
             item_venta = ItemVenta()
             item_venta.item_id = int(item)
-            item_venta.cantidad_solicitada = int(cantidad)
+            
+            if cantidad == "":
+                return HttpResponseBadRequest()
+            else:
+                item_venta.cantidad_solicitada = int(cantidad)
+                
             item_venta.sucursal_asociada_id = str(sucursal)
             item_venta.venta_asociada_id = int(venta)
             item_venta.monto = Decimal(cantidad.replace(',', '.')) * Decimal(precio.replace(',', '.'))
@@ -181,10 +186,12 @@ def AgregarItem(request, sucursal, venta):
                 continue
             else:
                 lista_success.append(item_venta.item.nombre)
-                
+            
             lista_items.append(item_venta.item_id)
             lista_ventas.append(item_venta.venta_asociada_id)
             
+            print(lista_success)
+            print(lista_errores)
             item_venta.save()
             
             queryset = Venta.objects.raw("""
@@ -193,7 +200,7 @@ def AgregarItem(request, sucursal, venta):
                 WHERE id IN %s               
             """, [tuple(lista_ventas)])  
             
-        
+            
             for venta in queryset:
                 
                 venta.total += item_venta.monto
@@ -201,22 +208,23 @@ def AgregarItem(request, sucursal, venta):
                 venta.save()
         
         
-        if len(lista_items) > 0:
-            item_de_venta = Item.objects.raw("""
-                SELECT * 
-                FROM item_item 
-                WHERE id IN %s               
-            """, [tuple(lista_items)])  
-            
-            
-            for item in item_de_venta:
+            if len(lista_items) > 0:
+                item_de_venta = Item.objects.raw("""
+                    SELECT * 
+                    FROM item_item 
+                    WHERE id IN %s               
+                """, [tuple(lista_items)])  
                 
-                if (item.cantidad - item_venta.cantidad_solicitada) < 0:
-                    return HttpResponseBadRequest()
-                else:
-                    item.cantidad -= item_venta.cantidad_solicitada
-                    item.save() 
-            
+                
+                for item in item_de_venta:
+                    print(item_venta.cantidad_solicitada)
+                    if (item.cantidad - item_venta.cantidad_solicitada) < 0:
+                        return HttpResponseBadRequest()
+                    else:
+                        
+                        item.cantidad -= item_venta.cantidad_solicitada
+                        item.save() 
+                
             
         mensaje = "Se añadieron: "
         for m in lista_success:
@@ -245,11 +253,10 @@ def validar(request, item_venta):
         
         
     if item_venta.venta_asociada.cliente_asociado.nombre == 'CONSUMIDOR FINAL' and item_venta.item.precio >= 10000:
+        
          #messages.error(request, "Es necesario registrar al cliente para agregar el item.")
          return item_venta.item.nombre + " (Es necesario registrar al cliente para agregar el item)"
     
-    if item_venta.venta_asociada.total >= 10000 and item_venta.venta_asociada.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
-        return item_venta.item.nombre + " (Es necesario registrar al cliente para realizar la venta)"
     
     if item_venta.item.cantidad < item_venta.cantidad_solicitada:
         #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
@@ -265,21 +272,25 @@ def validar(request, item_venta):
 
 
 def CambiarEstado(request, id):
-    
+
     queryset = Venta.objects.filter(id = id)
-    
+
     ids = EstadoVenta.objects.filter(opciones = 'LISTA')
     nuevo_estado = ""
+    instancia = None
+
     for id in ids:
         nuevo_estado = id.id
-              
+
     for venta in queryset:
-       
+        instancia = venta
+        if instancia.total >= 10000 and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
+            messages.error(request, "Es necesario registrar al cliente para agregar el item")
+            return redirect('ventas:listar_ventas')
         venta.estado_id = nuevo_estado
         venta.save()
-       
+
     messages.success(request, "Venta lista para su ejecucion.")
-    
     return redirect('ventas:listar_ventas')
 
 
