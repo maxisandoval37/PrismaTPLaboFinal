@@ -26,10 +26,10 @@ app.conf.beat_schedule = {
     #     'task': 'ProyectoPRISMA.tasks.Pedido',
     #     'schedule': 60.0,
     # },
-    'cada-1-hora': {
-        'task': 'ProyectoPRISMA.tasks.receiveVentasVirtuales',
-        'schedule': 60.0,
-    },
+    # 'cada-1-hora': {
+    #     'task': 'ProyectoPRISMA.tasks.receiveVentasVirtuales',
+    #     'schedule': 60.0,
+    # },
     # 'aviso-disposicion-cada-dia-clientes': {
     #     'task': 'ProyectoPRISMA.tasks.enviarAvisoDisposicion',
     #     'schedule': 15.0,
@@ -43,7 +43,7 @@ app.conf.beat_schedule = {
 
 
 # Load task modules from all registered Django apps.
-app.autodiscover_tasks(['ProyectoPRISMA.tasks'])
+# app.autodiscover_tasks(['ProyectoPRISMA.tasks'])
 
 CELERY_TIMEZONE = 'UTC'
 CELERY_ENABLE_UTC = True

@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'item',
     'sucursal',
     'proveedor',
-    
     'django_celery_beat',
     'cliente',
     'venta',
