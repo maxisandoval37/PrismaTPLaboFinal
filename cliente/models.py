@@ -76,7 +76,17 @@ class MedioDePago(models.Model):
     def __str__(self):
         return self.opciones
         
-    
+    def clean(self):
+        
+        medios_de_pagos = MedioDePago.objects.all()
+        for medios in medios_de_pagos:
+            
+            if self.opciones == medios.opciones:
+                raise ValidationError('No es posible añadir un medio de pago ya registrado.')
+                
+            if self.cliente.nombre == 'CONSUMIDOR FINAL' and self.opciones != 'EFECTIVO':
+                raise ValidationError('El consumidor final solo puede pagar con efectivo.')
+        
 class CuentaCorriente(models.Model):
     
     numero_cuenta = models.BigIntegerField("Número de cuenta")
@@ -85,6 +95,24 @@ class CuentaCorriente(models.Model):
     def __str__(self):
         return "Cliente: {}, Cuenta: {}".format(self.cliente.nombre, self.numero_cuenta)
 
+    def clean(self):
+        
+        cuentas_corriente = CuentaCorriente.objects.all()
+        cuenta_corriente = CuentaCorriente.objects.filter(cliente = self.cliente)
+        contador = 0
+        
+        for cuenta in cuenta_corriente:
+            contador += 1
+            
+        for cuenta in cuentas_corriente:
+            
+            if self.numero_cuenta == cuenta.numero_cuenta:
+                raise ValidationError('La cuenta corriente ya está registrada.')
+
+            if self.cliente.nombre == 'CONSUMIDOR FINAL' and contador == 1:
+                raise ValidationError('El consumidor final sólo puede tener una cuenta corriente genérica.')
+            
+            
 class Cliente(models.Model):
     
     cuit = models.CharField('Cuit', max_length=11, unique=True)

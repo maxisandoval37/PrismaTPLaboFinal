@@ -143,32 +143,32 @@ def Pedido():
 
 @shared_task
 def receiveVentasVirtuales():
-    body = open('body.json',)
-#     body = """{
-#     "ventas": [
-#         {
-#             "numero_comprobante": "100",
-#             "cliente_asociado_id": "1",
-#             "cuenta_corriente_id": "1",
-#             "estado_id": "3",
-#             "mediopago_id": "1",
-#             "sucursal_asociada_id": "1",
-#             "vendedor_asociado_id": "2",
-#             "tipo_de_venta":"VIRTUAL",
-#             "items": [
-#                 {
-#                     "item_id": "1",
-#                     "cantidad_solicitada": "1",
-#                     "monto": "1500,00",
-#                     "sucursal_asociada_id": "1",
-#                     "venta_asociada_id": "1"
-#                 }
+    #body = open('body.json',)
+    body = """{
+    "ventas": [
+        {
+            "numero_comprobante": "12500",
+            "cliente_asociado_id": "2",
+            "cuenta_corriente_id": "2",
+            "estado_id": "5",
+            "mediopago_id": "2",
+            "sucursal_asociada_id": "1",
+            "vendedor_asociado_id": "6",
+            "tipo_de_venta":"VIRTUAL",
+            "items": [
+                {
+                    "item_id": "1",
+                    "cantidad_solicitada": "5",
+                    "monto": "1200,00",
+                    "sucursal_asociada_id": "1",
+                    "venta_asociada_id": "1"
+                }
                 
-#             ]
-#         }
+            ]
+        }
 
-#     ]
-# }"""
+    ]
+}"""
 
     # print('****************')
     for i in range(0, len(json.loads(body)['ventas'])):
@@ -212,9 +212,9 @@ def receiveVentasVirtuales():
             print('\titem_venta: ' + str(k))
             cargarItemVenta(item, numero_comprobante)
 
-    # print('****************')
+     #print('****************')
 
-    body.close()
+    #body.close()
 
     return None
 
@@ -290,9 +290,9 @@ def enviarAvisoDisposicion():
 
     for venta in ventas:
         print("DIAS: " + str(abs(date.today() - venta.fecha.date()).days))
-        if venta.estado.opciones == EstadoVenta.opcionesVenta.PAGADA and abs(date.today() - venta.fecha.date()).days == 7:
+        if venta.estado.opciones == EstadoVenta.opcionesVenta.PENDIENTE_DE_RETIRO and abs(date.today() - venta.fecha.date()).days == 7:
             ventasAAvisar.append(venta)
-        elif venta.estado.opciones == EstadoVenta.opcionesVenta.PAGADA and abs(date.today() - venta.fecha.date()).days == 8:
+        elif venta.estado.opciones == EstadoVenta.opcionesVenta.PENDIENTE_DE_RETIRO and abs(date.today() - venta.fecha.date()).days == 8:
             ventasADisponer.append(venta)
 
     print("ventasAAvisar: ")
@@ -306,7 +306,7 @@ def enviarAvisoDisposicion():
         send_mail('AVISO DISPOSICIÓN DE COMPRA - ' + venta.cliente_asociado.nombre, "Buenas tardes, " + venta.cliente_asociado.nombre + " este es un aviso automático de que su venta realizada el " + str(venta.fecha.date()) +
                   " va a ser dispuesta. Por favor, diríjase a la sucursal N°" + str(venta.sucursal_asociada_id) + " dentro de las siguientes 24hs para poder retirarla.\nDe otra forma, se le devolverá sólo el 75" + '%' + " de su dinero.\n\n--\nSaludos.", 'tmmzprueba@gmail.com', {venta.cliente_asociado.email})
 
-    ids = EstadoVenta.objects.filter(opciones = 'CANCELADA POR LA SUCURSAL')
+    ids = EstadoVenta.objects.filter(opciones = 'NO RETIRADA')
     nuevo_estado = ""
     for id in ids:
         

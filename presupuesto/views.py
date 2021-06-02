@@ -216,7 +216,10 @@ def AprobarPresupuesto(request, id):
         nuevo_estado = id.id
               
     for presupuesto in queryset:
-       
+        
+        if presupuesto.total == 0:
+            messages.error(request, 'No puedes aprobar un presupuesto sin items.')
+            return redirect('presupuestos:listar_presupuestos')
         presupuesto.estado_id = nuevo_estado
         presupuesto.save()
        

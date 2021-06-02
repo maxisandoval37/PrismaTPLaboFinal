@@ -224,6 +224,11 @@ class Supervisor(Usuario):
         
     def __str__(self):
         return self.username
+    
+    def clean(self):
+        
+     if self.rol.opciones != 'SUPERVISOR':
+         raise ValidationError('El rol debe ser SUPERVISOR')
 
 class Vendedor(Usuario):
     
@@ -236,5 +241,25 @@ class Vendedor(Usuario):
     
     def __str__(self):
         return self.username
-        
     
+    def clean(self):
+        
+     if self.rol.opciones != 'VENDEDOR':
+         raise ValidationError('El rol debe ser VENDEDOR')
+    
+class Cajero(Usuario):
+    
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
+    
+    class Meta:
+        
+        verbose_name = 'cajero'
+        verbose_name_plural = 'cajeros'
+    
+    def __str__(self):
+        return self.username
+    
+    def clean(self):
+        
+     if self.rol.opciones != 'CAJERO':
+         raise ValidationError('El rol debe ser CAJERO')

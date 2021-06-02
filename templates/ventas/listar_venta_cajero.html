@@ -46,16 +46,31 @@ Listado de Ventas
                     <td>{{ venta.mediodepago }}</td>
                     <td>{{ venta.estado}}</td>
                     <td>{{ venta.total }}</td>
-                   
+
+                   {% if venta.estado.opciones == 'LISTA' %}
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.pk %}" class="btn btn-danger">
                             Eliminar </a>
                     </td>
+                    {% else %} 
+                    <td>
+                        <a class="btn btn-secondary">
+                            Eliminar </a>
+                    </td>
+                    {% endif %}
+                    {% if venta.estado.opciones == 'LISTA' or venta.estado.opciones == 'PAGADA' %}
                     <td>
                         <a href="{% url 'ventas:ver_items' venta.pk %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
-                    {% ifnotequal venta.estado.opciones 'PAGADA' %}
+                    {% else %}
+                    <td>
+                        <a class="btn btn-secondary">
+                            Ver detalle </a>
+                    </td>
+                    {% endif %}
+                    
+                    {% if venta.estado.opciones == 'LISTA' %}
                     <td>
                         <a href="{% url 'ventas:finalizar_venta' venta.pk %}" class="btn btn-success">Finalizar venta</a> 
                     </td>
@@ -63,7 +78,7 @@ Listado de Ventas
                     <td>
                         <a  class="btn btn-secondary">Finalizar venta</a>
                     </td>
-                    {% endifnotequal %}
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}

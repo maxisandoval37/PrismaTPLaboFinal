@@ -60,6 +60,7 @@ class RegistrarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateVi
 
 def idCaja(request, id):
     
+    
     sucursal = Sucursal.objects.get(id = id)
     queryset = Caja.objects.filter(sucursal_id = sucursal.id)
     lista = []

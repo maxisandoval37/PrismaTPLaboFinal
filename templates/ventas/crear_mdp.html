@@ -17,18 +17,18 @@
             {% for field in form %}
             {{field.label_tag}}
             
+            
+            <div class="form-group">
+                {% render_field field class="form-control form-control" %}
+
+                {% endfor %}
+
+            </div>
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
             {% endfor %}
-            <div class="form-group">
-                {% render_field field class="form-control form-control-user" %}
-
-                {% endfor %}
-
-            </div>
-
             <div class="">
                 <a href="{% url 'ventas:registrar_venta_local' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-primary">Registrar</button>

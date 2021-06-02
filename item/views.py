@@ -97,7 +97,7 @@ class ListarCategorias(ValidarLoginYPermisosRequeridos, ListView):
 
 class ListarPedidos(ValidarLoginYPermisosRequeridos, ListView):
 
-    permission_required = ('item.view_item','item.add_item','item.change_item','item.delete_item',)
+    permission_required = ('item.view_pedidos',)
     model = Pedidos
     template_name = 'items/visualizar_pedidos.html'
 

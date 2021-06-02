@@ -109,7 +109,7 @@ class VentaLocal(Venta):
     def __str__(self):
         return "Venta local, número de comprobrante {}".format(self.numero_comprobante)
 
-
+    
 
 # def definirTipoVenta(sender, instance, **kwargs):
         

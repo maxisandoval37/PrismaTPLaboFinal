@@ -7,9 +7,9 @@ from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, FormView
-from .models import Usuario
+from .models import Usuario, Vendedor, Supervisor, Cajero
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from .forms import FormularioLogin, FormularioUsuario
+from .forms import FormularioLogin, FormularioUsuario, FormularioVendedor, FormularioSupervisor, FormularioCajero
 from .mixins import ValidarLoginYPermisosRequeridos
 from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
@@ -65,9 +65,6 @@ class RegistrarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Creat
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Usuario registrado correctamente.'
     
-    def clean(self):
-        if self.cuit in 'abcdefghijklmnñopqrstuvwxyz':
-            raise ValidationError('Cuit inválido.')
 
 
 class EditarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
@@ -79,8 +76,33 @@ class EditarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateVi
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Se editó al usuario correctamente.'
     
+class RegistrarVendedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
-
+    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    model = Vendedor
+    form_class = FormularioVendedor
+    template_name = 'usuarios/crear_vendedor.html'
+    success_url = reverse_lazy('usuarios:listar_usuarios')
+    success_message = 'Vendedor registrado correctamente.'
+    
+class RegistrarSupervisor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
+    
+    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    model = Supervisor
+    form_class = FormularioSupervisor
+    template_name = 'usuarios/crear_supervisor.html'
+    success_url = reverse_lazy('usuarios:listar_usuarios')
+    success_message = 'Supervisor registrado correctamente.'
+    
+    
+class RegistrarCajero(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
+   
+    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    model = Cajero
+    form_class = FormularioCajero
+    template_name = 'usuarios/crear_cajero.html'
+    success_url = reverse_lazy('usuarios:listar_usuarios')
+    success_message = 'Cajero registrado correctamente.'
 
 
 

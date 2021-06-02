@@ -71,7 +71,7 @@ Listado de Ventas
                     
                     {% if venta.estado.opciones == 'EN PREPARACION' %}
                         <td>
-                            <a href="{% url 'ventas:cambiar_estado' venta.pk %}" class="btn btn-success">Cargar venta</a>
+                            <a href="{% url 'ventas:cambiar_estado' venta.pk  %}" class="btn btn-success">Cargar venta</a>
                         </td>
                     {% else %}
                         

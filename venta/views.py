@@ -24,7 +24,7 @@ class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
 
 class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
     
-    permission_required = ('venta.view_venta',)
+    permission_required = ('venta.view_venta_cajero',)
     model = Venta 
     template_name = 'ventas/listar_venta_cajero.html'
     #queryset = Venta.objects.filter(estado_id = 2)
@@ -284,8 +284,15 @@ def CambiarEstado(request, id):
 
     for venta in queryset:
         instancia = venta
+        
         if instancia.total >= 10000 and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
             messages.error(request, "Es necesario registrar al cliente para agregar el item")
+            return redirect('ventas:listar_ventas')
+        if instancia.vendedor_asociado.id != request.user.id:
+            messages.error(request, "No puedes cargar una venta de otra sucursal.")
+            return redirect('ventas:listar_ventas')
+        if instancia.total == 0:
+            messages.error(request, 'No puedes cargar una venta sin items.')
             return redirect('ventas:listar_ventas')
         venta.estado_id = nuevo_estado
         venta.save()

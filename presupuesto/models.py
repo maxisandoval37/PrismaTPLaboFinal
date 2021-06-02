@@ -33,7 +33,7 @@ class ItemPresupuesto(models.Model):
         verbose_name_plural = 'items de ventas'
         
     def __str__(self):
-        return "Item: {}, Venta: {}".format(self.item, self.venta_asociada)    
+        return "Item: {}, Venta: {}".format(self.item.nombre, self.presupuesto_asociado)    
 
 class Presupuesto(models.Model):
     

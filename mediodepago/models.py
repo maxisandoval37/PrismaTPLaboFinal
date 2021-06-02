@@ -81,4 +81,4 @@ class MedioDePago(models.Model):
         verbose_name = 'mediodepago'
         verbose_name_plural = 'mediosdepago'
         
-        
+    
