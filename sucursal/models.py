@@ -89,3 +89,20 @@ class Sucursal (models.Model):
         return self.codigo
 
 
+class Operacion(models.Model):
+    
+    fecha = models.DateTimeField('Fecha', auto_now_add=True)
+    monto = models.CharField('Monto', max_length=10)
+    tipo = models.CharField('Tipo', max_length=10)
+    identificador = models.CharField('Identificador', max_length= 30)
+    
+    class Meta:
+        
+        verbose_name = 'operacion'
+        verbose_name_plural = 'operaciones'
+    
+    def __str__(self):
+        return "Identificador: {}, Monto: {}, Tipo: {}".format(self.identificador, self.monto, self.tipo)
+        
+        
+        

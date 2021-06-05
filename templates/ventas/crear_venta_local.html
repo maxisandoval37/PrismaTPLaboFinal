@@ -15,12 +15,6 @@
         <form class="user" method="post">
             {% csrf_token %}
 
-            {{form.numero_comprobante.label_tag}}
-            <div class="form-group">
-                {% render_field form.numero_comprobante class="form-control form-control-user" %}
-            </div>
-
-
             {{form.fecha.label_tag}}
             <div class="form-group">
                 {% render_field form.fecha class="form-control form-control-user" %}

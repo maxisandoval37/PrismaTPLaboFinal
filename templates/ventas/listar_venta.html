@@ -50,13 +50,13 @@ Listado de Ventas
                     <td>{{ venta.total}}</td>
                    
                     <td>
-                        <a href="{% url 'ventas:eliminar_venta' venta.pk %}" class="btn btn-danger">
+                        <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             Eliminar </a>
                     </td>
 
                     {% if venta.estado.opciones == 'EN PREPARACION' %}
                     <td>
-                        <a href="{% url 'ventas:registrar_itemventa' venta.sucursal_asociada.id  venta.pk %}" class="btn btn-primary">
+                        <a href="{% url 'ventas:registrar_itemventa' venta.sucursal_asociada.id  venta.numero_comprobante %}" class="btn btn-primary">
                             Agregar item </a>
                     </td>
                     {% else %} 
@@ -65,13 +65,13 @@ Listado de Ventas
                     </td>
                     {% endif %}
                     <td>
-                        <a href="{% url 'ventas:listar_itemsventa' venta.pk %}" class="btn btn-warning">
+                        <a href="{% url 'ventas:listar_itemsventa' venta.numero_comprobante %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
                     
                     {% if venta.estado.opciones == 'EN PREPARACION' %}
                         <td>
-                            <a href="{% url 'ventas:cambiar_estado' venta.pk  %}" class="btn btn-success">Cargar venta</a>
+                            <a href="{% url 'ventas:cambiar_estado' venta.numero_comprobante  %}" class="btn btn-success">Cargar venta</a>
                         </td>
                     {% else %}
                         

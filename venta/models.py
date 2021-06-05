@@ -51,7 +51,7 @@ class EstadoVenta(models.Model):
 class Venta(models.Model):
     
     fecha = models.DateTimeField('Fecha',auto_now_add=True, null=True, blank=True)
-    numero_comprobante = models.CharField('Número de comprobrante', max_length=25, unique=True)
+    numero_comprobante = models.AutoField('Número de comprobrante', primary_key=True)
     cliente_asociado = models.ForeignKey(Cliente, on_delete=models.PROTECT)
     vendedor_asociado = models.ForeignKey(Vendedor, on_delete=models.PROTECT)
     sucursal_asociada = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
@@ -69,17 +69,10 @@ class Venta(models.Model):
         verbose_name_plural = 'ventas'
         
     def __str__(self):
-        return self.numero_comprobante
+        return str(self.numero_comprobante)
     
 
-    def clean(self):
-        
-        if not self.numero_comprobante.isdigit():
-            raise ValidationError('El número de comprobante solo puede tener digitos.')
-        
-        if len(self.numero_comprobante) < 1 or len(self.numero_comprobante) > 25:
-            raise ValidationError('El número de comprobante debe tener entre 1 y 25 digitos.')
-                  
+
     
 class VentaVirtual(Venta):
     

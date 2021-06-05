@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from proveedor.views import ListadoProveedor, RegistrarProveedor, EditarProveedor, EliminarProveedor
+from proveedor.views import ListadoProveedor, RegistrarProveedor, EditarProveedor, EliminarProveedor, RegistrarCuentaCorrienteProveedor
 
 urlpatterns = [
     
@@ -9,5 +9,5 @@ urlpatterns = [
     path('registrar_proveedor/', login_required(RegistrarProveedor.as_view()),name = 'registrar_proveedor'),
     path('actualizar_proveedor/<int:pk>/', login_required(EditarProveedor.as_view()), name = 'actualizar_proveedor'),
     path('eliminar_proveedor/<int:pk>/',login_required(EliminarProveedor.as_view()), name='eliminar_proveedor'),
-    
+    path('registrar_cuenta_corriente/', login_required(RegistrarCuentaCorrienteProveedor.as_view()), name='registrar_cuenta_corriente'),
 ]

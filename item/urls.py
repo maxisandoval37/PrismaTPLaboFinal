@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, RegistrarItem,EditarItem,EliminarItem, ConfigurarReposicionItem, ListarCategorias,ListarPedidos,  VerPedido,RecibirStock, MensajeExitoso
+from .views import ListadoItem, RegistrarItem,EditarItem,EliminarItem, ConfigurarReposicionItem, ListarCategorias,ListarPedidos,  VerPedido,RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -14,6 +14,7 @@ urlpatterns = [
     path('pedido_proveedor/<int:id_proveedor>/<int:id_sucursal>/', VerPedido, name= 'pedido_proveedor'),
     path('pedido_proveedor/<int:id_proveedor>/<int:id_sucursal>/RecibirStock/', RecibirStock, name= 'pedido_proveedor'),
     path('stock_recibido/', MensajeExitoso.as_view(), name= 'stock_recibido'),
-    
+    path('ver_categorias/', ModificarCampos.as_view(), name= 'ver_categorias'),
+    path('ver_categorias/CambioMasivo/', CambioMasivo, name='cambio_masivo' )
     
 ]

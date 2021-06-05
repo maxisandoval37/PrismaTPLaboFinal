@@ -1,3 +1,4 @@
+from proveedor.models import CuentaCorrienteProveedor
 from item.models import Item, Pedidos, Proveedor
 from venta.models import Venta, ItemVenta, EstadoVenta
 from celery import shared_task, Celery
@@ -59,23 +60,33 @@ def Pedido():
         FROM proveedor_proveedor
         LIMIT 10
     """)
-
+    
+   
     proveedoresEmails = []
     for proveedor in proveedoresQuery:
         proveedoresEmails.append(proveedor.email)
+    
+        
 
     itemsToChangeProveedor = {}
 
     for item in items:
+        cuentas = CuentaCorrienteProveedor.objects.filter(proveedor = item.categoria.prov_preferido)
+        cuenta_corriente = None
+        for cuenta in cuentas:
+            cuenta_corriente = cuenta
+        
         print('****item: ' + str(item))
         print('****item.reintentos: ' + str(item.reintentos))
         if item.solicitud == False:
             item.solicitud = True
+            item.reintentos = 0
             item.save()
             pedido = Pedidos()
             pedido.item = item
             pedido.sucursal = item.sucursal
             pedido.proveedor = item.categoria.prov_preferido
+            pedido.cuenta_corriente = cuenta_corriente
             print(item.repo_por_lote)
             if item.repo_por_lote:
                 pedido.cantidad = item.cantidad_lote * 2
@@ -85,22 +96,22 @@ def Pedido():
             item.save()
         else:
             print('****The OLD proveedor is: ' +
-                  str(item.categoria.prov_preferido.email))
+                str(item.categoria.prov_preferido.email))
             indice = proveedoresEmails.index(
                 item.categoria.prov_preferido.email)
             if indice == 0:
                 print('****The NEW proveedor is: ' + str(list(proveedoresQuery)
-                                                         [(random.randint(1, len(list(proveedoresQuery)) - 1))].email))
+                                                        [(random.randint(1, len(list(proveedoresQuery)) - 1))].email))
                 itemsToChangeProveedor.update({item.id: list(proveedoresQuery)[(
                     random.randint(1, len(list(proveedoresQuery)) - 1))].email})
             elif indice == len(list(proveedoresQuery)):
                 print('****The NEW proveedor is: ' + str(list(proveedoresQuery)
-                                                         [(random.randint(0, len(list(proveedoresQuery)) - 2))].email))
+                                                        [(random.randint(0, len(list(proveedoresQuery)) - 2))].email))
                 itemsToChangeProveedor.update({item.id: list(proveedoresQuery)[(
                     random.randint(0, len(list(proveedoresQuery)) - 2))].email})
             else:
                 print('****The NEW proveedor is: ' + str(list(proveedoresQuery)
-                                                         [(random.randint(0, indice - 1))].email))
+                                                        [(random.randint(0, indice - 1))].email))
                 itemsToChangeProveedor.update(
                     {item.id: list(proveedoresQuery)[(random.randint(0, indice - 1))].email})
             item.reintentos = 0
@@ -144,77 +155,77 @@ def Pedido():
 @shared_task
 def receiveVentasVirtuales():
     #body = open('body.json',)
-    body = """{
-    "ventas": [
-        {
-            "numero_comprobante": "12500",
-            "cliente_asociado_id": "2",
-            "cuenta_corriente_id": "2",
-            "estado_id": "5",
-            "mediopago_id": "2",
-            "sucursal_asociada_id": "1",
-            "vendedor_asociado_id": "6",
-            "tipo_de_venta":"VIRTUAL",
-            "items": [
-                {
-                    "item_id": "1",
-                    "cantidad_solicitada": "5",
-                    "monto": "1200,00",
-                    "sucursal_asociada_id": "1",
-                    "venta_asociada_id": "1"
-                }
+#     body = """{
+#     "ventas": [
+#         {
+#             "numero_comprobante": "250",
+#             "cliente_asociado_id": "2",
+#             "cuenta_corriente_id": "2",
+#             "estado_id": "5",
+#             "mediopago_id": "2",
+#             "sucursal_asociada_id": "1",
+#             "vendedor_asociado_id": "6",
+#             "tipo_de_venta":"VIRTUAL",
+#             "items": [
+#                 {
+#                     "item_id": "1",
+#                     "cantidad_solicitada": "5",
+#                     "monto": "1200,00",
+#                     "sucursal_asociada_id": "1",
+#                     "venta_asociada_id": "1"
+#                 }
                 
-            ]
-        }
+#             ]
+#         }
 
-    ]
-}"""
+#     ]
+# }"""
 
-    # print('****************')
-    for i in range(0, len(json.loads(body)['ventas'])):
-        venta = json.loads(body)['ventas'][i]
-        numero_comprobante = venta['numero_comprobante']
-        cliente_asociado_id = venta['cliente_asociado_id']
-        cuenta_corriente_id = venta['cuenta_corriente_id']
-        estado_id = venta['estado_id']
-        mediopago_id = venta['mediopago_id']
-        sucursal_asociada_id = venta['sucursal_asociada_id']
-        vendedor_asociado_id = venta['vendedor_asociado_id']
-        tipo_de_venta = venta['tipo_de_venta']
-        # print('****************')
-        # print('Venta: ' + str(i))
-        # print('numero_comprobante: ' + numero_comprobante)
-        # print('cliente_asociado_id: ' + cliente_asociado_id)
-        # print('cuenta_corriente_id: ' + cuenta_corriente_id)
-        # print('estado_id: ' + estado_id)
-        # print('mediopago_id: ' + mediopago_id)
-        # print('sucursal_asociada_id: ' + sucursal_asociada_id)
-        # print('vendedor_asociado_id: ' + vendedor_asociado_id)
+#     # print('****************')
+#     for i in range(0, len(json.loads(body)['ventas'])):
+#         venta = json.loads(body)['ventas'][i]
+#         numero_comprobante = venta['numero_comprobante']
+#         cliente_asociado_id = venta['cliente_asociado_id']
+#         cuenta_corriente_id = venta['cuenta_corriente_id']
+#         estado_id = venta['estado_id']
+#         mediopago_id = venta['mediopago_id']
+#         sucursal_asociada_id = venta['sucursal_asociada_id']
+#         vendedor_asociado_id = venta['vendedor_asociado_id']
+#         tipo_de_venta = venta['tipo_de_venta']
+#         # print('****************')
+#         # print('Venta: ' + str(i))
+#         # print('numero_comprobante: ' + numero_comprobante)
+#         # print('cliente_asociado_id: ' + cliente_asociado_id)
+#         # print('cuenta_corriente_id: ' + cuenta_corriente_id)
+#         # print('estado_id: ' + estado_id)
+#         # print('mediopago_id: ' + mediopago_id)
+#         # print('sucursal_asociada_id: ' + sucursal_asociada_id)
+#         # print('vendedor_asociado_id: ' + vendedor_asociado_id)
 
-        try:
-            ventaToInsert = Venta()
-            ventaToInsert.numero_comprobante = int(numero_comprobante)
-            ventaToInsert.cliente_asociado_id = int(cliente_asociado_id)
-            ventaToInsert.vendedor_asociado_id = int(vendedor_asociado_id)
-            ventaToInsert.sucursal_asociada_id = int(sucursal_asociada_id)
-            ventaToInsert.mediodepago_id = int(mediopago_id)
-            ventaToInsert.cuenta_corriente_id = int(cuenta_corriente_id)
-            ventaToInsert.estado_id = int(estado_id)
-            ventaToInsert.tipo_de_venta = str(tipo_de_venta)
-            ventaToInsert.save()
-        except Exception as e:
-            print("Exception:")
-            print(e)
+#         try:
+#             ventaToInsert = Venta()
+#             ventaToInsert.numero_comprobante = int(numero_comprobante)
+#             ventaToInsert.cliente_asociado_id = int(cliente_asociado_id)
+#             ventaToInsert.vendedor_asociado_id = int(vendedor_asociado_id)
+#             ventaToInsert.sucursal_asociada_id = int(sucursal_asociada_id)
+#             ventaToInsert.mediodepago_id = int(mediopago_id)
+#             ventaToInsert.cuenta_corriente_id = int(cuenta_corriente_id)
+#             ventaToInsert.estado_id = int(estado_id)
+#             ventaToInsert.tipo_de_venta = str(tipo_de_venta)
+#             ventaToInsert.save()
+#         except Exception as e:
+#             print("Exception:")
+#             print(e)
 
-        # print('****************')
-        for k in range(0, len(venta['items'])):
-            item = venta['items'][k]
-            print('\titem_venta: ' + str(k))
-            cargarItemVenta(item, numero_comprobante)
+#         # print('****************')
+#         for k in range(0, len(venta['items'])):
+#             item = venta['items'][k]
+#             print('\titem_venta: ' + str(k))
+#             cargarItemVenta(item, numero_comprobante)
 
-     #print('****************')
+#      #print('****************')
 
-    #body.close()
+#     #body.close()
 
     return None
 
@@ -268,7 +279,7 @@ def cargarItemVenta(objeto, numero_comprobante):
     ventas = Venta.objects.raw("""
         SELECT * 
         FROM venta_venta
-        WHERE id IN %s               
+        WHERE numero_comprobante IN %s               
     """, [tuple(lista_ventas)])
 
     for venta in ventas:
@@ -280,74 +291,76 @@ def cargarItemVenta(objeto, numero_comprobante):
 
 @shared_task
 def enviarAvisoDisposicion():
-    ventas = Venta.objects.raw("""
-        SELECT *
-        FROM venta_venta
-    """)
+    # ventas = Venta.objects.raw("""
+    #     SELECT *
+    #     FROM venta_venta
+    # """)
 
-    ventasAAvisar = []
-    ventasADisponer = []
+    # ventasAAvisar = []
+    # ventasADisponer = []
 
-    for venta in ventas:
-        print("DIAS: " + str(abs(date.today() - venta.fecha.date()).days))
-        if venta.estado.opciones == EstadoVenta.opcionesVenta.PENDIENTE_DE_RETIRO and abs(date.today() - venta.fecha.date()).days == 7:
-            ventasAAvisar.append(venta)
-        elif venta.estado.opciones == EstadoVenta.opcionesVenta.PENDIENTE_DE_RETIRO and abs(date.today() - venta.fecha.date()).days == 8:
-            ventasADisponer.append(venta)
+    # for venta in ventas:
+    #     print("DIAS: " + str(abs(date.today() - venta.fecha.date()).days))
+    #     if venta.estado.opciones == EstadoVenta.opcionesVenta.PENDIENTE_DE_RETIRO and abs(date.today() - venta.fecha.date()).days == 7:
+    #         ventasAAvisar.append(venta)
+    #     elif venta.estado.opciones == EstadoVenta.opcionesVenta.PENDIENTE_DE_RETIRO and abs(date.today() - venta.fecha.date()).days == 8:
+    #         ventasADisponer.append(venta)
 
-    print("ventasAAvisar: ")
-    print(ventasAAvisar)
+    # print("ventasAAvisar: ")
+    # print(ventasAAvisar)
 
-    print("ventasADisponer: ")
-    print(ventasADisponer)
+    # print("ventasADisponer: ")
+    # print(ventasADisponer)
 
-    for venta in ventasAAvisar:
-        print("ENVIANDO EMAIL")
-        send_mail('AVISO DISPOSICIÓN DE COMPRA - ' + venta.cliente_asociado.nombre, "Buenas tardes, " + venta.cliente_asociado.nombre + " este es un aviso automático de que su venta realizada el " + str(venta.fecha.date()) +
-                  " va a ser dispuesta. Por favor, diríjase a la sucursal N°" + str(venta.sucursal_asociada_id) + " dentro de las siguientes 24hs para poder retirarla.\nDe otra forma, se le devolverá sólo el 75" + '%' + " de su dinero.\n\n--\nSaludos.", 'tmmzprueba@gmail.com', {venta.cliente_asociado.email})
+    # for venta in ventasAAvisar:
+    #     print("ENVIANDO EMAIL")
+    #     send_mail('AVISO DISPOSICIÓN DE COMPRA - ' + venta.cliente_asociado.nombre, "Buenas tardes, " + venta.cliente_asociado.nombre + " este es un aviso automático de que su venta realizada el " + str(venta.fecha.date()) +
+    #               " va a ser dispuesta. Por favor, diríjase a la sucursal N°" + str(venta.sucursal_asociada_id) + " dentro de las siguientes 24hs para poder retirarla.\nDe otra forma, se le devolverá sólo el 75" + '%' + " de su dinero.\n\n--\nSaludos.", 'tmmzprueba@gmail.com', {venta.cliente_asociado.email})
 
-    ids = EstadoVenta.objects.filter(opciones = 'NO RETIRADA')
-    nuevo_estado = ""
-    for id in ids:
+    # ids = EstadoVenta.objects.filter(opciones = 'NO RETIRADA')
+    # nuevo_estado = ""
+    # for id in ids:
         
-        nuevo_estado = id.id
+    #     nuevo_estado = id.id
 
-    for venta in ventasADisponer:
+    # for venta in ventasADisponer:
         
         
-        cajas = Caja.objects.filter(sucursal_id = venta.sucursal_asociada_id)
-        venta.estado_id = nuevo_estado
-        venta.save()
+    #     cajas = Caja.objects.filter(sucursal_id = venta.sucursal_asociada_id)
+    #     venta.estado_id = nuevo_estado
+    #     venta.save()
         
-        for caja in cajas:
+    #     for caja in cajas:
             
-            caja.saldo_disponible += (venta.total * Decimal("0.75".replace(',', '.')))
-            caja.save()
+    #         caja.saldo_disponible += (venta.total * Decimal("0.75".replace(',', '.')))
+    #         caja.save()
             
-            break
+    #         break
         
     return None
 
 @shared_task()
 def ListaItemsPorCriterio():
     
-    items_venta = ItemVenta.objects.values('item_id').annotate(Count('item_id')).order_by()[:5]
-    items = []
+    # items_venta = ItemVenta.objects.values('item_id').annotate(Count('item_id')).order_by()[:5]
+    # items = []
     
-    for item in items_venta:
-        items.append(item.get('item_id'))
+    # for item in items_venta:
+    #     items.append(item.get('item_id'))
         
-    item_obtenido = Item.objects.raw("""
-    SELECT *
-    FROM item_item
-    WHERE id IN %s                                                                                 
-    """, [tuple(items)])
+    # item_obtenido = Item.objects.raw("""
+    # SELECT *
+    # FROM item_item
+    # WHERE id IN %s                                                                                 
+    # """, [tuple(items)])
     
-    for item in item_obtenido:
+    # for item in item_obtenido:
         
-        item.stockminimo = 10
-        item.stockseguridad = 5
-        item.save()
+    #     item.stockminimo = 10
+    #     item.stockseguridad = 5
+    #     item.save()
+    
+    return None
      
 
 app = Celery()

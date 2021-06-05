@@ -7,12 +7,11 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import ProtectedError
 from cliente.models import Cliente, CuentaCorriente,MedioDePago
-from sucursal.models import Sucursal, Caja
+from sucursal.models import Sucursal, Caja, Operacion
 from usuario.models import Vendedor
-from item.models import Item
+from item.models import Item, Estado
 from django.http import HttpResponse, HttpResponseBadRequest
 from decimal import Decimal
-from django.core.exceptions import ValidationError
 import json
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -123,7 +122,12 @@ def VerDetalle(request, sucursal, venta):
     
    
     sucursal = Sucursal.objects.get(id = sucursal)
-    queryset = Item.objects.filter(sucursal = sucursal.id, estado = 1)
+    estados = Estado.objects.filter(opciones = 'ACTIVO')
+    nuevo_estado = 0
+    for estado in estados:
+        nuevo_estado = estado.id
+    
+    queryset = Item.objects.filter(sucursal = sucursal.id, estado = nuevo_estado)
     lista = []
     for item in queryset:
         dic = {
@@ -197,7 +201,7 @@ def AgregarItem(request, sucursal, venta):
             queryset = Venta.objects.raw("""
                 SELECT * 
                 FROM venta_venta
-                WHERE id IN %s               
+                WHERE numero_comprobante IN %s               
             """, [tuple(lista_ventas)])  
             
             
@@ -273,7 +277,7 @@ def validar(request, item_venta):
 
 def CambiarEstado(request, id):
 
-    queryset = Venta.objects.filter(id = id)
+    queryset = Venta.objects.filter(numero_comprobante = id)
 
     ids = EstadoVenta.objects.filter(opciones = 'LISTA')
     nuevo_estado = ""
@@ -288,9 +292,9 @@ def CambiarEstado(request, id):
         if instancia.total >= 10000 and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
             messages.error(request, "Es necesario registrar al cliente para agregar el item")
             return redirect('ventas:listar_ventas')
-        if instancia.vendedor_asociado.id != request.user.id:
-            messages.error(request, "No puedes cargar una venta de otra sucursal.")
-            return redirect('ventas:listar_ventas')
+        # if instancia.vendedor_asociado.id != request.user.id:
+        #     messages.error(request, "No puedes cargar una venta de otra sucursal.")
+        #     return redirect('ventas:listar_ventas')
         if instancia.total == 0:
             messages.error(request, 'No puedes cargar una venta sin items.')
             return redirect('ventas:listar_ventas')
@@ -324,7 +328,7 @@ def eliminarItem(request, venta, item):
         item.cantidad += cantidad_solicitada
         item.save() 
         
-    queryset = Venta.objects.filter(id = venta_asociada)
+    queryset = Venta.objects.filter(numero_comprobante = venta_asociada)
     
     for venta in queryset:
         
@@ -359,7 +363,7 @@ def eliminarItemCajero(request, venta, item):
         item.cantidad += cantidad_solicitada
         item.save() 
         
-    queryset = Venta.objects.filter(id = venta_asociada)
+    queryset = Venta.objects.filter(numero_comprobante = venta_asociada)
     
     for venta in queryset:
         
@@ -373,7 +377,7 @@ def eliminarItemCajero(request, venta, item):
 
 def FinalizarVenta(request, venta):
     
-    venta_obtenida = Venta.objects.filter(id = venta)
+    venta_obtenida = Venta.objects.filter(numero_comprobante = venta)
     instancia = None
     sucursal_asociada = 0
     total = 0
@@ -389,37 +393,34 @@ def FinalizarVenta(request, venta):
     if instancia.total <= 0:
         messages.error(request, "No es posible realizar una venta sin agregar items.")
         return redirect('ventas:listar_ventas_cajero')
+    
+    
+    caja_menor = None
+    monto = total
+    
+    for caja in cajas:
         
-    for caja in cajas: 
-        
-        if caja.saldo_disponible < total:
-            caja.saldo_disponible = caja.saldo_disponible + total
-            caja.save()
-            ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
-            nuevo_estado = ""
-            for id in ids:
-                nuevo_estado = id.id
-              
-            instancia.estado_id = nuevo_estado
-           
-            instancia.save()
-            
-            messages.success(request, "Venta finalizada con éxito.")  
-            break
-            
+        if caja.saldo_disponible < monto:
+            monto = caja.saldo_disponible
+            caja_menor = caja
         else:
-            caja.saldo_disponible = caja.saldo_disponible + total
-            caja.save()
-            ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
-            nuevo_estado = ""
-            for id in ids:
-                nuevo_estado = id.id
-              
-            instancia.estado_id = nuevo_estado
-           
-            instancia.save()
-            
-            messages.success(request, "Venta finalizada con éxito.")  
-            break
+            caja_menor = caja
+    
+    caja_menor.saldo_disponible = caja_menor.saldo_disponible + total
+    caja_menor.save()
+    ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
+    nuevo_estado = ""
+    for id in ids:
+        nuevo_estado = id.id
         
+    instancia.estado_id = nuevo_estado
+    instancia.save()
+    movimiento = Operacion()
+    movimiento.monto = "+" + str(total) 
+    movimiento.tipo = "Venta"
+    movimiento.identificador = "Número de comprobante" + str(instancia.numero_comprobante)
+    movimiento.save()
+    
+    messages.success(request, "Venta finalizada con éxito.")  
+    
     return redirect('ventas:listar_ventas_cajero')

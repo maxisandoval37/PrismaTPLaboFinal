@@ -1,0 +1,127 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Categorias
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Categorias</strong>
+        </div>
+    </div>
+    
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            
+            <thead>
+
+                <tr>
+                    <th>#</th>
+                    <th>Categoria</th>
+                    <th>Precio de items</th>
+                    <th>Stock de seguridad</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for cat in object_list %}
+
+                <tr>
+                    <td id="{{cat.id}}" class="input-cantidad">{{cat.id}}</td>
+                    <td>{{ cat.opciones}}</td>
+                    <td><input type="Integer"  id="{{ cat.id }}precio" placeholder="0" min="0"
+                        max="100000"></td>
+                    <td><input type="Integer" id="{{ cat.id }}stock" placeholder="0" min="0"
+                         max="1000"></td>
+
+                    <td><a href="{% url 'items:ver_categorias' %}" onclick="ModificacionMasiva()" class="btn btn-primary">Modificar</a></td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+<script>
+function ModificacionMasiva() {
+        
+    var csrftoken = getCookie('csrftoken');
+    const inputsCantidades = document.getElementsByClassName('input-cantidad');
+
+    for (input of inputsCantidades) {
+        
+        console.log(document.getElementById(input.id).innerText)
+        console.log(document.getElementById(input.id+"precio").value)
+        console.log(document.getElementById(input.id+"stock").value)
+
+        $.ajax({
+            type: "POST",
+            url: "CambioMasivo/",
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                categoria: document.getElementById(input.id).innerText,
+                precio: document.getElementById(input.id+"precio").value,
+                stock: document.getElementById(input.id+"stock").value,
+            },
+            dataType: "text",
+            success: function (data) {
+                location.reload()
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 0) {
+                    alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
+                }
+                else if (jqXHR.status == 404) {
+                    alert('La Pagina solicitada no fue encontrada [404]');
+                }
+                else if (jqXHR.status == 500) {
+                    alert('Erro Interno [500]');
+                }
+                else if (textStatus === 'parsererror') {
+                    alert('Error en el retorno de Datos. [parseJson]');
+                }
+                else if (textStatus === 'timeout') {
+                    alert('Tiempo de Espera agotado');
+                }
+                else if (textStatus === 'abort') {
+                    alert('Solicitud Abortada. [Ajax Request]');
+                }
+                else {
+                    alert('Error desconocido: ' + jqXHR.responseText);
+                }
+            }
+        });
+    }
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+
+
+{% endblock %}

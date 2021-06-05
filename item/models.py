@@ -4,7 +4,7 @@ from sucursal.models import Sucursal
 from django.db.models.signals import post_save
 from proveedor.models import Proveedor
 from django.core.exceptions import ValidationError
-from cliente.models import CuentaCorriente
+from proveedor.models import CuentaCorrienteProveedor
 import random
 # Create your models here.
 
@@ -149,6 +149,7 @@ class Estado(models.Model):
 class Item(models.Model):
 
     id = models.AutoField(primary_key=True)
+    codigo_de_barras = models.CharField('Código de barras', max_length= 13, unique=True)
     nombre = models.CharField('Nombre', max_length=50, unique=True)
     precio = models.DecimalField('Precio',decimal_places=2, max_digits=10, null=True)
     descripcion = models.CharField('Descripción', max_length=50, null=True, blank=True)
@@ -196,6 +197,9 @@ class Item(models.Model):
             raise ValidationError('El stock de seguridad no puede ser negativo.')
         if self.cantidad < 0:
             raise ValidationError('La cantidad del stock no puede ser negativa')
+        
+        if len(self.codigo_de_barras) > 13 or len(self.codigo_de_barras) < 13:
+            raise ValidationError('El código de barras debe tener exactamente 13 digitos.')
 
     class Meta:
 
@@ -210,7 +214,7 @@ class Pedidos(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
-    cuenta_corriente = models.ForeignKey(CuentaCorriente, on_delete= models.PROTECT)
+    cuenta_corriente = models.ForeignKey(CuentaCorrienteProveedor, on_delete= models.PROTECT)
     cantidad = models.IntegerField('Cantidad', null=True)
     solicitadoRandom = random.randint(20, 75)
     solicitado = models.IntegerField('Solicitado ' + str(solicitadoRandom), default=solicitadoRandom)

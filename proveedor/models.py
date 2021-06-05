@@ -1,7 +1,27 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+class CuentaCorrienteProveedor(models.Model):
+    
+    numero_cuenta = models.BigIntegerField("Número de cuenta")
+    proveedor = models.ForeignKey('Proveedor', on_delete=models.PROTECT)
+    
+    def __str__(self):
+        return "Proveedor: {}, Cuenta: {}".format(self.proveedor.razon_social, self.numero_cuenta)
 
+    def clean(self):
+        
+        cuentas_corriente = CuentaCorrienteProveedor.objects.all()
+        cuenta_corriente = CuentaCorrienteProveedor.objects.filter(proveedor = self.proveedor)
+        contador = 0
+        
+        for cuenta in cuenta_corriente:
+            contador += 1
+            
+        for cuenta in cuentas_corriente:
+            
+            if self.numero_cuenta == cuenta.numero_cuenta:
+                raise ValidationError('La cuenta corriente ya está registrada.')
 
 class Proveedor(models.Model):
     

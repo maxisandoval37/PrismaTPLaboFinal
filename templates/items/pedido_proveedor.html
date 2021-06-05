@@ -1,14 +1,14 @@
-{% extends 'index.html' %}
+{% extends 'pantalla_pedido.html' %}
 {% load widget_tweaks %}
 {% load static %}
 
-{% block title %}
-Pedido para el proveedor
-{% endblock title %}
 
 {% block content %}
 
 {% if queryset %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
 <div class="bg-gray-100">
     <div class="card">
         <div class="card-header">
@@ -20,27 +20,28 @@ Pedido para el proveedor
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Item</th>
-                    <th>Solicitado</th>
-                    <th>Disponible</th>
+                    <th style="color: white;">#</th>
+                    <th style="color: white;">Item</th>
+                    <th style="color: white;">Solicitado</th>
+                    <th style="color: white;">Disponible</th>
 
                 </tr>
             </thead>
             <tbody>
                 {% for pedido in queryset %}
                 <tr>
-                    <td>{{pedido.item.cantidad_lote}}</td>
-                    <td>{{ pedido.item }}</td>
-                    <td id="{{pedido.item}}cantitdadLote">{{ pedido.cantidad }}</td>
-                    <td hidden id="{{pedido.item}}porLote" class="esPorLoteClass">{{ pedido.item.repo_por_lote }}</td>
+                    <td></td>
+                    <!-- <td>{{pedido.item.cantidad_lote}}</td> -->
+                    <td style="color: white;">{{ pedido.item }}</td>
+                    <td style="color: white;" id="{{pedido.item}}cantidadLote">{{ pedido.solicitado }}</td>
+                    <!-- <td hidden id="{{pedido.item}}porLote" class="esPorLoteClass">{{ pedido.item.repo_por_lote }}</td> -->
                     {% if pedido.item.repo_por_lote %}
-                    <td>
+                    <td style="color: white;">
                         <input type="Number" class="input-cantidad" id="{{pedido.item}}" placeholder="0" min="0"
                             max="{{ pedido.cantidad }}" step="{{ pedido.item.cantidad_lote }}">
                     </td>
                     {% else %}
-                    <td><input type="Integer" class="input-cantidad" id="{{pedido.item}}" placeholder="0" min="0"
+                    <td style="color: white;"><input type="Integer" class="input-cantidad" id="{{pedido.item}}" placeholder="0" min="0"
                             max="{{ pedido.cantidad }}"></td>
                     {% endif %}
                 </tr>
@@ -55,18 +56,27 @@ Pedido para el proveedor
 
 </div>
 <div class="text-center">
-    <a onclick="funcionCantidad()" class="btn btn-primary"> Enviar </a>
+    <a href="{% url 'items:stock_recibido' %}" onclick="funcionCantidad()" class="btn btn-primary"> Enviar </a>
 </div>
 </div>
-
+</div>
+</div>
+</header>
 {% else %}
-<h1>NO EXISTE EL PEDIDO >:( </h1>
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h3 class="text-white-50 mx-auto mt-2 mb-5">El pedido ha expirado o se encuentra finalizado.</h2>
+           
+        </div>
+    </div>
+</header>
 {% endif %}
 
 
 <script>
     function funcionCantidad() {
-        console.log("Con su permiso, paso a enviar todo a Django :D");
+        
         var csrftoken = getCookie('csrftoken');
         const inputsCantidades = document.getElementsByClassName('input-cantidad');
 

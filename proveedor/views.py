@@ -1,9 +1,9 @@
 from django.shortcuts import render, HttpResponseRedirect, redirect
-from .forms import ProveedorForm
-from .models import Proveedor
+from .forms import ProveedorForm, CuentaCorrienteProveedorForm
+from .models import Proveedor, CuentaCorrienteProveedor
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import ProtectedError
 from django.contrib.messages.views import SuccessMessageMixin
@@ -56,3 +56,12 @@ class EliminarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Dele
             return redirect('proveedores:listar_proveedores')
 
         return HttpResponseRedirect(success_url)                                
+    
+class RegistrarCuentaCorrienteProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
+    
+    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
+    model = CuentaCorrienteProveedor
+    form_class = CuentaCorrienteProveedorForm
+    success_message = 'Se registró la cuenta corriente.'
+    template_name = 'proveedores/crear_cuenta_corriente.html'
+    success_url = reverse_lazy('proveedores:listar_proveedores')

@@ -22,28 +22,28 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 
 app.conf.beat_schedule = {
-    # 'cada-24-horas': {  # cada dia a las 18:00 cuando cierra la caja
-    #     'task': 'ProyectoPRISMA.tasks.Pedido',
-    #     'schedule': 60.0,
-    # },
-    # 'cada-1-hora': {
-    #     'task': 'ProyectoPRISMA.tasks.receiveVentasVirtuales',
-    #     'schedule': 60.0,
-    # },
-    # 'aviso-disposicion-cada-dia-clientes': {
-    #     'task': 'ProyectoPRISMA.tasks.enviarAvisoDisposicion',
-    #     'schedule': 15.0,
-    # },
-    # 'cambiar-reposicion-por-items-mas-vendidos': {  #Cada una semana
-    #     'task': 'ProyectoPRISMA.tasks.ListaItemsPorCriterio',
-    #     'schedule': 15.0,
-    # },
+    'cada-24-horas': {  # cada dia a las 18:00 cuando cierra la caja
+        'task': 'ProyectoPRISMA.tasks.Pedido',
+        'schedule': 60.0,
+    },
+    'cada-1-hora': {
+        'task': 'ProyectoPRISMA.tasks.receiveVentasVirtuales',
+        'schedule': 60.0,
+    },
+    'aviso-disposicion-cada-dia-clientes': {
+        'task': 'ProyectoPRISMA.tasks.enviarAvisoDisposicion',
+        'schedule': 15.0,
+    },
+    'cambiar-reposicion-por-items-mas-vendidos': {  #Cada una semana
+        'task': 'ProyectoPRISMA.tasks.ListaItemsPorCriterio',
+        'schedule': 15.0,
+    },
 }
 
 
 
 # Load task modules from all registered Django apps.
-# app.autodiscover_tasks(['ProyectoPRISMA.tasks'])
+app.autodiscover_tasks(['ProyectoPRISMA.tasks'])
 
 CELERY_TIMEZONE = 'UTC'
 CELERY_ENABLE_UTC = True

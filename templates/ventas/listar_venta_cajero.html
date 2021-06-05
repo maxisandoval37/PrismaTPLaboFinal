@@ -49,7 +49,7 @@ Listado de Ventas
 
                    {% if venta.estado.opciones == 'LISTA' %}
                     <td>
-                        <a href="{% url 'ventas:eliminar_venta' venta.pk %}" class="btn btn-danger">
+                        <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             Eliminar </a>
                     </td>
                     {% else %} 
@@ -60,7 +60,7 @@ Listado de Ventas
                     {% endif %}
                     {% if venta.estado.opciones == 'LISTA' or venta.estado.opciones == 'PAGADA' %}
                     <td>
-                        <a href="{% url 'ventas:ver_items' venta.pk %}" class="btn btn-warning">
+                        <a href="{% url 'ventas:ver_items' venta.numero_comprobante %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
                     {% else %}
@@ -72,7 +72,7 @@ Listado de Ventas
                     
                     {% if venta.estado.opciones == 'LISTA' %}
                     <td>
-                        <a href="{% url 'ventas:finalizar_venta' venta.pk %}" class="btn btn-success">Finalizar venta</a> 
+                        <a href="{% url 'ventas:finalizar_venta' venta.numero_comprobante %}" class="btn btn-success">Finalizar venta</a> 
                     </td>
                     {% else %}
                     <td>
