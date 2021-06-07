@@ -94,6 +94,7 @@ class Operacion(models.Model):
     fecha = models.DateTimeField('Fecha', auto_now_add=True)
     monto = models.CharField('Monto', max_length=10)
     tipo = models.CharField('Tipo', max_length=10)
+    caja_asociada = models.ForeignKey(Caja, on_delete=models.PROTECT)
     identificador = models.CharField('Identificador', max_length= 30)
     
     class Meta:

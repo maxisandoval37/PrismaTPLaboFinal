@@ -1,0 +1,67 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Pinturas Usadas
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Pinturas Usadas</strong>
+        </div>
+    </div>
+    <div class="text-center">
+        <a href="{% url 'items:listar_mezclas_usadas' %}" class="btn btn-primary">Ver mezclas</a>
+        <a href="{% url 'items:iniciar_mezcla_usada' %}" class= "btn btn-info"> Agregar mezcla nueva</a>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Código de barras</th>
+                    <th>Nombre</th>
+                    <th>Color</th>
+                    <th>Cantidad de pintura restante</th>
+                   
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for pintura in object_list %}
+              
+               
+                <tr>
+                    <td></td>
+                    <td>{{ pintura.codigo_de_barras}}</td>
+                    <td>{{ pintura.nombre }}</td>
+                    <td>{{ pintura.color }}</td>
+                    <td>{{ pintura.cantidad_restante}}</td>
+                   
+                </tr>
+
+                {% endfor %}
+                {% else %}
+                <h5>No hay pinturas usadas por el momento. :( </h1>
+                    {% endif %}
+            </tbody>
+        </table>
+        
+    </div>
+    
+
+</div>
+</div>
+
+
+
+
+{% endblock %}

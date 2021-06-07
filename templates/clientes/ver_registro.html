@@ -1,0 +1,61 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Registro de la cuenta
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Registro de la cuenta</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Número de venta</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Monto</th>
+                    <th>Tipo de venta</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                {% if lista %}
+                {% for venta in lista %}
+                <tr>
+                    <td></td>
+                    <td>{{ venta.numero_comprobante}}</td>
+                    <td>{{ venta.fecha}}</td>
+                    <td>{{ venta.cliente_asociado}}</td>                    
+                    <td>{{ venta.total}}</td>
+                    <td>{{ venta.tipo_de_venta}}</td>
+                </tr>
+
+                {% endfor %}
+                {% else %}
+                <h5>La cuenta no posee ningún registro. :( </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+<div class="text-center">
+
+    <a href="{% url 'clientes:listar_cuenta_corriente' %}" class="btn btn-primary" > Volver</a>
+
+</div>
+
+{% endblock %}

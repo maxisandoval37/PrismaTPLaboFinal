@@ -418,6 +418,7 @@ def FinalizarVenta(request, venta):
     movimiento = Operacion()
     movimiento.monto = "+" + str(total) 
     movimiento.tipo = "Venta"
+    movimiento.caja_asociada = caja_menor
     movimiento.identificador = "Número de comprobante" + str(instancia.numero_comprobante)
     movimiento.save()
     

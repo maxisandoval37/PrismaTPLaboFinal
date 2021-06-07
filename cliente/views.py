@@ -6,8 +6,9 @@ from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-
-
+from venta.models import Venta
+from django.db.models import ProtectedError
+from django.core.exceptions import ValidationError
 
 class ListadoCliente(ValidarLoginYPermisosRequeridos,ListView):
     
@@ -15,7 +16,11 @@ class ListadoCliente(ValidarLoginYPermisosRequeridos,ListView):
     model = Cliente
     template_name = 'clientes/listar_cliente.html'
 
-
+class ListadoCuentasCorriente(ValidarLoginYPermisosRequeridos, ListView):
+    
+    permission_required = ('proveedor.view_proveedor',)
+    model = CuentaCorriente
+    template_name = 'clientes/listar_cuenta_corriente.html'
 
 class RegistrarCliente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
@@ -78,3 +83,47 @@ class RegistrarCuentaCorriente(ValidarLoginYPermisosRequeridos,SuccessMessageMix
     template_name = 'clientes/crear_cuenta_corriente.html'
     def get_success_url(self):
         return self.request.GET.get('next', reverse('ventas:registrar_venta_local'))
+    
+    
+class EliminarCuentaCorriente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
+    
+    permission_required = ('cliente.view_cuentacorriente','cliente.add_cuentacorriente',)
+    model = CuentaCorriente
+    template_name = 'clientes/eliminar_cuenta_corriente.html'
+    success_url = reverse_lazy('clientes:listar_cuenta_corriente')
+    success_message = 'Se eliminó la cuenta corriente correctamente.'
+                                    
+    def delete(self, request, *args, **kwargs):
+        
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        ventas_asociadas = Venta.objects.filter(cuenta_corriente = self.object.id)
+        
+        if len(ventas_asociadas) > 0:
+            messages.add_message(request, messages.ERROR, 'No es posible eliminar una cuenta corriente con registros')
+            return redirect('clientes:listar_cuenta_corriente')
+        else:
+            try:
+                self.object.delete()
+            except ProtectedError:
+                messages.add_message(request, messages.ERROR, 'No se puede eliminar: Esta cuenta corriente esta relacionada.')
+                return redirect('clientes:listar_cuenta_corriente')
+
+        return HttpResponseRedirect(success_url) 
+    
+
+def verRegistro(request, cuentacorriente):
+    
+    queryset = Venta.objects.filter(cuenta_corriente = cuentacorriente)
+    lista = []
+    
+    for registro in queryset:
+        
+        print(registro.estado.opciones)
+        
+        if registro.estado.opciones == 'PAGADA':
+            lista.append(registro)
+        
+    return render(request, 'clientes/ver_registro.html', locals())
+        

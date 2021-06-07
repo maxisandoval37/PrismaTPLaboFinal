@@ -1,12 +1,10 @@
 from django.db import models
-from cliente.models import Cliente,MedioDePago, CuentaCorriente
+from cliente.models import Cliente,MedioDePago, CuentaCorriente, TipoDeMoneda
 from sucursal.models import Sucursal
 from usuario.models import Vendedor
-from django.core.exceptions import ValidationError
+
 from django.utils.translation import gettext_lazy as _
 from item.models import Item
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 
 
 
@@ -56,6 +54,7 @@ class Venta(models.Model):
     vendedor_asociado = models.ForeignKey(Vendedor, on_delete=models.PROTECT)
     sucursal_asociada = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
     mediodepago = models.ForeignKey(MedioDePago, on_delete=models.PROTECT)
+    tipo_de_moneda = models.ForeignKey(TipoDeMoneda, on_delete=models.PROTECT)
     cuenta_corriente = models.ForeignKey(CuentaCorriente, on_delete=models.PROTECT)
     estado = models.ForeignKey(EstadoVenta, on_delete=models.PROTECT)
     total = models.DecimalField('Total',decimal_places=2, max_digits=10, default=0)

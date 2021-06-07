@@ -1,0 +1,65 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Pinturas Nuevas
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Pinturas Nuevas</strong>
+        </div>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Código de barras</th>
+                    <th>Nombre</th>
+                    <th>Color</th>
+                    <th>Cantidad de pintura</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Sucursal</th>
+                   
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for pintura in object_list %}
+              
+               
+                <tr>
+                    <td></td>
+                    <td>{{ pintura.codigo_de_barras}}</td>
+                    <td>{{ pintura.nombre }}</td>
+                    <td>{{ pintura.color }}</td>
+                    <td>{{ pintura.cantidad}}</td>
+                    <td>{{ pintura.stock }}</td>
+                    <td>{{ pintura.precio }}</td>
+                    <td>{{ pintura.sucursal}}</td>
+                   
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay pinturas nuevas por el momento. :( </h1>
+                    {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Mezclas
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Mezclas</strong>
+        </div>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Primera Pintura</th>
+                    <th>Cantidad de la primera pintura</th>
+                    <th>Segunda Pintura</th>
+                    <th>Cantidad de la segunda pintura</th>
+                 
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for pintura in object_list %}
+                
+               
+                <tr>
+                    <td></td>
+                    <td>{{ pintura.primera_pintura }}</td>
+                    <td>{{ pintura.cantidad_primera_pintura}}</td>
+                    <td>{{ pintura.segunda_pintura }}</td>
+                    <td>{{ pintura.cantidad_segunda_pintura}}</td>
+                   
+                    <td>
+                        <a href="{% url 'items:eliminar_mezcla' pintura.pk %}" class="btn btn-danger"> Eliminar </a>
+                        <a href="{% url 'items:finalizar_mezcla' pintura.id pintura.primera_pintura.id pintura.segunda_pintura.id pintura.cantidad_primera_pintura pintura.cantidad_segunda_pintura %}" class="btn btn-primary">Mezclar</a>
+                    </td>
+                   
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay mezclas preparadas :( </h1>
+                    {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+
+
+{% endblock %}

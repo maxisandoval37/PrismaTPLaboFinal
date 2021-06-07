@@ -1,0 +1,103 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Pinturas
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Pinturas</strong>
+        </div>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Color</th>
+                    <th>Cantidad de pintura máxima (En ML)</th>
+                    <th>Stock</th>
+                    <th>Categoria</th>
+                    <th>SubCategoria</th>
+                    <th>Proveedor</th>
+                    <th>Estado</th>
+                    <th>Unidad de medida</th>
+                    <th>Ubicación</th>
+                    <th>Sucursal</th>
+                    <th>Stock Minimo</th>
+                    <th>Stock de Seguridad</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for pintura in object_list %}
+                {% if pintura.cantidad <= pintura.stockminimo and pintura.cantidad > pintura.stockseguridad %}
+
+
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>STOCK MINIMO!</strong> Se ha alcanzado el stock minimo para la pintura {{item.nombre}}.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+
+                {% if item.cantidad <= item.stockseguridad %} 
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>STOCK DE SEGURIDAD!</strong> Se ha alcanzado el stock de seguridad para la pintura {{item.nombre}}.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+               
+                <tr>
+                    <td></td>
+                    <td>{{ pintura.nombre }}</td>
+                    <td>{{ pintura.precio }}</td>
+                    <td>{{ pintura.color }}</td>
+                    <td>{{ pintura.cantidad_pintura}}</td>
+                    <td>{{ pintura.cantidad}}</td>
+                    <td>{{ pintura.categoria }}</td>
+                    <td>{{ pintura.subcategoria }}</td>
+                    <td>{{ pintura.categoria.prov_preferido}}</td>
+                    <td>{{ pintura.estado}}</td>
+                    <td>{{ pintura.unidad_de_medida }}</td>
+                    <td>{{ pintura.ubicacion}}</td>
+                    <td>{{ pintura.sucursal}}</td>
+                    <td>{{ pintura.stockminimo }}</td>
+                    <td>{{ pintura.stockseguridad }}</td>
+
+                    <td>
+                        <a href="{% url 'items:eliminar_item' pintura.pk %}" class="btn btn-danger"> Eliminar </a>
+                        <a href="{% url 'items:actualizar_item' pintura.pk %}" class="btn btn-primary"> Editar </a>
+                        <a href="{% url 'items:reposicion_item' pintura.pk %}" class="btn btn-warning"> Configurar
+                            reposicion </a>
+                    </td>
+                   
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay pinturas registradas :( </h1>
+                    {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+
+
+{% endblock %}

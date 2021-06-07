@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mathfilters',
     'usuario',
     'item',
     'sucursal',

@@ -86,7 +86,27 @@ class MedioDePago(models.Model):
                 
             if self.cliente.nombre == 'CONSUMIDOR FINAL' and self.opciones != 'EFECTIVO':
                 raise ValidationError('El consumidor final solo puede pagar con efectivo.')
+            
+class TipoDeMoneda(models.Model):
+    
+    class opcionesTipo(models.TextChoices):
         
+        EURO = 'EURO'
+        DOLAR = 'DOLAR'
+        
+    opciones = models.CharField(choices = opcionesTipo.choices, max_length= 5)
+    
+    def __str__(self):
+        return self.opciones
+    
+    def clean(self):
+        
+        monedas = TipoDeMoneda.objects.all()
+        for moneda in monedas:
+            
+            if self.opciones == moneda.opciones:
+                raise ValidationError('No es posible añadir un tipo de moneda ya registrado.')
+            
 class CuentaCorriente(models.Model):
     
     numero_cuenta = models.BigIntegerField("Número de cuenta")

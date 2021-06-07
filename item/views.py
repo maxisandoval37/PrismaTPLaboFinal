@@ -1,9 +1,10 @@
+import decimal
 from proveedor.models import Proveedor
 from django.shortcuts import render, redirect, HttpResponseRedirect
-from .models import Categoria, SubCategoria,  Item, Pedidos
+from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
-from .forms import ItemForm
+from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import  ProtectedError
@@ -12,8 +13,8 @@ from venta.models import Venta, ItemVenta
 from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
 from sucursal.models import Caja, Operacion
-
-
+from decimal import Decimal
+import random
 
 class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
     
@@ -88,6 +89,49 @@ class EliminarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,DeleteVi
 
         return HttpResponseRedirect(success_url)
 
+class EliminarMezcla(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,DeleteView):
+    
+    permission_required = ('item.view_item','item.delete_item',)
+    model = Mezcla
+    template_name = 'items/eliminar_mezcla.html'
+    success_url = reverse_lazy('items:listar_mezclas')
+    success_message = 'Se eliminó la mezcla.'
+
+    def delete(self, request, *args, **kwargs):
+
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.add_message(
+                request, messages.ERROR, 'No se puede eliminar: Esta mezcla esta relacionada.')
+            return redirect('items:listar_mezclas')
+
+        return HttpResponseRedirect(success_url)
+
+class EliminarMezclaUsada(ValidarLoginYPermisosRequeridos, SuccessMessageMixin,DeleteView):
+    
+    permission_required = ('item.view_item','item.delete_item',)
+    model = MezclaUsada
+    template_name = 'items/eliminar_mezcla_usada.html'
+    success_url = reverse_lazy('items:listar_mezclas_usadas')
+    success_message = 'Se eliminó la mezcla.'
+
+    def delete(self, request, *args, **kwargs):
+
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.add_message(
+                request, messages.ERROR, 'No se puede eliminar: Esta mezcla esta relacionada.')
+            return redirect('items:listar_mezclas_usadas')
+
+        return HttpResponseRedirect(success_url)
 
 class ListarCategorias(ValidarLoginYPermisosRequeridos, ListView):
     
@@ -176,10 +220,10 @@ def RecibirStock(request, id_proveedor, id_sucursal):
                     item.cantidad += int(cantidadReq)
                     item.solicitud = False
                     item.save()
-                    Pedidos.objects.filter(item_id=item.id).delete()
                     movimiento = Operacion()
                     movimiento.monto = "-" + str(total) 
                     movimiento.tipo= "Pedido"
+                    movimiento.caja_asociada = caja_mayor
                     movimiento.identificador = "Proveedor: " + razon_social
                     movimiento.save()
                     reintentos = False
@@ -214,10 +258,229 @@ def CambioMasivo(request):
         
         for item in items:
             
+            reporte_precios = ReportePrecios()
+            reporte_precios.item_asociado = item.id 
+            reporte_precios.precio_anterior = item.precio 
+        
             item.precio += int(precio)
+            
+            reporte_precios.precio_nuevo = item.precio
+            reporte_precios.responsable = request.user.id
+            
             item.stockseguridad = int(stock) 
             item.save()
             
     messages.success(request, 'Modificación masiva realizada con éxito.')
     return HttpResponse("Cambio efectuado.")
             
+class ListadoPintura(ValidarLoginYPermisosRequeridos, ListView):
+    
+    model = Pintura
+    template_name = 'items/listar_pintura.html'   
+
+
+class ListadoPinturaNueva(ValidarLoginYPermisosRequeridos, ListView):
+    
+    model = PinturaNueva
+    template_name = 'items/listar_pintura_nueva.html'   
+
+class ListadoPinturaUsada(ValidarLoginYPermisosRequeridos, ListView):
+    
+    model = PinturaUsada
+    template_name = 'items/listar_pintura_usada.html'     
+        
+class AgregarPintura(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, CreateView):
+    
+    model = Pintura
+    form_class = PinturaForm
+    template_name = 'items/crear_pintura.html'
+    success_message = 'Pintura registrada con éxito.'
+    success_url = reverse_lazy('items:listar_pinturas')
+    
+    
+class ListadoMezclas(ValidarLoginYPermisosRequeridos, ListView):
+    
+    model = Mezcla
+    template_name = 'items/listar_mezcla.html'    
+    
+class IniciarMezcla(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, CreateView):
+    
+    model = Mezcla
+    form_class = MezclaForm 
+    template_name = 'items/iniciar_mezcla.html'
+    success_message = 'Mezcla realizada correctamente.'
+    success_url = reverse_lazy('items:listar_mezclas')
+    
+class ListadoMezclaUsada(ValidarLoginYPermisosRequeridos, ListView):
+    
+    model = MezclaUsada
+    template_name = 'items/listar_mezcla_usada.html' 
+
+class IniciarMezclaUsada(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, CreateView):
+    
+    model = MezclaUsada
+    form_class = MezclaUsadaForm 
+    template_name = 'items/iniciar_mezcla_usada.html'
+    success_message = 'Mezcla realizada correctamente.'
+    success_url = reverse_lazy('items:listar_mezclas_usadas')
+    
+    
+    
+def mezclarPinturas(request, mezcla ,primerapintura, segundapintura, cantidad_primera, cantidad_segunda):
+    
+    queryset1 = Pintura.objects.filter(id = primerapintura)
+    queryset2 = Pintura.objects.filter(id = segundapintura)
+    primera_pintura = None 
+    segunda_pintura = None
+    
+    for pintura in queryset1:
+        primera_pintura = pintura
+    for pintura in queryset2:
+        segunda_pintura = pintura
+        
+    if primera_pintura.cantidad - 1 < 0 or segunda_pintura.cantidad -1 < 0:
+        messages.error(request, 'No hay stock disponible para realizar la mezcla.')
+        return redirect('items:listar_mezclas')
+    
+    pintura = PinturaNueva.objects.filter(color = primera_pintura.color + " y " + segunda_pintura.color + " | Cantidad: " + str(cantidad_primera) + " | " + str(cantidad_segunda))
+    
+    if len(pintura) > 0:
+        
+        for p in pintura:
+            
+            p.stock += 1
+            p.save()
+    else:
+        
+        nueva_pintura = PinturaNueva()
+        nueva_pintura.codigo_de_barras = random.randint(999999999999, 10000000000000)
+        nueva_pintura.pcant = cantidad_primera 
+        nueva_pintura.scant = cantidad_segunda
+        nueva_pintura.nombre = "Pintura "+ primera_pintura.color + " y " + segunda_pintura.color
+        nueva_pintura.color = primera_pintura.color + " y " + segunda_pintura.color + " | Cantidad: " + str(nueva_pintura.pcant) + " | " + str(nueva_pintura.scant)
+        nueva_pintura.precio = primera_pintura.precio + segunda_pintura.precio + ((primera_pintura.precio + segunda_pintura.precio) * Decimal("0.10".replace(',', '.')))
+        nueva_pintura.cantidad = cantidad_primera + cantidad_segunda
+        nueva_pintura.sucursal = primera_pintura.sucursal
+        nueva_pintura.stock = 1
+        nueva_pintura.save()
+
+    
+    usadas = PinturaUsada.objects.all()    
+
+    if len(usadas) > 0:
+        for pintura in usadas:
+            
+        
+            if pintura.nombre == primera_pintura.nombre and pintura.color == primera_pintura.color and pintura.cantidad_restante == (primera_pintura.cantidad_pintura - cantidad_primera):
+                pintura.cantidad_restante += (primera_pintura.cantidad_pintura - cantidad_primera)
+                pintura.save() 
+            else:
+                
+                pintura_usada = PinturaUsada()
+                pintura_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
+                pintura_usada.nombre = primera_pintura.nombre
+                pintura_usada.color = primera_pintura.color
+                pintura_usada.cantidad_restante = primera_pintura.cantidad_pintura - cantidad_primera 
+                pintura_usada.precio = primera_pintura.precio
+                pintura_usada.sucursal = primera_pintura.sucursal
+                primera_pintura.cantidad -= 1
+                pintura_usada.save()
+                primera_pintura.save()
+                
+            if pintura.nombre == segunda_pintura.nombre and pintura.color == segunda_pintura.color and pintura.cantidad_restante == (segunda_pintura.cantidad_pintura - cantidad_segunda):
+                
+                pintura.cantidad_restante += (segunda_pintura.cantidad_pintura - cantidad_segunda)
+                pintura.save()
+            else:
+                            
+                segunda_usada = PinturaUsada()
+                segunda_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
+                segunda_usada.nombre = segunda_pintura.nombre
+                segunda_usada.color = segunda_pintura.color
+                segunda_usada.cantidad_restante = segunda_pintura.cantidad_pintura - cantidad_segunda
+                segunda_usada.precio = segunda_pintura.precio
+                segunda_usada.sucursal = segunda_pintura.sucursal 
+                segunda_usada.save()
+                segunda_pintura.cantidad -= 1
+                segunda_pintura.save()
+    else:
+        
+        pintura_usada = PinturaUsada()
+        pintura_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
+        pintura_usada.nombre = primera_pintura.nombre
+        pintura_usada.color = primera_pintura.color
+        pintura_usada.cantidad_restante = primera_pintura.cantidad_pintura - cantidad_primera 
+        pintura_usada.precio = primera_pintura.precio
+        pintura_usada.sucursal = primera_pintura.sucursal
+        primera_pintura.cantidad -= 1
+        pintura_usada.save()
+        primera_pintura.save()
+        segunda_usada = PinturaUsada()
+        segunda_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
+        segunda_usada.nombre = segunda_pintura.nombre
+        segunda_usada.color = segunda_pintura.color
+        segunda_usada.cantidad_restante = segunda_pintura.cantidad_pintura - cantidad_segunda
+        segunda_usada.precio = segunda_pintura.precio
+        segunda_usada.sucursal = segunda_pintura.sucursal 
+        segunda_usada.save()
+        segunda_pintura.cantidad -= 1
+        segunda_pintura.save()
+    
+    Mezcla.objects.filter(id = mezcla).delete()
+        
+    messages.success(request, 'Mezcla finalizada con éxito.')
+    return redirect('items:listar_pinturas')
+
+
+
+def mezclarPinturasUsadas(request, mezcla ,primerapintura, segundapintura, cantidad_primera, cantidad_segunda):
+    
+    queryset1 = PinturaUsada.objects.filter(id = primerapintura)
+    queryset2 = PinturaUsada.objects.filter(id = segundapintura)
+    primera_pintura = None 
+    segunda_pintura = None
+    
+    for pintura in queryset1:
+        primera_pintura = pintura
+    for pintura in queryset2:
+        segunda_pintura = pintura
+        
+    pintura = PinturaNueva.objects.filter(color = primera_pintura.color + " y " + segunda_pintura.color + " | Cantidad: " + str(cantidad_primera) + " | " + str(cantidad_segunda))
+    
+    if len(pintura) > 0:
+        
+        for p in pintura:
+            
+            p.stock += 1
+            p.save()
+    else:
+        
+        nueva_pintura = PinturaNueva()
+        nueva_pintura.codigo_de_barras = random.randint(999999999999, 10000000000000)
+        nueva_pintura.pcant = cantidad_primera 
+        nueva_pintura.scant = cantidad_segunda
+        nueva_pintura.nombre = "Pintura "+ primera_pintura.color + " y " + segunda_pintura.color
+        nueva_pintura.color = primera_pintura.color + " y " + segunda_pintura.color + " | Cantidad: " + str(nueva_pintura.pcant) + " | " + str(nueva_pintura.scant)
+        nueva_pintura.precio = primera_pintura.precio + segunda_pintura.precio + ((primera_pintura.precio + segunda_pintura.precio) * Decimal("0.10".replace(',', '.')))
+        nueva_pintura.cantidad = cantidad_primera + cantidad_segunda
+        nueva_pintura.sucursal = primera_pintura.sucursal
+        nueva_pintura.stock = 1
+        nueva_pintura.save()
+        
+        
+    primera_pintura.cantidad_restante -= cantidad_primera
+    segunda_pintura.cantidad_restante -= cantidad_segunda
+    primera_pintura.save()
+    segunda_pintura.save()
+    
+    MezclaUsada.objects.filter(id = mezcla).delete()
+    
+    if primera_pintura.cantidad_restante == 0:
+        primera_pintura.delete()
+    if segunda_pintura.cantidad_restante == 0:
+        segunda_pintura.delete() 
+    
+    
+    
+    messages.success(request, 'Mezcla realizada con éxito.')
+    return redirect('items:listar_mezclas_usadas')

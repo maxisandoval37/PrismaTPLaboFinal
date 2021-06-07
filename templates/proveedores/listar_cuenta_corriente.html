@@ -1,0 +1,59 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Cuentas Corriente
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Cuentas Corriente</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Número de cuenta</th>
+                    <th>Proveedor</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for cuenta in object_list %}
+                <tr>
+                    <td></td>
+                    <td>{{ cuenta.numero_cuenta }}</td>
+                    <td>{{ cuenta.proveedor }}</td>
+                    
+
+                    <td>
+                        <a href="{% url 'proveedores:eliminar_cuenta_corriente' cuenta.id %}" class="btn btn-danger">
+                            Eliminar </a>
+                        <a href="{% url 'proveedores:ver_registro' cuenta.id %}" class="btn btn-primary">
+                            Ver registro </a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay cuentas corriente registradas :( </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}

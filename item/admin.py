@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Item, Estado, Categoria, UnidadDeMedida, SubCategoria, Pedidos
+from .models import Item, Estado, Categoria, UnidadDeMedida, SubCategoria, Pedidos, Pintura, Mezcla, PinturaUsada, PinturaNueva
 
 @register(Item)
 class itemAdmin(ModelAdmin):
@@ -30,4 +30,26 @@ class subcatAdmin(ModelAdmin):
 class pedidosAdmin(ModelAdmin):
     
     icon_name = 'add_box'
+    
+@register(Pintura)
+class pinturaAdmin(ModelAdmin):
+    
+    icon_name = 'add_box'
+    
+@register(PinturaNueva)
+class pinturanuevaAdmin(ModelAdmin):
+    
+    icon_name = 'add_box'
+
+@register(PinturaUsada)
+class pinturaSAdmin(ModelAdmin):
+    
+    icon_name = 'add_box'
+    
+@register(Mezcla)
+class mezclaAdmin(ModelAdmin):
+    
+    icon_name = 'add_box'
+    
+
     

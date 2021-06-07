@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Eliminar mezcla {% endblock title %}
+
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <strong class="card-tittle">Eliminar Mezcla: {{object}}</strong>
+    </div>
+
+    <div class="card-body">
+        <form class="user" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <h1>¿Desea eliminar la mezcla {{object}}?</h1>
+                <a href="{% url 'items:listar_mezclas_usadas' %}" class="btn btn-danger"> Cancelar </a>
+                <button type="submit" class="btn btn-primary">Eliminar</button>
+            </div>
+        </form>
+    </div>
+    {% endblock %}

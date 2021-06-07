@@ -1,0 +1,59 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Registro de la cuenta
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Registro de la cuenta</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Número de Pedido</th>
+                    <th>Proveedor</th>
+                    <th>Cantidad de items solicitados</th>
+                    <th>Cantidad de items entregados</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% if lista %}
+                {% for pedido in lista %}
+                <tr>
+                    <td></td>
+                    <td>{{pedido.id}}</td>
+                    <td>{{ pedido.proveedor}}</td>
+                    <td>{{pedido.solicitadoRandom}}</td>
+                    <td>{{pedido.cantidad}}</td>
+
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>La cuenta no posee ningún registro. :( </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+<div class="text-center">
+
+    <a href="{% url 'proveedores:listar_cuenta_corriente' %}" class="btn btn-primary" > Volver</a>
+
+</div>
+
+{% endblock %}

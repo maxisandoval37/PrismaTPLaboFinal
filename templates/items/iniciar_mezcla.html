@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Seleccionar Pinturas {% endblock title %}
+
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <strong class="card-tittle">Seleccionar Pinturas</strong>
+    </div>
+
+    <div class="card-body">
+        <form class="user" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            {{field.label_tag}}
+            
+            <div class="form-group">
+                {% render_field field class="form-control form-control" %}
+
+                {% endfor %}
+            
+            </div>
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+            <div class="">
+                <a href="{% url 'items:listar_pinturas' %}" class="btn btn-danger"> Cancelar </a>
+                <button type="submit" class="btn btn-primary">Agregar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

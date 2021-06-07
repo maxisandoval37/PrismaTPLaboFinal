@@ -6,6 +6,11 @@ class CuentaCorrienteProveedor(models.Model):
     numero_cuenta = models.BigIntegerField("Número de cuenta")
     proveedor = models.ForeignKey('Proveedor', on_delete=models.PROTECT)
     
+    class Meta:
+        
+        verbose_name = 'cuenta corriente'
+        verbose_name_plural = 'cuentas corrientes'
+    
     def __str__(self):
         return "Proveedor: {}, Cuenta: {}".format(self.proveedor.razon_social, self.numero_cuenta)
 

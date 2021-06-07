@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from proveedor.models import Proveedor
 from django.core.exceptions import ValidationError
 from proveedor.models import CuentaCorrienteProveedor
+from usuario.models import Usuario
 import random
 # Create your models here.
 
@@ -149,8 +150,9 @@ class Estado(models.Model):
 class Item(models.Model):
 
     id = models.AutoField(primary_key=True)
-    codigo_de_barras = models.CharField('Código de barras', max_length= 13, unique=True)
-    nombre = models.CharField('Nombre', max_length=50, unique=True)
+    numero_random = random.randint(999999999999, 10000000000000)
+    codigo_de_barras = models.BigIntegerField('Código de barras', default = numero_random, unique=True)
+    nombre = models.CharField('Nombre', max_length=50)
     precio = models.DecimalField('Precio',decimal_places=2, max_digits=10, null=True)
     descripcion = models.CharField('Descripción', max_length=50, null=True, blank=True)
     stockminimo = models.IntegerField('Stock Minimo',  default=1)
@@ -171,6 +173,13 @@ class Item(models.Model):
 
     def clean(self):
 
+        items = Item.objects.all() 
+        
+        for item in items:
+            
+            if self.nombre == item.nombre:
+                raise ValidationError('Ya existe un item con el mismo nombre.')
+        
         
         if len(self.nombre) < 4 and len(self.nombre) > 50:
             raise ValidationError(
@@ -198,8 +207,9 @@ class Item(models.Model):
         if self.cantidad < 0:
             raise ValidationError('La cantidad del stock no puede ser negativa')
         
-        if len(self.codigo_de_barras) > 13 or len(self.codigo_de_barras) < 13:
-            raise ValidationError('El código de barras debe tener exactamente 13 digitos.')
+        
+        if self.repo_por_lote and self.cantidad_lote == 0:
+            raise ValidationError('Es necesario ingresar una cantidad de reposición por lote.')
 
     class Meta:
 
@@ -208,7 +218,180 @@ class Item(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+    
+    
+class Pintura(Item):
+    
+    color = models.CharField('Color', max_length=30)
+    cantidad_pintura = models.PositiveIntegerField('Cantidad de pintura', default= 0)
+    
+    class Meta:
 
+        verbose_name = 'pintura'
+        verbose_name_plural = 'pinturas'
+
+    def __str__(self):
+        return "{}, Color:{}".format(self.nombre, self.color)
+    
+    def clean(self):
+        
+        pinturas = Pintura.objects.all()
+        for pintura in pinturas:
+        
+            if self.nombre == pintura.nombre and self.color == pintura.color and self.id != pintura.id:
+                raise ValidationError('La pintura ya está registrada.')
+        
+        if not self.color.isalpha():
+            raise ValidationError('El color solo puede tener letras.')
+        if len(self.color) > 30 or len(self.color) < 4:
+            raise ValidationError('El color debe tener entre 4 y 30 letras.')
+        
+        if self.cantidad_pintura <= 0:
+            raise ValidationError('La cantidad de la pintura debe ser mayor a 0.')
+    
+    
+class PinturaUsada(models.Model):
+    
+    numero_random = random.randint(999999999999, 10000000000000)
+    codigo_de_barras = models.BigIntegerField('Código de barras', default = numero_random, unique=True)
+    nombre = models.CharField('Nombre de pintura', max_length=30)
+    color = models.CharField('Color de pintura', max_length=50)
+    cantidad_restante = models.PositiveIntegerField('Cantidad de pintura restante')
+    precio = models.PositiveIntegerField('Precio')
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
+    
+    class Meta:
+        
+        verbose_name = 'pintura usada'
+        verbose_name_plural = 'pinturas usadas'
+        
+    def __str__(self):
+        return "Pintura: {}, Color: {}".format(self.nombre, self.color) 
+    
+    def clean(self):
+        
+        if len(self.nombre) < 4 and len(self.nombre) > 30:
+            raise ValidationError(
+                'El nombre del item debe tener entre 4 y 30 letras.')
+        
+        if not self.color.isalpha():
+            raise ValidationError('El color solo puede tener letras.')
+        if len(self.color) > 50 or len(self.color) < 4:
+            raise ValidationError('El color debe tener entre 4 y 50 letras.')  
+        if self.cantidad_restante < 0:
+            raise ValidationError('La cantidad restante de la pintura no puede ser negativa.')
+
+class PinturaNueva(models.Model):
+    
+    numero_random = random.randint(999999999999, 10000000000000)
+    codigo_de_barras = models.BigIntegerField('Código de barras', default = numero_random, unique=True)
+    nombre = models.CharField('Nombre de pintura', max_length=30)
+    color = models.CharField('Color de pintura', max_length=50)
+    cantidad = models.PositiveIntegerField('Cantidad de pintura')
+    stock = models.IntegerField('Stock')
+    pcant = models.PositiveIntegerField('Primera cantidad')
+    scant = models.PositiveIntegerField('Segunda cantidad')
+    precio = models.PositiveIntegerField('Precio')
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
+    
+    class Meta:
+        
+        verbose_name = 'pintura nueva'
+        verbose_name_plural = 'pinturas nuevas'
+        
+    def __str__(self):
+        return "Pintura: {}, Color: {}".format(self.nombre, self.color) 
+    
+    def clean(self):
+        
+        if len(self.nombre) < 4 and len(self.nombre) > 30:
+            raise ValidationError(
+                'El nombre del item debe tener entre 4 y 30 letras.')
+        
+        if not self.color.isalpha():
+            raise ValidationError('El color solo puede tener letras.')
+        if len(self.color) > 50 or len(self.color) < 4:
+            raise ValidationError('El color debe tener entre 4 y 50 letras.')  
+        if self.cantidad_restante < 0:
+            raise ValidationError('La cantidad restante de la pintura no puede ser negativa.')
+    
+
+class Mezcla(models.Model):
+    
+    primera_pintura = models.ForeignKey(Pintura, on_delete=models.PROTECT, related_name='+')
+    segunda_pintura = models.ForeignKey(Pintura,on_delete=models.PROTECT)
+    cantidad_primera_pintura = models.PositiveIntegerField('Cantidad de la primera pintura (En mililitros)', default = 0)
+    cantidad_segunda_pintura = models.PositiveIntegerField('Cantidad de la segunda pintura (En mililitros)', default = 0)
+    
+    
+    class Meta:
+       verbose_name = 'mezcla'
+       verbose_name_plural = 'mezclas'
+
+    def __str__(self):
+        return "Pintura: {} con {}".format(self.primera_pintura.color, self.segunda_pintura.color) 
+    
+    def clean(self):
+        
+        if self.primera_pintura == None:
+            raise ValidationError('Debe seleccionar la primera pintura a mezclar.')
+        
+        if self.segunda_pintura == None:
+            raise ValidationError('Debe seleccionar la segunda pintura a mezclar.')
+        
+        if self.primera_pintura == self.segunda_pintura:
+            raise ValidationError('No es posible mezclar dos pinturas iguales.')
+        
+        if self.primera_pintura.cantidad <= 0 or self.segunda_pintura.cantidad <= 0:
+            raise ValidationError('La pintura seleccionada no tiene stock disponible.')
+        
+        if self.cantidad_primera_pintura > self.primera_pintura.cantidad_pintura:
+            raise ValidationError('No puedes ingresar una cantidad mayor que la capacidad maxima de la primera pintura.') 
+        if self.cantidad_segunda_pintura > self.segunda_pintura.cantidad_pintura:
+            raise ValidationError('No puedes ingresar una cantidad mayor que la capacidad maxima de la segunda pintura.')
+        
+        if self.cantidad_primera_pintura < 0 or self.cantidad_primera_pintura == 0:
+            raise ValidationError('La cantidad de la primera pintura debe ser mayor que 0.')
+        if self.cantidad_segunda_pintura < 0 or self.cantidad_segunda_pintura == 0:
+            raise ValidationError('La cantidad de la segunda pintura debe ser mayor que 0.')
+
+class MezclaUsada(models.Model):
+    
+    primera_pintura = models.ForeignKey(PinturaUsada, on_delete=models.PROTECT, related_name='+')
+    segunda_pintura = models.ForeignKey(PinturaUsada,on_delete=models.PROTECT)
+    cantidad_primera_pintura = models.PositiveIntegerField('Cantidad de la primera pintura (En mililitros)', default = 0)
+    cantidad_segunda_pintura = models.PositiveIntegerField('Cantidad de la segunda pintura (En mililitros)', default = 0)
+    
+    
+    class Meta:
+       verbose_name = 'mezcla'
+       verbose_name_plural = 'mezclas'
+
+    def __str__(self):
+        return "Pintura: {} con {}".format(self.primera_pintura.color, self.segunda_pintura.color) 
+    
+    def clean(self):
+        
+        if self.primera_pintura == None:
+            raise ValidationError('Debe seleccionar la primera pintura a mezclar.')
+        
+        if self.segunda_pintura == None:
+            raise ValidationError('Debe seleccionar la segunda pintura a mezclar.')
+        
+        if self.primera_pintura == self.segunda_pintura:
+            raise ValidationError('No es posible mezclar dos pinturas iguales.')
+        
+        if self.cantidad_primera_pintura > self.primera_pintura.cantidad_restante:
+            raise ValidationError('No puedes ingresar una cantidad mayor que la cantidad restante de la primera pintura.') 
+        if self.cantidad_segunda_pintura > self.segunda_pintura.cantidad_restante:
+            raise ValidationError('No puedes ingresar una cantidad mayor que la cantidad restante de la segunda pintura.')
+        
+        if self.cantidad_primera_pintura < 0 or self.cantidad_primera_pintura == 0:
+            raise ValidationError('La cantidad de la primera pintura debe ser mayor que 0.')
+        if self.cantidad_segunda_pintura < 0 or self.cantidad_segunda_pintura == 0:
+            raise ValidationError('La cantidad de la segunda pintura debe ser mayor que 0.')
+    
 
 class Pedidos(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
@@ -217,7 +400,7 @@ class Pedidos(models.Model):
     cuenta_corriente = models.ForeignKey(CuentaCorrienteProveedor, on_delete= models.PROTECT)
     cantidad = models.IntegerField('Cantidad', null=True)
     solicitadoRandom = random.randint(20, 75)
-    solicitado = models.IntegerField('Solicitado ' + str(solicitadoRandom), default=solicitadoRandom)
+    solicitado = models.IntegerField('Solicitado ', default=solicitadoRandom)
 
     def __str__(self):
         return "Item:" + str(self.item) + " , " + "Sucursal:"+str(self.sucursal) + " , " + "Proveedor:"+str(self.proveedor)
@@ -227,4 +410,17 @@ class Pedidos(models.Model):
         verbose_name_plural = 'pedidos'
     
     
+class ReportePrecios(models.Model):
     
+    item_asociado = models.ForeignKey(Item, on_delete= models.PROTECT)
+    fecha = models.DateTimeField('Fecha de modificación', auto_now_add=True)
+    precio_anterior = models.DecimalField('Precio anterior', decimal_places= 2, max_digits=7)
+    precio_nuevo = models.DecimalField('Precio nuevo',decimal_places= 2,max_digits=7)
+    responsable = models.ForeignKey(Usuario, on_delete=models.PROTECT)
+    
+    class Meta:
+        verbose_name = 'reporte de precios'
+        verbose_name_plural = 'reportes de precios'
+        
+    def __str__(self):
+        return "Fecha: {} , Categoria: {}".format(self.fecha, self.item_asociado)
