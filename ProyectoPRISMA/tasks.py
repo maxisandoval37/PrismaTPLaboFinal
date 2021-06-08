@@ -1,17 +1,20 @@
 from proveedor.models import CuentaCorrienteProveedor
 from item.models import Item, Pedidos, Proveedor
-from venta.models import Venta, ItemVenta, EstadoVenta
+from venta.models import Venta, ItemVenta, EstadoVenta, Cotizacion
 from celery import shared_task, Celery
 from django.core.mail import send_mail
 from usuario.models import Supervisor
-from cliente.models import Cliente
+from cliente.models import Cliente, TipoDeMoneda
 from sucursal.models import Caja
 from decimal import Decimal
 from datetime import date
 from time import sleep
+from django.db.models import Count
 import random
 import json
-from django.db.models import Count
+import requests
+
+
 
 @shared_task
 def sleepy(duration):
@@ -362,5 +365,41 @@ def ListaItemsPorCriterio():
     
     return None
      
+     
+@shared_task
+def obtenerCotizacion():
+    
+    dolar1 = requests.get('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + date.today().strftime("%Y-%m-%d") + '/currencies/usd/ars.json')
+    euro1 = requests.get('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + date.today().strftime("%Y-%m-%d") + '/currencies/eur/ars.json')
+    monedas = TipoDeMoneda.objects.filter(opciones = 'DOLAR')
+    monedas2 = TipoDeMoneda.objects.filter(opciones = 'EURO')
+    # monedas3 = TipoDeMoneda.objects.filter(opciones = 'PESO')
+    # peso = ""
+    dolar = ""
+    euro = ""
+    
+    for moneda in monedas:
+        dolar = moneda.id
+    for moneda in monedas2:
+        euro = moneda.id
+    # for moneda in monedas3:
+    #     peso = moneda.id
+    
+    cotizacion = Cotizacion()
+    cotizacion.moneda_id = dolar
+    cotizacion.cotizacion = dolar1.json()['ars']
+    cotizacion.save()
+    
+    cotizacion2 = Cotizacion()
+    cotizacion2.moneda_id = euro
+    cotizacion2.cotizacion = euro1.json()['ars']
+    cotizacion2.save()
+    
+    # cotizacion3 = Cotizacion()
+    # cotizacion3.moneda = peso
+    # cotizacion3.cotizacion = 1
+    # cotizacion3.save()
+    
 
+    
 app = Celery()

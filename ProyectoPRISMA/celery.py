@@ -38,6 +38,10 @@ app.conf.beat_schedule = {
         'task': 'ProyectoPRISMA.tasks.ListaItemsPorCriterio',
         'schedule': 15.0,
     },
+    'obtener-cotizacion': {  #Cada una semana
+        'task': 'ProyectoPRISMA.tasks.obtenerCotizacion',
+        'schedule': 15.0,
+    },
 }
 
 

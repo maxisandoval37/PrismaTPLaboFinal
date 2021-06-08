@@ -126,4 +126,10 @@ def verRegistro(request, cuentacorriente):
             lista.append(registro)
         
     return render(request, 'clientes/ver_registro.html', locals())
-        
+
+def consultaDiaria(request):
+    return render(request, 'clientes/consultas_cotizaciones.html')
+
+
+def consultaHistorico(request):
+    return render(request, 'clientes/consultas_historico.html')

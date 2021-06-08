@@ -1,0 +1,84 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}
+Cotizaciones
+{% endblock title %}
+
+{% block content %}
+
+<div class="bg-gray-100" id="report">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Consulta de histórica</strong>
+        </div>
+    </div>
+
+    <h4>Cotización Dolar</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Cotizacion</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoTablaDolar">
+        </tbody>
+    </table>
+</div>
+
+<h4> Cotización Euro</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Cotizacion</th>
+        </tr>
+    </thead>
+    <tbody id="cuerpoTablaEuro">
+    </tbody>
+</table>
+
+<script>
+    window.onload = function () {
+        try {
+            for (let i = 1; i < 7; i++) {
+                //dolar:
+                fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/2021-0' + i + '-01/currencies/usd/ars.json')
+                    .then(res => res.json())
+                    .then(json => {
+                        fecha = json.date;
+                        dolar = json.ars;
+                        fechaActualD = '2021-0' + i + '-01';
+
+
+                        document.getElementById("cuerpoTablaDolar").innerHTML +=
+                            "<tr><th scope='row'>" + i + "</th><td>" + fechaActualD +
+                            "</td><td>" + dolar.toFixed(2) + "</td></tr>";
+                    });
+
+                //euro
+                fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/2021-0' + i + '-01/currencies/eur/ars.json')
+                    .then(res => res.json())
+                    .then(json => {
+                        fecha = json.date;
+                        euro = json.ars;
+                        fechaActualD = '2021-0' + i + '-01';
+
+                        document.getElementById("cuerpoTablaEuro").innerHTML +=
+                            "<tr><th scope='row'>" + i + "</th><td>" + fechaActualD +
+                            "</td><td>" + euro.toFixed(2) + "</td></tr>";
+                    });
+
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+</script>
+
+{% endblock %}

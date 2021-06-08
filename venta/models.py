@@ -2,9 +2,10 @@ from django.db import models
 from cliente.models import Cliente,MedioDePago, CuentaCorriente, TipoDeMoneda
 from sucursal.models import Sucursal
 from usuario.models import Vendedor
-
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from item.models import Item
+from cliente.models import Deuda
 
 
 
@@ -35,6 +36,7 @@ class EstadoVenta(models.Model):
         EN_PREPARACION = 'EN PREPARACION'
         LISTA = 'LISTA'
         PAGADA = 'PAGADA'
+        EN_DEUDA = 'EN DEUDA'
         RETIRADA = 'RETIRADA'
         RECHAZADA = 'RECHAZADA'
         NO_RETIRADO = 'NO RETIRADA'
@@ -57,11 +59,12 @@ class Venta(models.Model):
     tipo_de_moneda = models.ForeignKey(TipoDeMoneda, on_delete=models.PROTECT)
     cuenta_corriente = models.ForeignKey(CuentaCorriente, on_delete=models.PROTECT)
     estado = models.ForeignKey(EstadoVenta, on_delete=models.PROTECT)
-    total = models.DecimalField('Total',decimal_places=2, max_digits=10, default=0)
+    total_peso = models.DecimalField('Total en pesos',decimal_places=2, max_digits=10, default=0)
+    total_dolar = models.DecimalField('Total en dolares',decimal_places=2, max_digits=10, default=0)
+    total_euro = models.DecimalField('Total en euros',decimal_places=2, max_digits=10, default=0)
     tipo_de_venta = models.CharField('Tipo de venta', default= 'LOCAL', null=True, blank=True, max_length=7)
-    #dinero_deuda = models.DecimalField(...)
-    
-    
+    monto_ingresado = models.DecimalField('Monto del cliente', default=0,decimal_places=2, max_digits=7)
+
     class Meta:
         
         verbose_name = 'venta'
@@ -70,7 +73,24 @@ class Venta(models.Model):
     def __str__(self):
         return str(self.numero_comprobante)
     
-
+    def clean(self):
+        if self.tipo_de_moneda.opciones == 'EURO':
+            if self.monto_ingresado > self.total_euro:
+                raise ValidationError('No puedes ingresar un monto mayor al total de la venta.')
+        if self.tipo_de_moneda.opciones == 'DOLAR':
+            if self.monto_ingresado > self.total_dolar:
+                raise ValidationError('No puedes ingresar un monto mayor al total de la venta.')
+        if self.tipo_de_moneda.opciones == 'PESO':
+            if self.monto_ingresado > self.total_peso:
+                raise ValidationError('No puedes ingresar un monto mayor al total de la venta.')
+        
+        if self.monto_ingresado < 0:
+            raise ValidationError('El monto no puede ser negativo.')
+        
+        deuda = Deuda.objects.filter(cliente_asociado_id = self.cliente_asociado)
+        
+        if len(deuda) > 3:
+            raise ValidationError('No es posible registrar la venta, el cliente posee más de tres deudas.')
 
     
 class VentaVirtual(Venta):
@@ -103,15 +123,17 @@ class VentaLocal(Venta):
 
     
 
-# def definirTipoVenta(sender, instance, **kwargs):
-        
-#     queryset = TipoVenta.objects.filter(opciones = 'LOCAL')
-#     venta = instance
-#     for id in queryset:
-#         venta.tipo_de_venta_id = id.id 
-#         venta.save()
-#         break
-        
+class Cotizacion(models.Model):
     
-# pre_save.connect(definirTipoVenta, sender = Venta)
-
+    moneda = models.ForeignKey(TipoDeMoneda, on_delete=models.PROTECT)
+    fecha = models.DateTimeField('Fecha', auto_now_add=True)
+    cotizacion = models.DecimalField('Cotización', decimal_places=2, max_digits=7)
+    
+    class Meta:
+        verbose_name = 'cotizacion'
+        verbose_name_plural = 'cotizaciones'
+        
+    def __str__(self):
+        return "Moneda: {}, Cotización: {}".format(self.moneda, self.cotizacion)
+    
+    

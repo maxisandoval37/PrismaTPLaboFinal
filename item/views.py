@@ -191,31 +191,19 @@ def RecibirStock(request, id_proveedor, id_sucursal):
                 saldo_maximo = caja.saldo_disponible
                 caja_mayor = caja
             else:
-                caja_mayor = caja                
-
-        print(caja_mayor)
-        print(caja_mayor.egresos)
+                caja_mayor = caja 
         
         for item in itemFromQuery:
-            
-
+        
             total = item.precio * int(cantidadReq)
-            print(itemReq)
-            print(cantidadReq)
-            print(item.precio)
-            print(total)
             
             while reintentos:
             
                 if caja_mayor.saldo_disponible >= total:
-                    print(caja_mayor)
-                    print(caja_mayor.saldo_disponible)
-                    print(total)
+                    
+                    Pedidos.objects.filter(item = item.id).update(total = total)
                     caja_mayor.saldo_disponible -= total
-                    print(caja_mayor.egresos)
                     caja_mayor.egresos += total
-                    print(caja_mayor.egresos)
-                    print(caja_mayor.saldo_disponible)
                     caja_mayor.save()
                     item.cantidad += int(cantidadReq)
                     item.solicitud = False
@@ -233,15 +221,10 @@ def RecibirStock(request, id_proveedor, id_sucursal):
                         if int(cantidadReq) == 0:
                             cantidadReq = 0
                             total = 0
-                        print(cantidadReq)
-                        print(total)
                         cantidadReq = int(cantidadReq) - 1
                         
                         total = item.precio * int(cantidadReq)
-                        
-                        print(cantidadReq)
-                        print(total)
-                     
+                                       
     return HttpResponse("")
 
 
@@ -258,14 +241,14 @@ def CambioMasivo(request):
         
         for item in items:
             
-            reporte_precios = ReportePrecios()
-            reporte_precios.item_asociado = item.id 
-            reporte_precios.precio_anterior = item.precio 
+            # reporte_precios = ReportePrecios()
+            # reporte_precios.item_asociado = item.id 
+            # reporte_precios.precio_anterior = item.precio 
         
             item.precio += int(precio)
             
-            reporte_precios.precio_nuevo = item.precio
-            reporte_precios.responsable = request.user.id
+            # reporte_precios.precio_nuevo = item.precio
+            # reporte_precios.responsable = request.user.id
             
             item.stockseguridad = int(stock) 
             item.save()

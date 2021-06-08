@@ -22,7 +22,7 @@ Listado de Ventas
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     <th>Número de comprobante</th>
                     <th>Fecha</th>
                     <th>Cliente</th>
@@ -31,6 +31,8 @@ Listado de Ventas
                     <th>Medio de pago</th>
                     <th>Estado</th>
                     <th>Tipo de venta</th>
+                    <th>Monto de cliente</th>
+                    <th>Moneda</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -47,8 +49,16 @@ Listado de Ventas
                     <td>{{ venta.mediodepago }}</td>
                     <td>{{ venta.estado}}</td>
                     <td>{{ venta.tipo_de_venta }}</td>
-                    <td>{{ venta.total}}</td>
-                   
+                    <td>{{ venta.monto_ingresado}}</td>
+                    <td>{{ venta.tipo_de_moneda}}</td>
+
+                    {% if venta.tipo_de_moneda.opciones == 'DOLAR' %}
+                    <td>${{ venta.total_dolar}}</td>
+                    {% elif venta.tipo_de_moneda.opciones == 'EURO' %} 
+                    <td>€{{ venta.total_euro}}</td>
+                    {% else %}
+                    <td>${{ venta.total_peso}}</td> 
+                    {% endif %}
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             Eliminar </a>
@@ -69,9 +79,21 @@ Listado de Ventas
                             Ver detalle </a>
                     </td>
                     
-                    {% if venta.estado.opciones == 'EN PREPARACION' %}
+                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' %}
                         <td>
-                            <a href="{% url 'ventas:cambiar_estado' venta.numero_comprobante  %}" class="btn btn-success">Cargar venta</a>
+                            <a href="{% url 'ventas:ingresar_monto' venta.pk %}" class="btn btn-info">Ingresar monto</a>
+                        </td>
+                    {% else %}
+                        
+                        <td>
+                            <a class="btn btn-secondary">Ingresar monto</a>
+                        </td>
+                    {% endif %}
+
+
+                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' %}
+                        <td>
+                            <a href="{% url 'ventas:cambiar_estado' venta.numero_comprobante  venta.cliente_asociado.id %}" class="btn btn-success">Cargar venta</a>
                         </td>
                     {% else %}
                         

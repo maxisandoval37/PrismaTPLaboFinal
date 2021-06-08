@@ -1,5 +1,4 @@
 from django.db import models
-from usuario.models import Usuario
 from django.core.exceptions import ValidationError
 import re
 
@@ -11,8 +10,8 @@ class CategoriaCliente(models.Model):
     class opcionesCategoria(models.TextChoices):
         
         A = 'A'   
-        B =   'B'  
-        C =     'C'     
+        B = 'B'  
+        C = 'C'     
     opciones = models.CharField(choices = opcionesCategoria.choices, max_length=1)
     
     def __str__(self):
@@ -48,13 +47,14 @@ class EstadoDeuda(models.Model):
     
 class Deuda(models.Model):
     
-    dias = models.IntegerField('Dias', null = True)
+    fecha = models.DateTimeField('Fecha', auto_now_add=True)
     monto = models.FloatField('Monto', null=True)
     estado_deuda = models.ForeignKey(EstadoDeuda, on_delete= models.PROTECT)
-    cliete_asociado = models.ForeignKey('Cliente', on_delete=models.PROTECT)
+    cliente_asociado = models.ForeignKey('Cliente', on_delete=models.PROTECT)
+    numero_venta = models.BigIntegerField('Número de venta')
     
     def __str__(self):
-        return "Dias: " + str(self.dias) + ", Monto: "+ str(self.monto)    
+        return "Dias: " + str(self.fecha) + ", Monto: "+ str(self.monto)    
 
 
     
@@ -93,6 +93,7 @@ class TipoDeMoneda(models.Model):
         
         EURO = 'EURO'
         DOLAR = 'DOLAR'
+        PESO = 'PESO'
         
     opciones = models.CharField(choices = opcionesTipo.choices, max_length= 5)
     

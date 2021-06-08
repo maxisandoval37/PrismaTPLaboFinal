@@ -1,12 +1,13 @@
 from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.views.generic.edit import UpdateView
 from .forms import VentaLocalForm, VentaVirtualForm, ItemVentaForm
-from .models import EstadoVenta, VentaLocal, VentaVirtual, Venta, ItemVenta
+from .models import EstadoVenta, VentaLocal, VentaVirtual, Venta, ItemVenta, Cotizacion
 from django.views.generic import  CreateView,  DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import ProtectedError
-from cliente.models import Cliente, CuentaCorriente,MedioDePago
+from cliente.models import Cliente, CuentaCorriente,MedioDePago, Deuda, EstadoDeuda, CategoriaCliente, TipoDeMoneda
 from sucursal.models import Sucursal, Caja, Operacion
 from usuario.models import Vendedor
 from item.models import Item, Estado
@@ -14,6 +15,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from decimal import Decimal
 import json
 from django.contrib.messages.views import SuccessMessageMixin
+
 
 class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
     
@@ -49,26 +51,14 @@ class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Cr
         return context
     
     
-    
-    
-class RegistrarVentaVirtual(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
+class EditarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin, UpdateView):
     
     permission_required = ('venta.view_venta','venta.add_venta',)
-    model = VentaVirtual
-    context_object_name = 'obj'
-    form_class = VentaVirtualForm
-    template_name = 'ventas/crear_venta_virtual.html'
+    model = VentaLocal
+    fields = ['monto_ingresado']
+    template_name = 'ventas/editar_venta.html'
     success_url = reverse_lazy('ventas:listar_ventas')
-    success_message = 'Venta virtual registrada correctamente.'
-    
-    def get_context_data(self, **kwargs):
-        context = super(RegistrarVentaVirtual, self).get_context_data(**kwargs)
-        context["cliente_asociado"] = Cliente.objects.all()
-        context["mediodepago"] = MedioDePago.objects.all()
-        context["cuenta_corriente"] = CuentaCorriente.objects.all()
-        context["sucursal_asociada"] = Sucursal.objects.all()
-        context["vendedor_asociado"] = Vendedor.objects.all()
-        return context
+    success_message = 'Monto ingresado correctamente.'
     
 class EliminarVenta(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
@@ -181,7 +171,7 @@ def AgregarItem(request, sucursal, venta):
             item_venta.venta_asociada_id = int(venta)
             item_venta.monto = Decimal(cantidad.replace(',', '.')) * Decimal(precio.replace(',', '.'))
             
-            
+            print(item_venta.cantidad_solicitada)
             
             validacion = validar(request, item_venta)
             
@@ -194,8 +184,6 @@ def AgregarItem(request, sucursal, venta):
             lista_items.append(item_venta.item_id)
             lista_ventas.append(item_venta.venta_asociada_id)
             
-            print(lista_success)
-            print(lista_errores)
             item_venta.save()
             
             queryset = Venta.objects.raw("""
@@ -204,11 +192,40 @@ def AgregarItem(request, sucursal, venta):
                 WHERE numero_comprobante IN %s               
             """, [tuple(lista_ventas)])  
             
+            tipodemoneda1 = TipoDeMoneda.objects.filter(opciones = 'EURO')
+            tipoeuro = 0
+            valor_euro = ""
+            
+            for tipo in tipodemoneda1:
+                tipoeuro = tipo.id  
+            euro = Cotizacion.objects.filter(moneda = tipoeuro)
+            for e in euro:
+                valor_euro = e.cotizacion 
+            
+            tipodemoneda2 = TipoDeMoneda.objects.filter(opciones = 'DOLAR')
+            tipodolar = 0
+            valor_dolar = ""
+            
+            for tipo in tipodemoneda2:
+                tipodolar = tipo.id  
+            dolar = Cotizacion.objects.filter(moneda = tipodolar)
+            for d in dolar:
+                valor_dolar = d.cotizacion  
+            
             
             for venta in queryset:
                 
-                venta.total += item_venta.monto
-               
+                if venta.tipo_de_moneda.opciones == 'EURO':
+                    
+                    venta.total_euro += (item_venta.monto / valor_euro)
+                    
+                
+                elif venta.tipo_de_moneda.opciones == 'DOLAR':
+                    venta.total_dolar += (item_venta.monto / valor_dolar)
+                    
+                else:
+                    venta.total_peso += item_venta.monto
+                    
                 venta.save()
         
         
@@ -219,15 +236,17 @@ def AgregarItem(request, sucursal, venta):
                     WHERE id IN %s               
                 """, [tuple(lista_items)])  
                 
+                contador = 0
                 
                 for item in item_de_venta:
-                    print(item_venta.cantidad_solicitada)
+                    
                     if (item.cantidad - item_venta.cantidad_solicitada) < 0:
                         return HttpResponseBadRequest()
                     else:
-                        
-                        item.cantidad -= item_venta.cantidad_solicitada
-                        item.save() 
+                        contador += 1
+                        if contador == 1:
+                            item.cantidad -= item_venta.cantidad_solicitada
+                            item.save() 
                 
             
         mensaje = "Se añadieron: "
@@ -275,34 +294,225 @@ def validar(request, item_venta):
         return item_venta.item.nombre + " (Debe seleccionar una cantidad)"
 
 
-def CambiarEstado(request, id):
+def CambiarEstado(request, id, cliente):
 
     queryset = Venta.objects.filter(numero_comprobante = id)
-
-    ids = EstadoVenta.objects.filter(opciones = 'LISTA')
+    queryset1 = EstadoVenta.objects.filter(opciones = 'LISTA')
     nuevo_estado = ""
     instancia = None
-
-    for id in ids:
-        nuevo_estado = id.id
+    deuda = Deuda.objects.filter(cliente_asociado_id = cliente, numero_venta = id)
+    en_deuda = EstadoVenta.objects.filter(opciones = 'EN DEUDA')
+    tipodemoneda1 = TipoDeMoneda.objects.filter(opciones = 'EURO')
+    tipoeuro = 0
+    valor_euro = ""
+    
+    for tipo in tipodemoneda1:
+        tipoeuro = tipo.id  
+    euro = Cotizacion.objects.filter(moneda = tipoeuro)
+    for e in euro:
+        valor_euro = e.cotizacion 
+    
+    tipodemoneda2 = TipoDeMoneda.objects.filter(opciones = 'DOLAR')
+    tipodolar = 0
+    valor_dolar = ""
+    
+    for tipo in tipodemoneda2:
+        tipodolar = tipo.id  
+    dolar = Cotizacion.objects.filter(moneda = tipodolar)
+    for d in dolar:
+        valor_dolar = d.cotizacion 
+        
+    for est in queryset1:
+        nuevo_estado = est.id
 
     for venta in queryset:
         instancia = venta
         
-        if instancia.total >= 10000 and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
-            messages.error(request, "Es necesario registrar al cliente para agregar el item")
-            return redirect('ventas:listar_ventas')
-        # if instancia.vendedor_asociado.id != request.user.id:
-        #     messages.error(request, "No puedes cargar una venta de otra sucursal.")
-        #     return redirect('ventas:listar_ventas')
-        if instancia.total == 0:
-            messages.error(request, 'No puedes cargar una venta sin items.')
-            return redirect('ventas:listar_ventas')
-        venta.estado_id = nuevo_estado
-        venta.save()
-
-    messages.success(request, "Venta lista para su ejecucion.")
-    return redirect('ventas:listar_ventas')
+        if instancia.tipo_de_moneda.opciones == 'EURO':
+            if instancia.total_euro >= (10000 / valor_euro) and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
+                messages.error(request, "Es necesario registrar al cliente para agregar el item")
+                return redirect('ventas:listar_ventas')
+            # if instancia.vendedor_asociado.id != request.user.id:
+            #     messages.error(request, "No puedes cargar una venta de otra sucursal.")
+            #     return redirect('ventas:listar_ventas')
+            if instancia.total_euro == 0:
+                messages.error(request, 'No puedes cargar una venta sin items.')
+                return redirect('ventas:listar_ventas')
+            
+            if instancia.monto_ingresado <= 0:
+                messages.error(request, 'Debes ingresar el monto del cliente.')
+                return redirect('ventas:listar_ventas')
+            
+            elif instancia.monto_ingresado < instancia.total_euro and len(deuda) == 0:
+                estado_deuda = EstadoDeuda.objects.filter(opciones = 'IMPAGA')
+                
+                nuevo_estado= ""
+                for est in estado_deuda:
+                    nuevo_estado = est.id
+                deuda = Deuda()
+                deuda.monto = instancia.total_euro - instancia.monto_ingresado
+                deuda.estado_deuda_id = nuevo_estado
+                deuda.cliente_asociado_id = cliente
+                deuda.numero_venta = id
+                deuda.save()
+                
+                for estado in en_deuda:
+                    venta.estado_id = estado.id
+                    venta.save()
+                    messages.success(request, "Venta en estado de deuda.")
+                    return redirect('ventas:listar_ventas')
+            
+            elif instancia.monto_ingresado < instancia.total_euro and len(deuda) > 0:
+                
+                # cliente = Cliente.objects.filter(id = cliente)
+                # categorias = CategoriaCliente.objects.filter(opciones = 'B')
+                # categoria_b = ""
+                # for categoria in categorias:
+                #     categoria_b = categoria.id
+                # for cli in cliente:
+                #     cli.categoria_cliente = categoria_b
+                #     cli.save()
+                
+                for d in deuda:
+                    
+                    d.monto = instancia.total_euro - instancia.monto_ingresado
+                    d.save()
+                    
+                for estado in en_deuda:
+                    venta.estado_id = estado.id
+                    venta.save()
+                    messages.success(request, "Monto insuficiente para cargar la venta.")
+                    return redirect('ventas:listar_ventas')
+            else:
+                venta.estado_id = nuevo_estado
+                venta.save()
+                Deuda.objects.filter(cliente_asociado_id = cliente, numero_venta = id).delete()
+                messages.success(request, "Venta lista para su ejecución.")
+                return redirect('ventas:listar_ventas')
+        
+        elif instancia.tipo_de_moneda.opciones == 'DOLAR':
+            if instancia.total_dolar >= (10000 / valor_dolar) and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
+                messages.error(request, "Es necesario registrar al cliente para agregar el item")
+                return redirect('ventas:listar_ventas')
+            # if instancia.vendedor_asociado.id != request.user.id:
+            #     messages.error(request, "No puedes cargar una venta de otra sucursal.")
+            #     return redirect('ventas:listar_ventas')
+            if instancia.total_dolar == 0:
+                messages.error(request, 'No puedes cargar una venta sin items.')
+                return redirect('ventas:listar_ventas')
+            
+            if instancia.monto_ingresado <= 0:
+                messages.error(request, 'Debes ingresar el monto del cliente.')
+                return redirect('ventas:listar_ventas')
+            
+            elif instancia.monto_ingresado < instancia.total_dolar and len(deuda) == 0:
+                estado_deuda = EstadoDeuda.objects.filter(opciones = 'IMPAGA')
+                
+                nuevo_estado= ""
+                for est in estado_deuda:
+                    nuevo_estado = est.id
+                deuda = Deuda()
+                deuda.monto = instancia.total_dolar - instancia.monto_ingresado
+                deuda.estado_deuda_id = nuevo_estado
+                deuda.cliente_asociado_id = cliente
+                deuda.numero_venta = id
+                deuda.save()
+                
+                for estado in en_deuda:
+                    venta.estado_id = estado.id
+                    venta.save()
+                    messages.success(request, "Venta en estado de deuda.")
+                    return redirect('ventas:listar_ventas')
+            
+            elif instancia.monto_ingresado < instancia.total_dolar and len(deuda) > 0:
+                
+                # cliente = Cliente.objects.filter(id = cliente)
+                # categorias = CategoriaCliente.objects.filter(opciones = 'B')
+                # categoria_b = ""
+                # for categoria in categorias:
+                #     categoria_b = categoria.id
+                # for cli in cliente:
+                #     cli.categoria_cliente = categoria_b
+                #     cli.save()
+                
+                for d in deuda:
+                    
+                    d.monto = instancia.total_dolar - instancia.monto_ingresado
+                    d.save()
+                    
+                for estado in en_deuda:
+                    venta.estado_id = estado.id
+                    venta.save()
+                    messages.success(request, "Monto insuficiente para cargar la venta.")
+                    return redirect('ventas:listar_ventas')
+            else:
+                venta.estado_id = nuevo_estado
+                venta.save()
+                Deuda.objects.filter(cliente_asociado_id = cliente, numero_venta = id).delete()
+                messages.success(request, "Venta lista para su ejecución.")
+                return redirect('ventas:listar_ventas')
+        else:
+            if instancia.total_peso >= 10000 and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
+                messages.error(request, "Es necesario registrar al cliente para agregar el item")
+                return redirect('ventas:listar_ventas')
+            # if instancia.vendedor_asociado.id != request.user.id:
+            #     messages.error(request, "No puedes cargar una venta de otra sucursal.")
+            #     return redirect('ventas:listar_ventas')
+            if instancia.total_peso == 0:
+                messages.error(request, 'No puedes cargar una venta sin items.')
+                return redirect('ventas:listar_ventas')
+            
+            if instancia.monto_ingresado <= 0:
+                messages.error(request, 'Debes ingresar el monto del cliente.')
+                return redirect('ventas:listar_ventas')
+            
+            elif instancia.monto_ingresado < instancia.total_peso and len(deuda) == 0:
+                estado_deuda = EstadoDeuda.objects.filter(opciones = 'IMPAGA')
+                
+                nuevo_estado= ""
+                for est in estado_deuda:
+                    nuevo_estado = est.id
+                deuda = Deuda()
+                deuda.monto = instancia.total_peso - instancia.monto_ingresado
+                deuda.estado_deuda_id = nuevo_estado
+                deuda.cliente_asociado_id = cliente
+                deuda.numero_venta = id
+                deuda.save()
+                
+                for estado in en_deuda:
+                    venta.estado_id = estado.id
+                    venta.save()
+                    messages.success(request, "Venta en estado de deuda.")
+                    return redirect('ventas:listar_ventas')
+            
+            elif instancia.monto_ingresado < instancia.total_peso and len(deuda) > 0:
+                
+                # cliente = Cliente.objects.filter(id = cliente)
+                # categorias = CategoriaCliente.objects.filter(opciones = 'B')
+                # categoria_b = ""
+                # for categoria in categorias:
+                #     categoria_b = categoria.id
+                # for cli in cliente:
+                #     cli.categoria_cliente = categoria_b
+                #     cli.save()
+                
+                for d in deuda:
+                    
+                    d.monto = instancia.total_peso - instancia.monto_ingresado
+                    d.save()
+                    
+                for estado in en_deuda:
+                    venta.estado_id = estado.id
+                    venta.save()
+                    messages.success(request, "Monto insuficiente para cargar la venta.")
+                    return redirect('ventas:listar_ventas')
+            else:
+                venta.estado_id = nuevo_estado
+                venta.save()
+                Deuda.objects.filter(cliente_asociado_id = cliente, numero_venta = id).delete()
+                messages.success(request, "Venta lista para su ejecución.")
+                return redirect('ventas:listar_ventas')
+    
 
 
 def eliminarItem(request, venta, item):
@@ -329,10 +539,37 @@ def eliminarItem(request, venta, item):
         item.save() 
         
     queryset = Venta.objects.filter(numero_comprobante = venta_asociada)
+    tipodemoneda1 = TipoDeMoneda.objects.filter(opciones = 'EURO')
+    tipoeuro = 0
+    valor_euro = ""
     
+    for tipo in tipodemoneda1:
+        tipoeuro = tipo.id  
+    euro = Cotizacion.objects.filter(moneda = tipoeuro)
+    for e in euro:
+        valor_euro = e.cotizacion 
+    
+    tipodemoneda2 = TipoDeMoneda.objects.filter(opciones = 'DOLAR')
+    tipodolar = 0
+    valor_dolar = ""
+    
+    for tipo in tipodemoneda2:
+        tipodolar = tipo.id  
+    dolar = Cotizacion.objects.filter(moneda = tipodolar)
+    for d in dolar:
+        valor_dolar = d.cotizacion 
+        
     for venta in queryset:
         
-        venta.total -= monto
+        if venta.tipo_de_moneda.opciones == 'EURO':      
+            venta.total_euro -= (monto / valor_euro)
+        
+        elif venta.tipo_de_moneda.opciones == 'DOLAR':
+            venta.total_dolar -= (monto / valor_dolar)
+            
+        else:
+            venta.total_peso -= monto
+            
         venta.save()
         
     item_venta.delete()
@@ -364,10 +601,37 @@ def eliminarItemCajero(request, venta, item):
         item.save() 
         
     queryset = Venta.objects.filter(numero_comprobante = venta_asociada)
+    tipodemoneda1 = TipoDeMoneda.objects.filter(opciones = 'EURO')
+    tipoeuro = 0
+    valor_euro = ""
     
+    for tipo in tipodemoneda1:
+        tipoeuro = tipo.id  
+    euro = Cotizacion.objects.filter(moneda = tipoeuro)
+    for e in euro:
+        valor_euro = e.cotizacion 
+    
+    tipodemoneda2 = TipoDeMoneda.objects.filter(opciones = 'DOLAR')
+    tipodolar = 0
+    valor_dolar = ""
+    
+    for tipo in tipodemoneda2:
+        tipodolar = tipo.id  
+    dolar = Cotizacion.objects.filter(moneda = tipodolar)
+    for d in dolar:
+        valor_dolar = d.cotizacion 
+        
     for venta in queryset:
         
-        venta.total -= monto
+        if venta.tipo_de_moneda.opciones == 'EURO':      
+            venta.total_euro -= (monto / valor_euro)
+        
+        elif venta.tipo_de_moneda.opciones == 'DOLAR':
+            venta.total_dolar -= (monto / valor_dolar)
+            
+        else:
+            venta.total_peso -= monto
+            
         venta.save()
         
     item_venta.delete()
@@ -381,33 +645,71 @@ def FinalizarVenta(request, venta):
     instancia = None
     sucursal_asociada = 0
     total = 0
-  
+    
+        
     for venta in venta_obtenida:
         
+       
         instancia = venta
         sucursal_asociada = venta.sucursal_asociada
-        total += venta.total
+        if venta.tipo_de_moneda.opciones == 'EURO':
+            if venta.total_euro <= 0:
+                messages.error(request, "No es posible realizar una venta sin agregar items.")
+                return redirect('ventas:listar_ventas_cajero')      
+            total = venta.total_euro
+        
+        elif venta.tipo_de_moneda.opciones == 'DOLAR':
+            if venta.total_dolar <= 0:
+                messages.error(request, "No es posible realizar una venta sin agregar items.")
+                return redirect('ventas:listar_ventas_cajero')
+            total = venta.total_dolar
+            
+        else:
+            if venta.total_peso <= 0:
+                messages.error(request, "No es posible realizar una venta sin agregar items.")
+                return redirect('ventas:listar_ventas_cajero')
+            total = venta.total_peso
+        
         
     cajas = Caja.objects.filter(sucursal_id = sucursal_asociada.id)
-    
-    if instancia.total <= 0:
-        messages.error(request, "No es posible realizar una venta sin agregar items.")
-        return redirect('ventas:listar_ventas_cajero')
-    
     
     caja_menor = None
     monto = total
     
     for caja in cajas:
         
-        if caja.saldo_disponible < monto:
-            monto = caja.saldo_disponible
-            caja_menor = caja
+        if instancia.tipo_de_moneda.opciones == 'EURO':  
+            if caja.saldo_disponible_euros < monto:
+                monto = caja.saldo_disponible_euros
+                caja_menor = caja
+            else:
+                caja_menor = caja
+        elif instancia.tipo_de_moneda.opciones == 'DOLAR':
+            if caja.saldo_disponible_dolares < monto:
+                monto = caja.saldo_disponible_dolares
+                caja_menor = caja
+            else:
+                caja_menor = caja
         else:
-            caja_menor = caja
+            if caja.saldo_disponible < monto:
+                monto = caja.saldo_disponible
+                caja_menor = caja
+            else:
+                caja_menor = caja
     
-    caja_menor.saldo_disponible = caja_menor.saldo_disponible + total
+    
+    if instancia.tipo_de_moneda.opciones == 'EURO':
+        caja_menor.saldo_disponible_euros = caja_menor.saldo_disponible_euros + total
+        caja_menor.ingresos_en_euros += total
+    elif instancia.tipo_de_moneda.opciones == 'DOLAR':
+        caja_menor.saldo_disponible_dolares = caja_menor.saldo_disponible_dolares + total
+        caja_menor.ingresos_en_dolares += total
+    else:
+        caja_menor.saldo_disponible = caja_menor.saldo_disponible + total
+        caja_menor.ingresos_en_pesos += total
+        
     caja_menor.save()
+    
     ids = EstadoVenta.objects.filter(opciones = 'PAGADA')
     nuevo_estado = ""
     for id in ids:
@@ -416,7 +718,7 @@ def FinalizarVenta(request, venta):
     instancia.estado_id = nuevo_estado
     instancia.save()
     movimiento = Operacion()
-    movimiento.monto = "+" + str(total) 
+    movimiento.monto = "+" + str(total) + " (En "+ instancia.tipo_de_moneda.opciones + ")"
     movimiento.tipo = "Venta"
     movimiento.caja_asociada = caja_menor
     movimiento.identificador = "Número de comprobante" + str(instancia.numero_comprobante)

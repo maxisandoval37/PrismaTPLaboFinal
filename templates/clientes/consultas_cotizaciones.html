@@ -1,0 +1,101 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}
+Cotizaciones
+{% endblock title %}
+
+{% block content %}
+
+<div class="bg-gray-100" id="report">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Consulta de cotizaciones</strong>
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800"></h1>
+        </div>
+
+        <div class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div id="tituloDolar" class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                </div>
+                                <div id="valorDolar" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div id="tituloEuro" class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                </div>
+                                <div id="valorEuro" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-euro-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="container">
+                <a href="{% url 'sucursales:listar_sucursales' %}" class="btn btn-primary"> Volver
+                </a>
+            </div> -->
+
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        try {
+            fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur/ars.json')
+                .then(res => res.json())
+                .then(json => {
+                    fecha = json.date;
+                    euro = json.ars;
+
+                    document.getElementById("tituloEuro").innerHTML += "Euro - " + fecha;
+                    console.log(typeof euro);
+                    document.getElementById("valorEuro").innerHTML += euro.toFixed(2);
+                });
+
+            fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/usd/ars.json')
+                .then(res => res.json())
+                .then(json => {
+                    fecha = json.date;
+                    dolar = json.ars;
+
+                    document.getElementById("tituloDolar").innerHTML += "Dólar - " + fecha;
+                    document.getElementById("valorDolar").innerHTML += dolar.toFixed(2);
+                });
+        } catch (err) {
+            console.error(err);
+        }
+
+    };
+</script>
+
+{% endblock %}

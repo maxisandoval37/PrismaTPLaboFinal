@@ -173,12 +173,13 @@ class Item(models.Model):
 
     def clean(self):
 
-        items = Item.objects.all() 
+        # items = Item.objects.all() 
         
-        for item in items:
+        # for item in items:
             
-            if self.nombre == item.nombre:
-                raise ValidationError('Ya existe un item con el mismo nombre.')
+        #     if self.nombre == item.nombre and self.precio == item.precio and self.codigo_de_barras != item.codigo_de_barras:
+                
+        #         raise ValidationError('Ya existe un item con el mismo nombre.')
         
         
         if len(self.nombre) < 4 and len(self.nombre) > 50:
@@ -394,6 +395,8 @@ class MezclaUsada(models.Model):
     
 
 class Pedidos(models.Model):
+    
+    fecha = models.DateTimeField('Fecha de creación', auto_now_add=True)
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     sucursal = models.ForeignKey(Sucursal, on_delete=models.PROTECT)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
@@ -401,7 +404,8 @@ class Pedidos(models.Model):
     cantidad = models.IntegerField('Cantidad', null=True)
     solicitadoRandom = random.randint(20, 75)
     solicitado = models.IntegerField('Solicitado ', default=solicitadoRandom)
-
+    total = models.DecimalField('Total', decimal_places=2, max_digits=7, default = 0)
+    
     def __str__(self):
         return "Item:" + str(self.item) + " , " + "Sucursal:"+str(self.sucursal) + " , " + "Proveedor:"+str(self.proveedor)
 
@@ -412,7 +416,7 @@ class Pedidos(models.Model):
     
 class ReportePrecios(models.Model):
     
-    item_asociado = models.ForeignKey(Item, on_delete= models.PROTECT)
+    categoria_asociada = models.ForeignKey(Categoria, on_delete= models.PROTECT)
     fecha = models.DateTimeField('Fecha de modificación', auto_now_add=True)
     precio_anterior = models.DecimalField('Precio anterior', decimal_places= 2, max_digits=7)
     precio_nuevo = models.DecimalField('Precio nuevo',decimal_places= 2,max_digits=7)
@@ -423,4 +427,4 @@ class ReportePrecios(models.Model):
         verbose_name_plural = 'reportes de precios'
         
     def __str__(self):
-        return "Fecha: {} , Categoria: {}".format(self.fecha, self.item_asociado)
+        return "Fecha: {} , Categoria: {}".format(self.fecha, self.categoria_asociada)

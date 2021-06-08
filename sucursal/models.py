@@ -7,9 +7,13 @@ from django.core.exceptions import ValidationError
 class Caja(models.Model):
     
     codigo = models.CharField('Identificador', max_length= 4, unique=True)
-    saldo_disponible = models.DecimalField('Saldo Disponible', decimal_places=2, max_digits=9)
+    saldo_disponible = models.DecimalField('Saldo disponible en pesos', decimal_places=2, max_digits=9)
+    saldo_disponible_dolares = models.DecimalField('Saldo disponible en dolares', decimal_places=2, max_digits=9)
+    saldo_disponible_euros = models.DecimalField('Saldo disponible en euros', decimal_places=2, max_digits=9)
     egresos = models.DecimalField('Egresos', decimal_places=2, max_digits=9)
-    ingresos = models.DecimalField('Ingresos', decimal_places=2, max_digits=9)
+    ingresos_en_pesos = models.DecimalField('Ingresos en pesos', decimal_places=2, max_digits=9)
+    ingresos_en_dolares = models.DecimalField('Ingresos en dolares', decimal_places=2, max_digits=9)
+    ingresos_en_euros = models.DecimalField('Ingresos en euros', decimal_places=2, max_digits=9)
     saldo_inicial = models.DecimalField('Saldo Inicial', decimal_places=2, max_digits=9)
     saldo_final = models.DecimalField('Saldo Final', decimal_places=2, max_digits=9)
     sucursal_id = models.ForeignKey('Sucursal', on_delete=models.PROTECT, null=True)
@@ -21,11 +25,11 @@ class Caja(models.Model):
             raise ValidationError('El identificador solo puede contener letras y números')
         if len(self.codigo) < 2 and len(self.codigo) > 4:
             raise ValidationError('El indentificador debe tener entre 2 y 4 caracteres')
-        if self.saldo_disponible < 1 and self.saldo_disponible > 9:
+        if self.saldo_disponible < 1 and self.saldo_disponible > 9 or self.saldo_disponible_dolares < 1 and self.saldo_disponible_dolares > 9 or self.saldo_disponible_euros < 1 and self.saldo_disponible_euros > 9:
             raise ValidationError('El saldo disponible debe tener entre 1 y 9 digitos.')
         if self.egresos < 1 and self.egresos > 9:
             raise ValidationError('Los egresos deben tener entre 1 y 9 digitos.')
-        if self.ingresos < 1 and self.ingresos > 9:
+        if self.ingresos_en_pesos < 1 and self.ingresos_en_pesos > 9 or self.ingresos_en_dolares < 1 and self.ingresos_en_dolares > 9 or self.ingresos_en_euros < 1 and self.ingresos_en_euros > 9:
             raise ValidationError('Los ingresos deben tener entre 1 y 9 digitos.')
         if self.saldo_inicial < 1 and self.saldo_inicial > 9:
             raise ValidationError('El saldo inicial debe tener entre 1 y 9 digitos.')
@@ -92,7 +96,7 @@ class Sucursal (models.Model):
 class Operacion(models.Model):
     
     fecha = models.DateTimeField('Fecha', auto_now_add=True)
-    monto = models.CharField('Monto', max_length=10)
+    monto = models.CharField('Monto', max_length=40)
     tipo = models.CharField('Tipo', max_length=10)
     caja_asociada = models.ForeignKey(Caja, on_delete=models.PROTECT)
     identificador = models.CharField('Identificador', max_length= 30)

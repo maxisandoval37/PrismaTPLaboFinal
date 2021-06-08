@@ -30,6 +30,7 @@ Listado de Ventas
                     <th>Sucursal</th>
                     <th>Medio de pago</th>
                     <th>Estado</th>
+                    <th>Moneda</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -45,7 +46,14 @@ Listado de Ventas
                     <td>{{ venta.sucursal_asociada }}</td>
                     <td>{{ venta.mediodepago }}</td>
                     <td>{{ venta.estado}}</td>
-                    <td>{{ venta.total }}</td>
+                    <td>{{ venta.tipo_de_moneda }}</td>
+                    {% if venta.tipo_de_moneda.opciones == 'DOLAR' %}
+                    <td>${{ venta.total_dolar}}</td>
+                    {% elif venta.tipo_de_moneda.opciones == 'EURO' %} 
+                    <td>€{{ venta.total_euro}}</td>
+                    {% else %}
+                    <td>${{ venta.total_peso}}</td> 
+                    {% endif %}
 
                    {% if venta.estado.opciones == 'LISTA' %}
                     <td>

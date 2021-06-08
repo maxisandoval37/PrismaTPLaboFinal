@@ -91,7 +91,10 @@
                 {% render_field form.estado class="select form-control" %}
             </div>
 
-            
+            {{form.tipo_de_moneda.label_tag}}
+            <div class="form-group">
+                {% render_field form.tipo_de_moneda class="form-control form-control" %}
+            </div>
 
 
             {% for error in form.non_field_errors %}
