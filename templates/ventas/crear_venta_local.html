@@ -15,19 +15,7 @@
         <form class="user" method="post">
             {% csrf_token %}
 
-            {{form.fecha.label_tag}}
-            <div class="form-group">
-                {% render_field form.fecha class="form-control form-control-user" %}
-            </div>
-
-
-            {{form.monto.label_tag}}
-            <div class="form-group">
-                {% render_field form.monto class="form-control form-control-user" %}
-            </div>
-
-
-
+           
             <div class="form-group">Cliente asociado</div>
             <div class="form-group">
                 <select name="cliente_asociado" id="id_cliente_asociado" class="select form-control">

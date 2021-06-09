@@ -112,16 +112,23 @@ def consolidacionSucursales(request):
     cajas = Caja.objects.all()
     lista = []
     egresosTotal = 0
-    ingresosTotal = 0
-    
+    ingresos_en_pesos = 0
+    ingresos_en_dolares = 0
+    ingresos_en_euros = 0
+    lista = []
     for caja in cajas:
-    
+        
         egresosTotal += caja.egresos
-        ingresosTotal += caja.ingresos
+        ingresos_en_pesos += caja.ingresos_en_pesos
+        ingresos_en_dolares += caja.ingresos_en_dolares 
+        ingresos_en_euros += caja.ingresos_en_euros
+        
         
     dic = {
         "egresos": egresosTotal,
-        "ingresos": ingresosTotal,
+        "ingresos_en_pesos": ingresos_en_pesos,
+        "ingresos_en_dolares": ingresos_en_dolares,
+        "ingresos_en_euros": ingresos_en_euros,
     }
     lista.append(dic)
     

@@ -38,8 +38,15 @@ class Caja(models.Model):
         
         if self.saldo_disponible < 0 or self.saldo_disponible_dolares < 0 or self.saldo_disponible_euros < 0:
             raise ValidationError('El saldo disponible no puede ser negativo.')
-        if self.ingresos_en_pesos < 0 or self.ingresos_en_dolares < 0 or self.ingresos_en_euros:
+        if self.ingresos_en_pesos < 0 or self.ingresos_en_dolares < 0 or self.ingresos_en_euros < 0:
             raise ValidationError('Los ingresos no pueden ser negativos.')
+        
+        if self.egresos < 0:
+            raise ValidationError('Los egresos no pueden ser negativos.')
+        if self.saldo_inicial < 0:
+            raise ValidationError('El saldo inicial no puede ser negativo.')
+        if self.saldo_final < 0:
+            raise ValidationError('El saldo final no puede ser negativo.')
     
     class Meta:
         

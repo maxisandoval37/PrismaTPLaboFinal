@@ -74,6 +74,11 @@ class Venta(models.Model):
         return str(self.numero_comprobante)
     
     def clean(self):
+        
+        if self.DoesNotExist:
+            
+            raise ValidationError('Debes completar todos los campos.')
+        
         if self.tipo_de_moneda.opciones == 'EURO':
             if self.monto_ingresado > self.total_euro:
                 raise ValidationError('No puedes ingresar un monto mayor al total de la venta.')
