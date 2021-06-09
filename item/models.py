@@ -418,8 +418,7 @@ class ReportePrecios(models.Model):
     
     categoria_asociada = models.ForeignKey(Categoria, on_delete= models.PROTECT)
     fecha = models.DateTimeField('Fecha de modificación', auto_now_add=True)
-    precio_anterior = models.DecimalField('Precio anterior', decimal_places= 2, max_digits=7)
-    precio_nuevo = models.DecimalField('Precio nuevo',decimal_places= 2,max_digits=7)
+    aumento = models.DecimalField('Aumento', decimal_places= 2, max_digits=7)
     responsable = models.ForeignKey(Usuario, on_delete=models.PROTECT)
     
     class Meta:
@@ -428,3 +427,5 @@ class ReportePrecios(models.Model):
         
     def __str__(self):
         return "Fecha: {} , Categoria: {}".format(self.fecha, self.categoria_asociada)
+    
+    

@@ -78,7 +78,7 @@ class MedioDePago(models.Model):
         
     def clean(self):
         
-        medios_de_pagos = MedioDePago.objects.all()
+        medios_de_pagos = MedioDePago.objects.filter(cliente = self.cliente)
         for medios in medios_de_pagos:
             
             if self.opciones == medios.opciones:

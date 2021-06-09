@@ -43,7 +43,7 @@ Listado de Categorias
                     <td><input type="Integer" id="{{ cat.id }}stock" placeholder="0" min="0"
                          max="1000"></td>
 
-                    <td><a href="{% url 'items:ver_categorias' %}" onclick="ModificacionMasiva()" class="btn btn-primary">Modificar</a></td>
+                    <td><a onclick="ModificacionMasiva()" class="btn btn-primary">Modificar</a></td>
                 </tr>
                 {% endfor %}
 
@@ -99,7 +99,7 @@ function ModificacionMasiva() {
                     alert('Solicitud Abortada. [Ajax Request]');
                 }
                 else {
-                    alert('Error desconocido: ' + jqXHR.responseText);
+                    ErrorGeneral()
                 }
             }
         });
@@ -120,6 +120,15 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+function ErrorGeneral() {
+            
+            Swal.fire({
+                "title": "Ups",
+                "text": "Ha ocurrido un error.",
+                "icon": "error",
+            })
+}
+
 </script>
 
 

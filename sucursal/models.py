@@ -22,9 +22,9 @@ class Caja(models.Model):
     def clean(self):
         
         if not self.codigo.isalnum():
-            raise ValidationError('El identificador solo puede contener letras y números')
+            raise ValidationError('El identificador solo puede contener letras y números.')
         if len(self.codigo) < 2 and len(self.codigo) > 4:
-            raise ValidationError('El indentificador debe tener entre 2 y 4 caracteres')
+            raise ValidationError('El indentificador debe tener entre 2 y 4 caracteres.')
         if self.saldo_disponible < 1 and self.saldo_disponible > 9 or self.saldo_disponible_dolares < 1 and self.saldo_disponible_dolares > 9 or self.saldo_disponible_euros < 1 and self.saldo_disponible_euros > 9:
             raise ValidationError('El saldo disponible debe tener entre 1 y 9 digitos.')
         if self.egresos < 1 and self.egresos > 9:
@@ -35,6 +35,11 @@ class Caja(models.Model):
             raise ValidationError('El saldo inicial debe tener entre 1 y 9 digitos.')
         if self.saldo_final < 1 and self.saldo_final > 9:
             raise ValidationError('El saldo final debe tener entre 1 y 9 digitos.')
+        
+        if self.saldo_disponible < 0 or self.saldo_disponible_dolares < 0 or self.saldo_disponible_euros < 0:
+            raise ValidationError('El saldo disponible no puede ser negativo.')
+        if self.ingresos_en_pesos < 0 or self.ingresos_en_dolares < 0 or self.ingresos_en_euros:
+            raise ValidationError('Los ingresos no pueden ser negativos.')
     
     class Meta:
         

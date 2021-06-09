@@ -67,8 +67,12 @@ def idCaja(request, id):
     for caja in queryset:
         dic = {
             "saldo_disponible": caja.saldo_disponible,
+            "saldo_disponible_dolares": caja.saldo_disponible_dolares,
+            "saldo_disponible_euros": caja.saldo_disponible_euros,
+            "ingresos_en_pesos": caja.ingresos_en_pesos,
+            "ingresos_en_dolares": caja.ingresos_en_dolares,
+            "ingresos_en_euros": caja.ingresos_en_euros,
             "egresos": caja.egresos,
-            "ingresos": caja.ingresos,
             "saldo_inicial": caja.saldo_inicial,
             "saldo_final": caja.saldo_final,
             "sucursal_id": caja.sucursal_id,
@@ -128,16 +132,23 @@ def consolidacionPorSucursal(request, id):
     sucursal = Sucursal.objects.get(id = id)
     cajas = Caja.objects.filter(sucursal_id = sucursal.id)
     egresosTotal = 0
-    ingresosTotal = 0
+    ingresos_en_pesos = 0
+    ingresos_en_dolares = 0
+    ingresos_en_euros = 0
     lista = []
     for caja in cajas:
         
         egresosTotal += caja.egresos
-        ingresosTotal += caja.ingresos
+        ingresos_en_pesos += caja.ingresos_en_pesos
+        ingresos_en_dolares += caja.ingresos_en_dolares 
+        ingresos_en_euros += caja.ingresos_en_euros
+        
         
     dic = {
         "egresos": egresosTotal,
-        "ingresos": ingresosTotal,
+        "ingresos_en_pesos": ingresos_en_pesos,
+        "ingresos_en_dolares": ingresos_en_dolares,
+        "ingresos_en_euros": ingresos_en_euros,
     }
     lista.append(dic)
     

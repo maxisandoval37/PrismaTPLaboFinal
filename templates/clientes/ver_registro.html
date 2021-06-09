@@ -38,7 +38,13 @@ Registro de la cuenta
                     <td>{{ venta.numero_comprobante}}</td>
                     <td>{{ venta.fecha}}</td>
                     <td>{{ venta.cliente_asociado}}</td>                    
-                    <td>{{ venta.total}}</td>
+                    {% if venta.tipo_de_moneda.opciones == 'DOLAR' %}
+                    <td>${{ venta.total_dolar}}</td>
+                    {% elif venta.tipo_de_moneda.opciones == 'EURO' %} 
+                    <td>€{{ venta.total_euro}}</td>
+                    {% else %}
+                    <td>${{ venta.total_peso}}</td> 
+                    {% endif %}
                     <td>{{ venta.tipo_de_venta}}</td>
                 </tr>
 

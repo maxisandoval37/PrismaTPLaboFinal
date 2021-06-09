@@ -1,7 +1,9 @@
 import decimal
+
+from django.http.response import HttpResponseBadRequest
 from proveedor.models import Proveedor
 from django.shortcuts import render, redirect, HttpResponseRedirect
-from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios
+from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm
@@ -235,26 +237,31 @@ def CambioMasivo(request):
         categoria = request.POST.get('categoria', None)
         precio = request.POST.get('precio', None)
         stock = request.POST.get('stock', None)
-    
-    
         items = Item.objects.filter(categoria = int(categoria))
+        
+        if int(precio) <= 0:
+            return HttpResponseBadRequest()
+        
+        if int(stock) < 0:
+            return HttpResponseBadRequest()
+        
+        reporte_precios = ReportePrecios()
+        reporte_precios.categoria_asociada_id = int(categoria)
+        reporte_precios.aumento = int(precio)
+        reporte_precios.responsable_id = request.user.id
+        reporte_precios.save()
+        
         
         for item in items:
             
-            # reporte_precios = ReportePrecios()
-            # reporte_precios.item_asociado = item.id 
-            # reporte_precios.precio_anterior = item.precio 
-        
-            item.precio += int(precio)
-            
-            # reporte_precios.precio_nuevo = item.precio
-            # reporte_precios.responsable = request.user.id
-            
+            item.precio += int(precio) 
             item.stockseguridad = int(stock) 
             item.save()
             
+         
     messages.success(request, 'Modificación masiva realizada con éxito.')
     return HttpResponse("Cambio efectuado.")
+
             
 class ListadoPintura(ValidarLoginYPermisosRequeridos, ListView):
     
@@ -316,6 +323,7 @@ def mezclarPinturas(request, mezcla ,primerapintura, segundapintura, cantidad_pr
     primera_pintura = None 
     segunda_pintura = None
     
+    
     for pintura in queryset1:
         primera_pintura = pintura
     for pintura in queryset2:
@@ -348,46 +356,14 @@ def mezclarPinturas(request, mezcla ,primerapintura, segundapintura, cantidad_pr
         nueva_pintura.save()
 
     
-    usadas = PinturaUsada.objects.all()    
-
-    if len(usadas) > 0:
-        for pintura in usadas:
-            
-        
-            if pintura.nombre == primera_pintura.nombre and pintura.color == primera_pintura.color and pintura.cantidad_restante == (primera_pintura.cantidad_pintura - cantidad_primera):
-                pintura.cantidad_restante += (primera_pintura.cantidad_pintura - cantidad_primera)
-                pintura.save() 
-            else:
-                
-                pintura_usada = PinturaUsada()
-                pintura_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
-                pintura_usada.nombre = primera_pintura.nombre
-                pintura_usada.color = primera_pintura.color
-                pintura_usada.cantidad_restante = primera_pintura.cantidad_pintura - cantidad_primera 
-                pintura_usada.precio = primera_pintura.precio
-                pintura_usada.sucursal = primera_pintura.sucursal
-                primera_pintura.cantidad -= 1
-                pintura_usada.save()
-                primera_pintura.save()
-                
-            if pintura.nombre == segunda_pintura.nombre and pintura.color == segunda_pintura.color and pintura.cantidad_restante == (segunda_pintura.cantidad_pintura - cantidad_segunda):
-                
-                pintura.cantidad_restante += (segunda_pintura.cantidad_pintura - cantidad_segunda)
-                pintura.save()
-            else:
-                            
-                segunda_usada = PinturaUsada()
-                segunda_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
-                segunda_usada.nombre = segunda_pintura.nombre
-                segunda_usada.color = segunda_pintura.color
-                segunda_usada.cantidad_restante = segunda_pintura.cantidad_pintura - cantidad_segunda
-                segunda_usada.precio = segunda_pintura.precio
-                segunda_usada.sucursal = segunda_pintura.sucursal 
-                segunda_usada.save()
-                segunda_pintura.cantidad -= 1
-                segunda_pintura.save()
+    usada_uno = PinturaUsada.objects.filter(nombre = primera_pintura.nombre, color = primera_pintura.color)
+    usada_dos = PinturaUsada.objects.filter(nombre = segunda_pintura.nombre, color = segunda_pintura.color)
+    
+    if len(usada_uno) > 0:
+        for usada in usada_uno:
+            usada.cantidad_restante += (primera_pintura.cantidad_pintura - cantidad_primera)
+            usada.save()
     else:
-        
         pintura_usada = PinturaUsada()
         pintura_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
         pintura_usada.nombre = primera_pintura.nombre
@@ -395,9 +371,13 @@ def mezclarPinturas(request, mezcla ,primerapintura, segundapintura, cantidad_pr
         pintura_usada.cantidad_restante = primera_pintura.cantidad_pintura - cantidad_primera 
         pintura_usada.precio = primera_pintura.precio
         pintura_usada.sucursal = primera_pintura.sucursal
-        primera_pintura.cantidad -= 1
         pintura_usada.save()
-        primera_pintura.save()
+        
+    if len(usada_dos) > 0:
+        for usada in usada_dos:
+            usada.cantidad_restante += (segunda_pintura.cantidad_pintura - cantidad_segunda)
+            usada.save()
+    else:
         segunda_usada = PinturaUsada()
         segunda_usada.codigo_de_barras = random.randint(999999999999, 10000000000000)
         segunda_usada.nombre = segunda_pintura.nombre
@@ -406,8 +386,13 @@ def mezclarPinturas(request, mezcla ,primerapintura, segundapintura, cantidad_pr
         segunda_usada.precio = segunda_pintura.precio
         segunda_usada.sucursal = segunda_pintura.sucursal 
         segunda_usada.save()
-        segunda_pintura.cantidad -= 1
-        segunda_pintura.save()
+        
+          
+    primera_pintura.cantidad -= 1
+    primera_pintura.save()
+    segunda_pintura.cantidad -= 1
+    segunda_pintura.save()
+    
     
     Mezcla.objects.filter(id = mezcla).delete()
         

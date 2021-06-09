@@ -22,10 +22,14 @@ Listado de Cajas
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Saldo disponible</th>
+                    <th></th>
+                    <th>Saldo disponible en pesos</th>
+                    <th>Saldo disponible en dolares</th>
+                    <th>Saldo disponible en euros</th>
+                    <th>Ingresos en pesos</th>
+                    <th>Ingresos en dolares</th>
+                    <th>Ingresos en euros</th>
                     <th>Egresos</th>
-                    <th>Ingresos</th>
                     <th>Saldo Inicial</th>
                     <th>Saldo Final</th>
                    
@@ -36,8 +40,12 @@ Listado de Cajas
                 <tr>
                     <td></td>
                     <td>{{ caja.saldo_disponible }}</td>
+                    <td>{{ caja.saldo_disponible_dolares }}</td>
+                    <td>{{ caja.saldo_disponible_euros }}</td>
+                    <td>{{ caja.ingresos_en_pesos }}</td>
+                    <td>{{ caja.ingresos_en_dolares }}</td>
+                    <td>{{ caja.ingresos_en_euros }}</td>
                     <td>{{ caja.egresos }}</td>
-                    <td>{{ caja.ingresos }}</td>
                     <td>{{ caja.saldo_inicial }}</td>
                     <td>{{ caja.saldo_final }}</td>
                     
