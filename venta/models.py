@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from item.models import Item
 from cliente.models import Deuda
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -75,9 +76,32 @@ class Venta(models.Model):
     
     def clean(self):
         
-        if self.DoesNotExist:
-            
-            raise ValidationError('Debes completar todos los campos.')
+        if self.estado.opciones != 'EN PREPARACION':
+            raise ValidationError('El estado inicial de la venta debe ser "EN PREPARACIÓN" ')
+      
+        try:
+            if self.cliente_asociado == None:
+                raise ValidationError('Error')
+        except:
+            raise ValidationError('Debe seleccionar un cliente asociado')
+    
+        try: 
+            if self.mediodepago == None:
+                raise ValidationError('Error')
+        except:
+            raise ValidationError('Debe seleccionar un medio de pago')
+        
+        try:
+            if self.cuenta_corriente == None:
+                raise ValidationError('Error')
+        except:
+            raise ValidationError('Debe seleccionar una cuenta corriente')
+        try:
+            if self.sucursal_asociada == None:
+                raise ValidationError('Error')
+        except:
+            raise ValidationError('Debe seleccionar una sucursal asociada.')
+        
         
         if self.tipo_de_moneda.opciones == 'EURO':
             if self.monto_ingresado > self.total_euro:

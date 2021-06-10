@@ -4,10 +4,10 @@ from venta.models import Venta, ItemVenta, EstadoVenta, Cotizacion
 from celery import shared_task, Celery
 from django.core.mail import send_mail
 from usuario.models import Supervisor
-from cliente.models import Cliente, TipoDeMoneda
+from cliente.models import Cliente, TipoDeMoneda, EstadoCliente, CategoriaCliente
 from sucursal.models import Caja
 from decimal import Decimal
-from datetime import date
+from datetime import date, timedelta
 from time import sleep
 from django.db.models import Count
 import random
@@ -369,12 +369,11 @@ def ListaItemsPorCriterio():
 @shared_task
 def obtenerCotizacion():
     
-    dolar1 = requests.get('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + date.today().strftime("%Y-%m-%d") + '/currencies/usd/ars.json')
-    euro1 = requests.get('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + date.today().strftime("%Y-%m-%d") + '/currencies/eur/ars.json')
+    dolar1 = requests.get('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + (date.today()-timedelta(days=1)).strftime("%Y-%m-%d") + '/currencies/usd/ars.json')
+    euro1 = requests.get('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + (date.today()-timedelta(days=1)).strftime("%Y-%m-%d") + '/currencies/eur/ars.json')
     monedas = TipoDeMoneda.objects.filter(opciones = 'DOLAR')
     monedas2 = TipoDeMoneda.objects.filter(opciones = 'EURO')
-    # monedas3 = TipoDeMoneda.objects.filter(opciones = 'PESO')
-    # peso = ""
+    
     dolar = ""
     euro = ""
     
@@ -382,8 +381,7 @@ def obtenerCotizacion():
         dolar = moneda.id
     for moneda in monedas2:
         euro = moneda.id
-    # for moneda in monedas3:
-    #     peso = moneda.id
+    
     
     cotizacion = Cotizacion()
     cotizacion.moneda_id = dolar
@@ -394,12 +392,51 @@ def obtenerCotizacion():
     cotizacion2.moneda_id = euro
     cotizacion2.cotizacion = euro1.json()['ars']
     cotizacion2.save()
+     
+@shared_task 
+def avisoDeuda():
     
-    # cotizacion3 = Cotizacion()
-    # cotizacion3.moneda = peso
-    # cotizacion3.cotizacion = 1
-    # cotizacion3.save()
+    estado_deuda = EstadoVenta.objects.filter(opciones = 'EN DEUDA')
+    estado_cliente = EstadoCliente.objects.filter(opciones = 'DEUDOR')
+    estado_cliente2 = EstadoCliente.objects.filter(opciones = 'INCOBRABLE')
+    en_deuda = ""
+    estado = ""
+    estado2 = ""
+    for estado in estado_deuda:
+        en_deuda = estado.id
+    for est in estado_cliente:
+        estado = est.id
+    for est in estado_cliente2:
+        estado2 = est.id
     
-
+    ventas = Venta.objects.filter(estado = en_deuda)
     
+    for venta in ventas:
+        print("BUENAS")
+        print(date.today())
+        print(venta.fecha.date())
+        print(abs(date.today() - venta.fecha.date()).days)
+        
+        
+        cliente = Cliente.objects.filter(id = venta.cliente_asociado_id)
+        if abs(date.today() - venta.fecha.date()).days >= 45 and abs(date.today() - venta.fecha.date()).days < 90:
+            print("LLEGE ACA PA")
+            for cli in cliente:
+                print(cli)
+                cli.estado_cliente_id = estado
+                cli.save()
+            
+        if  abs(date.today() - venta.fecha.date()).days >= 90:
+            
+            categoria = CategoriaCliente.objects.filter(opciones = 'C')
+            cat = ""
+            for c in categoria:
+                cat = c.id
+            
+            for cli in cliente:
+                cli.estado_cliente_id = estado2
+                cli.categoria_cliente_id = cat
+                cli.save()
+    
+     
 app = Celery()

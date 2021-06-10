@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 
 class VentaLocalForm(forms.ModelForm):
     
+    
     class Meta:
         model = VentaLocal
         fields = ['estado','cliente_asociado','mediodepago','tipo_de_moneda','sucursal_asociada','vendedor_asociado','cuenta_corriente']

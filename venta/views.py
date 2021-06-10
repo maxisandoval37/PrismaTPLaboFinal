@@ -15,6 +15,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from decimal import Decimal
 import json
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.mail import EmailMessage
 
 
 class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
@@ -22,13 +23,14 @@ class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('venta.view_venta',)
     model = Venta
     template_name = 'ventas/listar_venta.html'
+    queryset = Venta.objects.all().order_by('numero_comprobante')
 
 class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
     
     permission_required = ('venta.view_venta_cajero',)
     model = Venta 
     template_name = 'ventas/listar_venta_cajero.html'
-    #queryset = Venta.objects.filter(estado_id = 2)
+    queryset = Venta.objects.all().order_by('numero_comprobante')
 
 class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
@@ -49,6 +51,8 @@ class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Cr
         context["sucursal_asociada"] = Sucursal.objects.all()
         context["vendedor_asociado"] = Vendedor.objects.all()
         return context
+    
+    
     
     
 class EditarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin, UpdateView):
@@ -724,6 +728,33 @@ def FinalizarVenta(request, venta):
     movimiento.identificador = "Número de comprobante" + str(instancia.numero_comprobante)
     movimiento.save()
     
+    querycliente = Cliente.objects.filter(id = instancia.cliente_asociado_id)
+    cliente = ""
+    for cliente in querycliente:
+        cliente = cliente
+    
+    email = EmailMessage("Venta realizada - Prisma Technology",
+                                 "Hola {}.\n\n {} ".format(cliente.nombre,"Felicidades, te queremos informar que la venta ha sido procesada y se encuentra pagada.\n Gracias por confiar en nosotros.\n [Aquí estaría el comprobante de pago - SPRINT 4]" ),
+                                 "",[cliente.email], reply_to=["VENTA REALIZADA"])
+    
+    
+    try:
+        
+        email.send()
+    except:
+        
+        messages.error(request, 'Ocurrió un error al momento de enviar el mail.')
+    
     messages.success(request, "Venta finalizada con éxito.")  
     
     return redirect('ventas:listar_ventas_cajero')
+
+def ReporteCuentaCorrienteClientes(request):
+    queryset = Venta.objects.all()
+    ventas = []
+
+    for venta in queryset:
+        ventas.append(venta)
+
+    return render(request,'ventas/reporte_cuenta_corriente_clientes.html',locals())
+

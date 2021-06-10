@@ -22,7 +22,7 @@ class ListadoPresupuesto(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('presupuesto.view_presupuesto',)
     model = Presupuesto
     template_name = 'presupuestos/listar_presupuesto.html'
-
+    queryset = Presupuesto.objects.all().order_by('id')
 
 
 class RegistrarPresupuesto(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):

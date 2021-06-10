@@ -46,6 +46,7 @@ class InicioUsuarios(ValidarLoginYPermisosRequeridos, TemplateView):
    
     permission_required = ('usuario.view_usuario',)
     template_name = 'usuarios/listar_usuario.html'
+    queryset = Usuario.objects.all().order_by('id')
 
     
 class ListadoUsuario(ValidarLoginYPermisosRequeridos,ListView):

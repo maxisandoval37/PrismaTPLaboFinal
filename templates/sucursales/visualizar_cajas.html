@@ -23,6 +23,7 @@ Listado de Cajas
             <thead>
                 <tr>
                     <th></th>
+                    <th>Código de caja</th>
                     <th>Saldo disponible en pesos</th>
                     <th>Saldo disponible en dolares</th>
                     <th>Saldo disponible en euros</th>
@@ -39,6 +40,7 @@ Listado de Cajas
                 {% for caja in lista %}
                 <tr>
                     <td></td>
+                    <td>{{ caja.caja_codigo }}</td>
                     <td>{{ caja.saldo_disponible }}</td>
                     <td>{{ caja.saldo_disponible_dolares }}</td>
                     <td>{{ caja.saldo_disponible_euros }}</td>

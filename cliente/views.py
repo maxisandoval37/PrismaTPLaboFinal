@@ -15,12 +15,14 @@ class ListadoCliente(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('cliente.view_cliente',)
     model = Cliente
     template_name = 'clientes/listar_cliente.html'
+    queryset = Cliente.objects.all().order_by('id')
 
 class ListadoCuentasCorriente(ValidarLoginYPermisosRequeridos, ListView):
     
     permission_required = ('proveedor.view_proveedor',)
     model = CuentaCorriente
     template_name = 'clientes/listar_cuenta_corriente.html'
+    queryset = CuentaCorriente.objects.all().order_by('id')
 
 class RegistrarCliente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     

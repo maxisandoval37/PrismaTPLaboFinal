@@ -42,6 +42,10 @@ app.conf.beat_schedule = {
         'task': 'ProyectoPRISMA.tasks.obtenerCotizacion',
         'schedule': 15.0,
     },
+    'revisar-deudas': {
+        'task': 'ProyectoPRISMA.tasks.avisoDeuda',
+        'schedule': 15.0,
+    }
 }
 
 

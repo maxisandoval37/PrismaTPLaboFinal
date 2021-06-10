@@ -1,0 +1,81 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+{% block content %}
+
+<div class="bg-gray-100" id="report">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Modificaciones de precios por categorías</strong>
+        </div>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Fecha</th>
+                    <th>Categoría</th>
+                    <th>Monto modificado</th>
+                    <th>Responsable</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if filas %}
+                {% for fila in filas %}
+                <tr>
+                    <td>{{ fila.id }}</td>
+                    <td>{{ fila.fecha }}</td>
+                    <td>{{ fila.categoria_asociada.opciones }}</td>
+                    <td>+{{ fila.aumento }}</td>
+                    <td>{{ fila.responsable.nombre }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay items registrados :( </h1>
+                    {% endif %}
+            </tbody>
+        </table>
+        <div id="chartdiv"></div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!--Inserta Grafico-->
+<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+
+<style>
+    #chartdiv {
+        height: 350px;
+        width: 69%;
+        margin: auto;
+    }
+</style>
+
+<script>
+    function printChart(divName) {
+        let toPrint = document.getElementById(divName).innerHTML;
+        let originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = toPrint;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+
+    window.onload = (event) => {
+        setTimeout(function () {
+            document.getElementById("button").hidden = false;
+        }, 1000);
+    };
+</script>
+
+{% endblock %}

@@ -14,6 +14,7 @@ class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('sucursal.view_sucursal',)
     model = Sucursal
     template_name = 'sucursales/listar_sucursal.html'
+    queryset = Sucursal.objects.all().order_by('id')
 
 class RegistrarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
@@ -66,6 +67,7 @@ def idCaja(request, id):
     lista = []
     for caja in queryset:
         dic = {
+            "caja_codigo": caja.codigo,
             "saldo_disponible": caja.saldo_disponible,
             "saldo_disponible_dolares": caja.saldo_disponible_dolares,
             "saldo_disponible_euros": caja.saldo_disponible_euros,

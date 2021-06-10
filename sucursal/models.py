@@ -21,6 +21,12 @@ class Caja(models.Model):
     
     def clean(self):
         
+        cajas = Caja.objects.all() 
+        
+        for caja in cajas:
+            if self.codigo == caja.codigo and self.id != caja.id:
+                raise ValidationError('Ya existe una caja con el identificador ingresado.')
+        
         if not self.codigo.isalnum():
             raise ValidationError('El identificador solo puede contener letras y números.')
         if len(self.codigo) < 2 and len(self.codigo) > 4:

@@ -1,0 +1,51 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de cuentas corrientes de clientes 
+{% endblock title %}
+
+{% block content %}
+
+<div class="bg-gray-100" id="report">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Cuentas corrientes de proveedores</strong>
+        </div>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>N° Cta corriente</th>
+                    <th>Sucursal</th>
+                    <th>Responsable</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if listaPedidos %}
+                {% for pedido in listaPedidos %}
+                <tr>
+                    <td>{{ pedido.cuenta_corriente }}</td>
+                    <td>{{ pedido.sucursal.codigo }}</td>
+                    <td>{{ pedido.proveedor.razon_social }}</td>
+                    <td>{{ pedido.fecha }}</td>
+                    <td>{{ pedido.total }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay pedidos registrados :(</h1>
+                    {% endif %}
+            </tbody>
+        </table>
+        <div id="chartdiv"></div>
+
+    </div>
+
+</div>
+
+</div>
+{% endblock %}

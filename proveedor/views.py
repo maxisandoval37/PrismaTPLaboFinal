@@ -15,12 +15,14 @@ class ListadoProveedor(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('proveedor.view_proveedor',)
     model = Proveedor
     template_name = 'proveedores/listar_proveedor.html'
+    queryset = Proveedor.objects.all().order_by('id')
 
 class ListadoCuentasCorriente(ValidarLoginYPermisosRequeridos, ListView):
     
     permission_required = ('proveedor.view_proveedor',)
     model = CuentaCorrienteProveedor
     template_name = 'proveedores/listar_cuenta_corriente.html'
+    queryset = CuentaCorrienteProveedor.objects.all().order_by('id')
 
 class RegistrarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
