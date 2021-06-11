@@ -257,16 +257,20 @@ def CambioMasivo(request):
         
         if not precio.isdigit():
             return HttpResponseBadRequest()
-        if not stock.isdigit():
-            return HttpResponseBadRequest()
+        if stock == '':
+            stock = "vacio"
+        else:
+            if not stock.isdigit():
+                return HttpResponseBadRequest()
         
     
         if int(precio) <= 0:
             return HttpResponseBadRequest()
 
-        if int(stock) < 0:
-            return HttpResponseBadRequest()
-        
+        if stock != "vacio":
+            if int(stock) < 0:
+                return HttpResponseBadRequest()
+            
 
         reporte_precios = ReportePrecios()
         reporte_precios.categoria_asociada_id = int(categoria)
@@ -276,7 +280,7 @@ def CambioMasivo(request):
 
         for item in items:
             item.precio += int(precio)
-            if int(stock) != 00:
+            if stock != "vacio":
                 item.stockseguridad = int(stock)
             item.save()
 
