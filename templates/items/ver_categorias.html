@@ -42,37 +42,40 @@ Listado de Categorias
                         max="100000"></td>
                     <td><input type="Integer" id="{{ cat.id }}stock" placeholder="0" min="0"
                          max="1000"></td>
-
-                    <td><a onclick="ModificacionMasiva()" class="btn btn-primary">Modificar</a></td>
+                    <td><a id="{{cat.id}}" onclick="ModificacionMasiva(this.id)" class="btn btn-primary">Modificar</a></td>
+                    
                 </tr>
                 {% endfor %}
-
+                
             </tbody>
         </table>
+        <div class="text-center">
+            
+        </div>
     </div>
 </div>
 </div>
 
 <script>
-function ModificacionMasiva() {
+function ModificacionMasiva(boton_id) {
         
     var csrftoken = getCookie('csrftoken');
     const inputsCantidades = document.getElementsByClassName('input-cantidad');
 
     for (input of inputsCantidades) {
         
-        console.log(document.getElementById(input.id).innerText)
-        console.log(document.getElementById(input.id+"precio").value)
-        console.log(document.getElementById(input.id+"stock").value)
+        console.log(document.getElementById(boton_id).innerText)
+        console.log(document.getElementById(boton_id+"precio").value)
+        console.log(document.getElementById(boton_id+"stock").value)
 
         $.ajax({
             type: "POST",
             url: "CambioMasivo/",
             data: {
                 csrfmiddlewaretoken: csrftoken,
-                categoria: document.getElementById(input.id).innerText,
-                precio: document.getElementById(input.id+"precio").value,
-                stock: document.getElementById(input.id+"stock").value,
+                categoria: document.getElementById(boton_id).innerText,
+                precio: document.getElementById(boton_id+"precio").value,
+                stock: document.getElementById(boton_id+"stock").value,
             },
             dataType: "text",
             success: function (data) {

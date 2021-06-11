@@ -153,6 +153,7 @@ def AgregarItem(request, sucursal, venta):
         lista_ventas = []
         lista_errores = []
         lista_success = []
+        contador = 0
         
         for info in object:
             objeto = json.loads(info)
@@ -176,11 +177,12 @@ def AgregarItem(request, sucursal, venta):
             item_venta.venta_asociada_id = int(venta)
             item_venta.monto = Decimal(cantidad.replace(',', '.')) * Decimal(precio.replace(',', '.'))
             
-            print(item_venta.cantidad_solicitada)
+            
             
             validacion = validar(request, item_venta)
             
             if validacion != None:
+                
                 lista_errores.append(validacion)
                 continue
             else:
@@ -269,6 +271,8 @@ def AgregarItem(request, sucursal, venta):
             mensaje = mensaje[0:len(mensaje)-18] 
         else:
             mensaje = mensaje[0:len(mensaje)-2] + "."
+        print(lista_success)
+        print(lista_errores)
         #messages.success(request, "Item agregado correctamente.")
         return HttpResponse(mensaje)
     
@@ -276,8 +280,8 @@ def AgregarItem(request, sucursal, venta):
 def validar(request, item_venta):
     
     if item_venta.item.cantidad == 0:
-            #messages.error(request, "No hay stock del item solicitado.")
-            return item_venta.item.nombre + " (No hay stock del item solicitado)"
+        #messages.error(request, "No hay stock del item solicitado.")
+        return item_venta.item.nombre + " (No hay stock del item solicitado)"
         
         
     if item_venta.venta_asociada.cliente_asociado.nombre == 'CONSUMIDOR FINAL' and item_venta.item.precio >= 10000:

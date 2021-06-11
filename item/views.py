@@ -158,6 +158,7 @@ class ModificarCampos(ValidarLoginYPermisosRequeridos, ListView):
                            'item.change_item', 'item.delete_item',)
     model = Categoria
     template_name = 'items/ver_categorias.html'
+    queryset = Categoria.objects.all().order_by('id')
 
 
 class ListarPedidos(ValidarLoginYPermisosRequeridos, ListView):
@@ -255,31 +256,40 @@ def CambioMasivo(request):
         stock = request.POST.get('stock', None)
         items = Item.objects.filter(categoria=int(categoria))
         
-        if not precio.isdigit():
-            return HttpResponseBadRequest()
+        if precio == '':
+            precio = "vacio"
+        else:
+            if not precio.isdigit():
+                return HttpResponseBadRequest()
         if stock == '':
             stock = "vacio"
         else:
             if not stock.isdigit():
                 return HttpResponseBadRequest()
         
-    
-        if int(precio) <= 0:
-            return HttpResponseBadRequest()
-
+        if precio != "vacio":
+            if int(precio) < 0:
+                return HttpResponseBadRequest()
+            if int(precio) > 99999:
+                return HttpResponseBadRequest()
         if stock != "vacio":
             if int(stock) < 0:
                 return HttpResponseBadRequest()
+            if int(stock) > 99999:
+                return HttpResponseBadRequest()
             
-
         reporte_precios = ReportePrecios()
         reporte_precios.categoria_asociada_id = int(categoria)
-        reporte_precios.aumento = int(precio)
+        if precio == "vacio":
+            reporte_precios.aumento = 0
+        else:
+            reporte_precios.aumento = int(precio)
         reporte_precios.responsable_id = request.user.id
         reporte_precios.save()
 
         for item in items:
-            item.precio += int(precio)
+            if precio != "vacio":
+                item.precio += int(precio)
             if stock != "vacio":
                 item.stockseguridad = int(stock)
             item.save()
@@ -516,7 +526,17 @@ def ReporteCambiosPrecios(request):
     filas = []
 
     for fila in queryset:
-        filas.append(fila)
+        print("fila.aumento")
+        print(fila.aumento)
+        dic = {
+            "id": fila.id,
+            "fecha": fila.fecha,
+            "categoria": fila.categoria_asociada.opciones,
+            "aumento": fila.aumento,
+            "responsable": fila.responsable.nombre,
+            "fecha_a_comparar": str(fila.fecha.date())
+        }
+        filas.append(dic)
 
     return render(request, 'items/reporte_cambios_masivos.html', locals())
 

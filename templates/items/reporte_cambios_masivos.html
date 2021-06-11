@@ -13,12 +13,19 @@ Listado de Items
     <div class="card">
         <div class="card-header">
             <strong class="card-title">Modificaciones de precios por categorías</strong>
+            <div align="right">
+                <input id=fechaDesde type="date">
+                <input id=fechaHasta type="date">
+                <a id="boton" class="btn btn-primary" onclick="filtrarLista()">Filtrar
+                    resultados</a>
+            </div>
         </div>
     </div>
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Id</th>
                     <th>Fecha</th>
                     <th>Categoría</th>
@@ -26,15 +33,17 @@ Listado de Items
                     <th>Responsable</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="table">
                 {% if filas %}
                 {% for fila in filas %}
-                <tr>
+                <tr class="items" id="{{ fila.id }}">
+                    <td></td>
                     <td>{{ fila.id }}</td>
                     <td>{{ fila.fecha }}</td>
-                    <td>{{ fila.categoria_asociada.opciones }}</td>
+                    <td hidden id="fecha{{ fila.id }}">{{ fila.fecha_a_comparar }}</td>
+                    <td>{{ fila.categoria }}</td>
                     <td>+{{ fila.aumento }}</td>
-                    <td>{{ fila.responsable.nombre }}</td>
+                    <td>{{ fila.responsable }}</td>
                 </tr>
                 {% endfor %}
                 {% else %}
@@ -76,6 +85,98 @@ Listado de Items
             document.getElementById("button").hidden = false;
         }, 1000);
     };
+
+    function filtrarLista() {
+        if (document.getElementById("boton").innerText == "Filtrar resultados") {
+            document.getElementById("boton").innerText = "Reiniciar";
+
+            elementos = document.getElementsByClassName("items");
+            cont = 0;
+            toDelete = []
+            for (let i = 0; i < document.getElementsByClassName("items").length; i++) {
+                elemento = elementos[cont];
+                fecha = document.getElementById("fecha" + elemento.id).innerText
+                fechaDesde = document.getElementById("fechaDesde").value;
+                fechaHasta = document.getElementById("fechaHasta").value;
+                console.log("fecha:" + fecha);
+                console.log("fechaDesde:" + fechaDesde);
+                console.log("fechaHasta:" + fechaHasta);
+                ret = fecha >= fechaDesde && fecha <= fechaHasta;
+                console.log(fechaDesde + " >= " + fecha);
+                console.log(fecha + " <= " + fechaHasta);
+                console.log(ret);
+                if (!ret) {
+                    // document.getElementById("table").removeChild(document.getElementById(elemento.id));
+                    toDelete.push(document.getElementById(elemento.id))
+                }
+                cont++;
+            }
+            cont = 0;
+            console.log(toDelete);
+            for (let i = 0; i < toDelete.length; i++) {
+                console.log(toDelete[cont]);
+                document.getElementById("table").removeChild(toDelete[cont]);
+                cont++;
+            }
+        }
+        else {
+            location.reload();
+        }
+        /*let csrftoken = getCookie('csrftoken');
+        console.log(document.getElementById("fechaDesde").value)
+        console.log(document.getElementById("fechaHasta").value)
+        $.ajax({
+            type: "POST",
+            url: "fecha/",
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                fechaDesde: document.getElementById("fechaDesde").value,
+                fechaHasta: document.getElementById("fechaHasta").value,
+            },
+            dataType: "text",
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 0) {
+                    alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
+                }
+                else if (jqXHR.status == 404) {
+                    alert('La Pagina solicitada no fue encontrada [404]');
+                }
+                else if (jqXHR.status == 500) {
+                    alert('Erro Interno [500]');
+                }
+                else if (textStatus === 'parsererror') {
+                    alert('Error en el retorno de Datos. [parseJson]');
+                }
+                else if (textStatus === 'timeout') {
+                    alert('Tiempo de Espera agotado');
+                }
+                else if (textStatus === 'abort') {
+                    alert('Solicitud Abortada. [Ajax Request]');
+                }
+                else {
+                    alert('Error desconocido: ' + jqXHR.responseText);
+                }
+            }
+        });*/
+    }
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 
 {% endblock %}

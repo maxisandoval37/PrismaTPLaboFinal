@@ -246,7 +246,7 @@ class Pintura(Item):
         pinturas = Pintura.objects.all()
         for pintura in pinturas:
         
-            if self.nombre == pintura.nombre and self.color == pintura.color and self.id != pintura.id:
+            if self.nombre.lower() == pintura.nombre.lower() and self.color.lower() == pintura.color.lower() and self.id != pintura.id:
                 raise ValidationError('La pintura ya está registrada.')
         
         if not self.color.isalpha():

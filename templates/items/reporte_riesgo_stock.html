@@ -1,0 +1,132 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+{% block content %}
+
+<div class="bg-gray-100" id="report">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Ítems con riesgo de stock</strong>
+        </div>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Código de barras</th>
+                    <th>Nombre</th>
+                    <th>Riesgo de stock mínimo</th>
+                    <th>Riesgo de stock de seguridad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if items %}
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.codigo_de_barras }}</td>
+                    <td class="items" id="{{ item.nombre }}">{{ item.nombre }}</td>
+                    <td hidden id="{{ item.nombre }}cantidad">{{ item.cantidad }}</td>
+                    {% with stockmin=item.stockminimo|mul:100 %}
+                    {% if item.cantidad != 0 %}
+                    <td>{{ stockmin|div:item.cantidad }}%</td>
+                    {% endif %}
+                    {% endwith %}
+                    
+                    {% with stockseg=item.stockseguridad|mul:100 %}
+                    {% if item.cantidad != 0 %}
+                    <td>{{ stockseg|div:item.cantidad }}%</td>
+                    {% endif %}
+                    {% endwith %}
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay items registrados :( </h1>
+                    {% endif %}
+            </tbody>
+        </table>
+        <div id="chartdiv"></div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!--Inserta Grafico-->
+<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+
+<style>
+    #chartdiv {
+        height: 350px;
+        width: 69%;
+        margin: auto;
+    }
+</style>
+
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script>
+    data = [];
+
+    function printChart(divName) {
+        let toPrint = document.getElementById(divName).innerHTML;
+        let originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = toPrint;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+
+    window.onload = (event) => {
+        let elements = document.getElementsByClassName("items");
+        cont = 0;
+
+        for (i = 0; i < elements.length; i++) {
+            let element = elements[cont];
+            let item = document.getElementById(element.id).innerText;
+            let cantidad = document.getElementById(element.id + "cantidad").innerText;
+            let info = { "item": item, "cantidad": cantidad };
+
+            data.push(info);
+            cont++;
+        }
+
+        am4core.ready(function () {
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            let chart = am4core.create("chartdiv", am4charts.PieChart);
+
+            // Add data
+            chart.data = data;
+
+            // Add and configure Series
+            let pieSeries = chart.series.push(new am4charts.PieSeries());
+            pieSeries.dataFields.value = "cantidad";
+            pieSeries.dataFields.category = "item";
+            pieSeries.slices.template.stroke = am4core.color("#fff");
+            pieSeries.slices.template.strokeWidth = 2;
+            pieSeries.slices.template.strokeOpacity = 1;
+
+            // This creates initial animation
+            pieSeries.hiddenState.properties.opacity = 1;
+            pieSeries.hiddenState.properties.endAngle = -90;
+            pieSeries.hiddenState.properties.startAngle = -90;
+        });
+
+        setTimeout(function () {
+            document.getElementById("button").hidden = false;
+        }, 1000);
+    };
+</script>
+
+{% endblock %}
