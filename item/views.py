@@ -17,6 +17,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from sucursal.models import Caja, Operacion
 from decimal import Decimal
 import random
+from usuario.models import Supervisor
 
 
 class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
@@ -42,6 +43,7 @@ class RegistrarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, Create
         context["categoria"] = Categoria.objects.all()
         context["subcategoria"] = SubCategoria.objects.all()
         return context
+    
 
 
 class EditarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, UpdateView):
@@ -193,6 +195,10 @@ def RecibirStock(request, id_proveedor, id_sucursal):
             razon_social = ven.razon_social
 
         cajas = Caja.objects.filter(sucursal_id=id_sucursal)
+        supervisorlista = Supervisor.objects.filter(sucursal_id = id_sucursal)
+        supervisor = ""
+        for supervisor in supervisorlista:
+            supervisor = supervisor.id
 
         caja_mayor = None
         saldo_maximo = 0
@@ -224,6 +230,7 @@ def RecibirStock(request, id_proveedor, id_sucursal):
                     movimiento.tipo = "Pedido"
                     movimiento.caja_asociada = caja_mayor
                     movimiento.identificador = "Proveedor: " + razon_social
+                    movimiento.responsable = supervisor
                     movimiento.save()
                     reintentos = False
 
@@ -248,16 +255,18 @@ def CambioMasivo(request):
         stock = request.POST.get('stock', None)
         items = Item.objects.filter(categoria=int(categoria))
         
-        if precio == '':
+        if not precio.isdigit():
             return HttpResponseBadRequest()
-        if stock == '':
+        if not stock.isdigit():
             return HttpResponseBadRequest()
         
+    
         if int(precio) <= 0:
             return HttpResponseBadRequest()
 
-        if int(stock) != 0 and int(stock) < 0:
+        if int(stock) < 0:
             return HttpResponseBadRequest()
+        
 
         reporte_precios = ReportePrecios()
         reporte_precios.categoria_asociada_id = int(categoria)
@@ -267,7 +276,7 @@ def CambioMasivo(request):
 
         for item in items:
             item.precio += int(precio)
-            if int(stock) != 0:
+            if int(stock) != 00:
                 item.stockseguridad = int(stock)
             item.save()
 

@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from proveedor.models import CuentaCorrienteProveedor
 from usuario.models import Usuario
 import random
+from datetime import datetime
 # Create your models here.
 
 
@@ -147,11 +148,14 @@ class Estado(models.Model):
     def __str__(self):
         return self.opciones
 
+def random_codigo():
+        
+        return int(str(datetime.now()).replace("-","").replace(" ","").replace(":","").replace(".","")[7:])
+
 class Item(models.Model):
 
     id = models.AutoField(primary_key=True)
-    numero_random = random.randint(999999999999, 10000000000000)
-    codigo_de_barras = models.BigIntegerField('Código de barras', default = numero_random, unique=True)
+    codigo_de_barras = models.BigIntegerField('Código de barras', unique=True,  default = random_codigo)
     nombre = models.CharField('Nombre', max_length=50)
     precio = models.DecimalField('Precio',decimal_places=2, max_digits=10, null=True)
     descripcion = models.CharField('Descripción', max_length=50, null=True, blank=True)
@@ -171,15 +175,17 @@ class Item(models.Model):
     cantidad_lote = models.PositiveIntegerField('Cantidad de reposición por lote', default=0, null=True)
     
 
+    
+    
     def clean(self):
 
-        # items = Item.objects.all() 
+        items = Item.objects.all() 
         
-        # for item in items:
+        for item in items:
             
-        #     if self.nombre == item.nombre and self.precio == item.precio and self.codigo_de_barras != item.codigo_de_barras:
+            if self.nombre == item.nombre and self.precio == item.precio and self.codigo_de_barras != item.codigo_de_barras:
                 
-        #         raise ValidationError('Ya existe un item con el mismo nombre.')
+                raise ValidationError('Ya existe un item con el mismo nombre.')
         
         
         if len(self.nombre) < 4 and len(self.nombre) > 50:
@@ -254,8 +260,7 @@ class Pintura(Item):
     
 class PinturaUsada(models.Model):
     
-    numero_random = random.randint(999999999999, 10000000000000)
-    codigo_de_barras = models.BigIntegerField('Código de barras', default = numero_random, unique=True)
+    codigo_de_barras = models.BigIntegerField('Código de barras', default = random_codigo, unique=True)
     nombre = models.CharField('Nombre de pintura', max_length=30)
     color = models.CharField('Color de pintura', max_length=50)
     cantidad_restante = models.PositiveIntegerField('Cantidad de pintura restante')
@@ -285,11 +290,10 @@ class PinturaUsada(models.Model):
 
 class PinturaNueva(models.Model):
     
-    numero_random = random.randint(999999999999, 10000000000000)
-    codigo_de_barras = models.BigIntegerField('Código de barras', default = numero_random, unique=True)
+    codigo_de_barras = models.BigIntegerField('Código de barras', default = random_codigo, unique=True)
     nombre = models.CharField('Nombre de pintura', max_length=30)
     color = models.CharField('Color de pintura', max_length=50)
-    cantidad = models.PositiveIntegerField('Cantidad de pintura')
+    cantidad = models.PositiveIntegerField('Cantidad de pintura (ML)')
     stock = models.IntegerField('Stock')
     pcant = models.PositiveIntegerField('Primera cantidad')
     scant = models.PositiveIntegerField('Segunda cantidad')

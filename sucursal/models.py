@@ -118,6 +118,7 @@ class Operacion(models.Model):
     tipo = models.CharField('Tipo', max_length=10)
     caja_asociada = models.ForeignKey(Caja, on_delete=models.PROTECT)
     identificador = models.CharField('Identificador', max_length= 30)
+    responsable = models.IntegerField('ID de responsable')
     
     class Meta:
         

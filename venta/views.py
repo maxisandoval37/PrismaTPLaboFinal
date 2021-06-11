@@ -165,11 +165,12 @@ def AgregarItem(request, sucursal, venta):
             
             item_venta = ItemVenta()
             item_venta.item_id = int(item)
-            
-            if cantidad == "":
-                return HttpResponseBadRequest()
-            else:
+        
+            if cantidad.isdigit():
                 item_venta.cantidad_solicitada = int(cantidad)
+            else:
+                return HttpResponseBadRequest()
+    
                 
             item_venta.sucursal_asociada_id = str(sucursal)
             item_venta.venta_asociada_id = int(venta)
@@ -309,6 +310,7 @@ def CambiarEstado(request, id, cliente):
     tipodemoneda1 = TipoDeMoneda.objects.filter(opciones = 'EURO')
     tipoeuro = 0
     valor_euro = ""
+    
     
     for tipo in tipodemoneda1:
         tipoeuro = tipo.id  
@@ -726,6 +728,7 @@ def FinalizarVenta(request, venta):
     movimiento.tipo = "Venta"
     movimiento.caja_asociada = caja_menor
     movimiento.identificador = "Número de comprobante" + str(instancia.numero_comprobante)
+    movimiento.responsable = request.user.id
     movimiento.save()
     
     querycliente = Cliente.objects.filter(id = instancia.cliente_asociado_id)
