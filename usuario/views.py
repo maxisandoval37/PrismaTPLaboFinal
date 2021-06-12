@@ -7,9 +7,9 @@ from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, FormView
-from .models import Usuario, Vendedor, Supervisor, Cajero
+from .models import Administrativo, Usuario, Vendedor, Supervisor, Cajero
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from .forms import FormularioLogin, FormularioUsuario, FormularioVendedor, FormularioSupervisor, FormularioCajero
+from .forms import FormularioLogin, FormularioUsuario, FormularioVendedor, FormularioSupervisor, FormularioCajero, FormularioAdministrativo
 from .mixins import ValidarLoginYPermisosRequeridos
 from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
@@ -104,6 +104,16 @@ class RegistrarCajero(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Create
     template_name = 'usuarios/crear_cajero.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Cajero registrado correctamente.'
+
+class RegistrarAdministrativo(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
+   
+    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    model = Administrativo
+    form_class = FormularioAdministrativo
+    template_name = 'usuarios/crear_administrativo.html'
+    success_url = reverse_lazy('usuarios:listar_usuarios')
+    success_message = 'Administrativo registrado correctamente.'
+
 
 
 

@@ -80,10 +80,12 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar Usuarios:</h6>
                         <a class="collapse-item" href="{% url 'usuarios:listar_usuarios' %}">Listado de Usuarios</a>
+                        <a class="collapse-item" href="{% url 'usuarios:registrar_usuario' %}">Registrar Gerente General</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_vendedor' %}">Registrar Vendedor</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_supervisor' %}">Registrar
                             Supervisor</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_cajero' %}">Registrar Cajero</a>
+                        <a class="collapse-item" href="{% url 'usuarios:registrar_administrativo' %}">Registrar Administrativo</a>
                     </div>
                 </div>
             </li>
@@ -107,7 +109,8 @@
                         <h6 class="collapse-header">Administrar items:</h6>
                         <a class="collapse-item" href="{% url 'items:listar_items' %}">Listado de Items</a>
                         <a class="collapse-item" href="{% url 'items:registrar_item' %}">Agregar Item</a>
-                        <a class="collapse-item" href="{% url 'items:ver_categorias' %}">Modificación masiva</a>
+                        <a class="collapse-item" href="{% url 'items:ver_categorias' %}">Modificación por categoria</a>
+                        <a class="collapse-item" href="{% url 'items:ver_items' %}">Modificación masiva</a>
                     </div>
                 </div>
             </li>

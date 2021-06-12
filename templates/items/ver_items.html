@@ -1,0 +1,135 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+
+
+{% block content %}
+
+{% if object_list %}
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Listado de Items</strong>
+        </div>
+    </div>
+    
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            
+            <thead>
+
+                <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th>Precio</th>
+                    
+
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for item in object_list %}
+
+                <tr>
+                    <td>{{item.id}}</td>
+                    <td>{{item.nombre}}</td>
+                    <td>{{ item.precio}}</td>
+                    
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+        <div class="text-center">
+            <td><input type="Integer" id="input-precio"  placeholder="0" min="0"
+                max="100000"></td>
+            
+            <td><a  onclick="ModificacionMasiva()" class="btn btn-primary">Modificar</a></td>
+        </div>
+        
+    </div>
+</div>
+</div>
+{% else %}
+        <h5>No hay items registrados :(</h1> 
+        {% endif %}
+<script>
+function ModificacionMasiva() {
+        
+    var csrftoken = getCookie('csrftoken');
+    console.log(document.getElementById("input-precio").value)
+    
+        $.ajax({
+            type: "POST",
+            url: "CambioMasivoItems/",
+            data: {
+                csrfmiddlewaretoken: csrftoken,
+                
+                precio: document.getElementById("input-precio").value,
+                
+            },
+            dataType: "text",
+            success: function (data) {
+                location.reload()
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 0) {
+                    alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
+                }
+                else if (jqXHR.status == 404) {
+                    alert('La Pagina solicitada no fue encontrada [404]');
+                }
+                else if (jqXHR.status == 500) {
+                    alert('Erro Interno [500]');
+                }
+                else if (textStatus === 'parsererror') {
+                    alert('Error en el retorno de Datos. [parseJson]');
+                }
+                else if (textStatus === 'timeout') {
+                    alert('Tiempo de Espera agotado');
+                }
+                else if (textStatus === 'abort') {
+                    alert('Solicitud Abortada. [Ajax Request]');
+                }
+                else {
+                    ErrorGeneral()
+                }
+            }
+        });
+    }
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function ErrorGeneral() {
+            
+            Swal.fire({
+                "title": "Ups",
+                "text": "Ha ocurrido un error.",
+                "icon": "error",
+            })
+}
+
+</script>
+
+
+
+{% endblock %}

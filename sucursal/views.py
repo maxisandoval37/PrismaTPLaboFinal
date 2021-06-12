@@ -59,9 +59,9 @@ class RegistrarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateVi
 
 
 
-def idCaja(request, id):
+def idCaja(request, id, ValidarLoginYPermisosRequeridos):
     
-    
+    permission_required = ('sucursal.view_caja','sucursal.add_caja',)
     sucursal = Sucursal.objects.get(id = id)
     queryset = Caja.objects.filter(sucursal_id = sucursal.id)
     lista = []

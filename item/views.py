@@ -3,7 +3,7 @@ import decimal
 from django.http.response import HttpResponseBadRequest
 from proveedor.models import Proveedor
 from django.shortcuts import render, redirect, HttpResponseRedirect
-from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios
+from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios, ReportePreciosItems
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm
@@ -159,6 +159,14 @@ class ModificarCampos(ValidarLoginYPermisosRequeridos, ListView):
     model = Categoria
     template_name = 'items/ver_categorias.html'
     queryset = Categoria.objects.all().order_by('id')
+    
+class ModificarCamposItems(ValidarLoginYPermisosRequeridos, ListView):
+
+    permission_required = ('item.view_item', 'item.add_item',
+                            'item.change_item', 'item.delete_item',)
+    model = Item
+    template_name = 'items/ver_items.html'
+    queryset = Item.objects.all().order_by('id')
 
 
 class ListarPedidos(ValidarLoginYPermisosRequeridos, ListView):
@@ -292,6 +300,47 @@ def CambioMasivo(request):
                 item.precio += int(precio)
             if stock != "vacio":
                 item.stockseguridad = int(stock)
+            item.save()
+
+    messages.success(request, 'Modificación masiva realizada con éxito.')
+    return HttpResponse("Cambio efectuado.")
+
+def CambioMasivoItems(request):
+
+    if request.is_ajax():
+
+        precio = request.POST.get('precio', None)
+        items = Item.objects.all()
+        
+        if precio == '':
+            precio = "vacio"
+        else:
+            if not precio.isdigit():
+                return HttpResponseBadRequest()
+       
+        
+        if precio != "vacio":
+            if int(precio) < 0:
+                return HttpResponseBadRequest()
+            if int(precio) > 99999:
+                return HttpResponseBadRequest()
+       
+            
+        reporte_precios = ReportePreciosItems()
+        
+        if precio == "vacio":
+            reporte_precios.aumento = 0
+        else:
+            reporte_precios.aumento = int(precio)
+        reporte_precios.responsable_id = request.user.id
+        reporte_precios.save()
+
+        for item in items:
+            if precio != "vacio":
+                item.precio += int(precio)
+            else:
+                messages.error(request, 'Debes ingresar un monto para realizar la modificación masiva.')
+                
             item.save()
 
     messages.success(request, 'Modificación masiva realizada con éxito.')

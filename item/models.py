@@ -432,4 +432,18 @@ class ReportePrecios(models.Model):
     def __str__(self):
         return "Fecha: {} , Categoria: {}".format(self.fecha, self.categoria_asociada)
     
+
+class ReportePreciosItems(models.Model):
+    
+    fecha = models.DateTimeField('Fecha de modificación', auto_now_add=True)
+    aumento = models.DecimalField('Aumento', decimal_places= 2, max_digits=7)
+    responsable = models.ForeignKey(Usuario, on_delete=models.PROTECT)
+    
+    class Meta:
+        verbose_name = 'reporte de precios global'
+        verbose_name_plural = 'reportes de precios globales'
+        
+    def __str__(self):
+        return "Fecha: {} , Aumento: {}".format(self.fecha, self.aumento)
+    
     
