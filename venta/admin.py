@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Venta, EstadoVenta, VentaLocal, ItemVenta
+from .models import Venta, EstadoVenta, VentaLocal, ItemVenta, Cotizacion
 # Register your models here.
 
 
@@ -18,6 +18,11 @@ class ventalocalADMIN(ModelAdmin):
     
 @register(ItemVenta)
 class itemventaADMIN(ModelAdmin):
+    
+    icon_name = 'person'
+    
+@register(Cotizacion)
+class cotadmin(ModelAdmin):
     
     icon_name = 'person'
     

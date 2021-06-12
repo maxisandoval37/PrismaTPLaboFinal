@@ -353,6 +353,10 @@ def CambiarEstado(request, id, cliente):
                 messages.error(request, 'Debes ingresar el monto del cliente.')
                 return redirect('ventas:listar_ventas')
             
+            if instancia.monto_ingresado < instancia.total_euro and instancia.cliente_asociado.nombre == 'CONSUMIDOR FINAL':
+                messages.error(request, 'El consumidor final debe abonar el total de la venta.')
+                return redirect('ventas:listar_ventas')
+            
             elif instancia.monto_ingresado < instancia.total_euro and len(deuda) == 0:
                 estado_deuda = EstadoDeuda.objects.filter(opciones = 'IMPAGA')
                 

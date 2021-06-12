@@ -76,6 +76,11 @@ class Venta(models.Model):
     
     def clean(self):
         
+        deudas = Deuda.objects.filter(cliente_asociado_id = self.cliente_asociado)
+        
+        if len(deudas) >= 3:
+            raise ValidationError('No es posible registrar la venta, ya que el cliente posee 3 deudas impagas.')
+        
         if self.estado.opciones != 'EN PREPARACION':
             raise ValidationError('El estado inicial de la venta debe ser "EN PREPARACIÓN" ')
       

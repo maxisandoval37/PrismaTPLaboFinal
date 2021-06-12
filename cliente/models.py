@@ -79,6 +79,10 @@ class MedioDePago(models.Model):
     def clean(self):
         
         medios_de_pagos = MedioDePago.objects.filter(cliente = self.cliente)
+        if len(medios_de_pagos) == 0:
+            if self.opciones != 'EFECTIVO':
+                raise ValidationError('El consumidor final solo puede pagar en efectivo.')
+            
         for medios in medios_de_pagos:
             
             if self.opciones == medios.opciones:

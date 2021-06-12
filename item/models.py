@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from proveedor.models import Proveedor
 from django.core.exceptions import ValidationError
 from proveedor.models import CuentaCorrienteProveedor
-from usuario.models import Usuario
+from usuario.models import Supervisor
 import random
 from datetime import datetime
 # Create your models here.
@@ -326,8 +326,8 @@ class Mezcla(models.Model):
     
     primera_pintura = models.ForeignKey(Pintura, on_delete=models.PROTECT, related_name='+')
     segunda_pintura = models.ForeignKey(Pintura,on_delete=models.PROTECT)
-    cantidad_primera_pintura = models.PositiveIntegerField('Cantidad de la primera pintura (En mililitros)', default = 0)
-    cantidad_segunda_pintura = models.PositiveIntegerField('Cantidad de la segunda pintura (En mililitros)', default = 0)
+    cantidad_primera_pintura = models.IntegerField('Cantidad de la primera pintura (En mililitros)')
+    cantidad_segunda_pintura = models.IntegerField('Cantidad de la segunda pintura (En mililitros)')
     
     
     class Meta:
@@ -423,7 +423,7 @@ class ReportePrecios(models.Model):
     categoria_asociada = models.ForeignKey(Categoria, on_delete= models.PROTECT)
     fecha = models.DateTimeField('Fecha de modificación', auto_now_add=True)
     aumento = models.DecimalField('Aumento', decimal_places= 2, max_digits=7)
-    responsable = models.ForeignKey(Usuario, on_delete=models.PROTECT)
+    responsable = models.ForeignKey(Supervisor, on_delete=models.PROTECT)
     
     class Meta:
         verbose_name = 'reporte de precios'
@@ -437,7 +437,7 @@ class ReportePreciosItems(models.Model):
     
     fecha = models.DateTimeField('Fecha de modificación', auto_now_add=True)
     aumento = models.DecimalField('Aumento', decimal_places= 2, max_digits=7)
-    responsable = models.ForeignKey(Usuario, on_delete=models.PROTECT)
+    responsable = models.ForeignKey(Supervisor, on_delete=models.PROTECT)
     
     class Meta:
         verbose_name = 'reporte de precios global'
