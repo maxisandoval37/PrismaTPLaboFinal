@@ -32,7 +32,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "67dc3509-011d-4fbb-913c-4e918296f76a",
       "comment": "",
@@ -45,7 +45,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "1e6b4037-b6b3-4322-be59-74198b8375cc",
       "comment": "",
@@ -77,7 +77,7 @@
       "id": "07ba321d-54d8-4868-a176-76b18d740bff",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -301,7 +301,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "00ad0c3a-ad04-40e9-a2b7-fc0c42cf7c50",
       "comment": "",
@@ -314,7 +314,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "9c171d17-ef55-424a-8b27-d967f2953480",
       "comment": "",
@@ -346,7 +346,7 @@
       "id": "b0692e7e-2a9e-4e38-b216-c8526a4054c3",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -570,7 +570,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "b621a7c3-6227-4428-b22c-efaf7cd0c1a8",
       "comment": "",
@@ -583,7 +583,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "3fb1900e-d3a1-4d8d-93b7-a0cce69bb17f",
       "comment": "",
@@ -615,7 +615,7 @@
       "id": "7b4c600d-532d-4e36-aa75-c19198d03875",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -839,7 +839,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "449c0b94-bdb1-4046-b202-a119a15b4fd2",
       "comment": "",
@@ -852,7 +852,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "aa17ff4c-c55d-4e98-825d-f7c404d826f4",
       "comment": "",
@@ -884,7 +884,7 @@
       "id": "9b652328-9b46-4f58-86af-3714be893db1",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -1108,7 +1108,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "c0d04b57-3a9c-403b-9dd0-1faedd780d9b",
       "comment": "",
@@ -1121,7 +1121,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "90e44fd0-87de-47d9-b2f9-7bd36cfa669f",
       "comment": "",
@@ -1153,7 +1153,7 @@
       "id": "dc90695d-4424-4969-b421-b693a8b651a7",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -1377,7 +1377,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "b2426ca8-fae4-4446-bc54-79303f15ff6f",
       "comment": "",
@@ -1390,7 +1390,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "c5c77ba0-abf7-4c60-8cc1-6cc1ffa2b701",
       "comment": "",
@@ -1422,7 +1422,7 @@
       "id": "8efcd8b8-700f-49d5-9ea8-eabb967280a6",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -1661,7 +1661,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "57a4f771-1a1f-4f1b-a750-e9b1b372494f",
       "comment": "",
@@ -1674,7 +1674,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "fd1bea36-842e-49a2-b0de-3c75f74d7ce5",
       "comment": "",
@@ -1706,7 +1706,7 @@
       "id": "56da658e-9ae8-41d9-b537-76c2e31ae8b9",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -1945,7 +1945,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "3c4023a5-2c1a-47d0-8c03-675a15cceef6",
       "comment": "",
@@ -1958,7 +1958,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "ce640b5c-bdb0-47ba-8926-421bcbe45844",
       "comment": "",
@@ -1990,7 +1990,7 @@
       "id": "8b14adb5-6906-4910-9c9d-d6bae7ef428c",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -2229,7 +2229,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "626cc710-0b9a-4b08-8805-a86d6e810f5c",
       "comment": "",
@@ -2242,7 +2242,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "d95ac511-b5b5-49df-9118-bc5c4a52a9ac",
       "comment": "",
@@ -2274,7 +2274,7 @@
       "id": "d1a8b831-cbe3-4327-b67a-cc89f97d8077",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -2513,7 +2513,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "74a8ed4f-d258-42a7-8cb6-5e4d8e41b178",
       "comment": "",
@@ -2558,7 +2558,7 @@
       "id": "b58b8979-7f10-4e1d-8917-76b60f55b271",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -2797,7 +2797,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "d5367c17-35db-4cf1-b535-296fb0657418",
       "comment": "",
@@ -2810,7 +2810,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "1fdf4e49-4c7b-4732-b769-06a638937877",
       "comment": "",
@@ -2842,7 +2842,7 @@
       "id": "36fa87b1-32ba-46a6-a58d-879f3d6ff18a",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
@@ -3081,7 +3081,7 @@
         ["xpath=//input[@id='id_username']", "xpath:attributes"],
         ["xpath=//div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "supervisor1"
     }, {
       "id": "d3f52cf9-0fd9-4e7e-9e28-d74849fa919f",
       "comment": "",
@@ -3094,7 +3094,7 @@
         ["xpath=//input[@id='id_password']", "xpath:attributes"],
         ["xpath=//div/div/input", "xpath:position"]
       ],
-      "value": "admin"
+      "value": "12345"
     }, {
       "id": "d3967329-c7f9-490a-b286-39d1a10dc59c",
       "comment": "",
@@ -3126,7 +3126,7 @@
       "id": "ea593405-ee6d-49c1-a819-58418f816a92",
       "comment": "",
       "command": "click",
-      "target": "linkText=Modificación masiva",
+      "target": "linkText=Modificación por categoria",
       "targets": [
         ["linkText=Modificación masiva", "linkText"],
         ["css=#collapseUtilities .collapse-item:nth-child(4)", "css:finder"],
