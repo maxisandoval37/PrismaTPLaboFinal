@@ -55,7 +55,7 @@ Listado de Ventas
                     <td>${{ venta.total_peso}}</td> 
                     {% endif %}
 
-                   {% if venta.estado.opciones == 'LISTA' %}
+                   {% if venta.estado.opciones == 'LISTA' and user.rol.opciones == 'CAJERO' or user.is_staff %}
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             Eliminar </a>
@@ -66,7 +66,7 @@ Listado de Ventas
                             Eliminar </a>
                     </td>
                     {% endif %}
-                    {% if venta.estado.opciones == 'LISTA' or venta.estado.opciones == 'PAGADA' %}
+                    {% if venta.estado.opciones == 'LISTA' or venta.estado.opciones == 'PAGADA' and user.rol.opciones == 'CAJERO' or user.is_staff or user.rol.opciones == 'SUPERVISOR' %}
                     <td>
                         <a href="{% url 'ventas:ver_items' venta.numero_comprobante %}" class="btn btn-warning">
                             Ver detalle </a>
@@ -78,7 +78,7 @@ Listado de Ventas
                     </td>
                     {% endif %}
                     
-                    {% if venta.estado.opciones == 'LISTA' %}
+                    {% if venta.estado.opciones == 'LISTA' and user.rol.opciones == 'CAJERO' or user.is_staff %}
                     <td>
                         <a href="{% url 'ventas:finalizar_venta' venta.numero_comprobante %}" class="btn btn-success">Finalizar venta</a> 
                     </td>

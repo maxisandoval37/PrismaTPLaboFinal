@@ -45,13 +45,13 @@ Listado de Clientes
                     <td>{{ cliente.telefono }}</td>
                     <td>{{ cliente.categoria_cliente }}</td>
                     <td>{{ cliente.estado_cliente }}</td>
-            
+                    
+                    {% if user.rol.opciones == 'VENDEDOR' or user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
                     <td>
-                        
                         <a href="{% url 'clientes:actualizar_cliente' cliente.pk %}" class="btn btn-primary">
                             Editar </a>
-
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}

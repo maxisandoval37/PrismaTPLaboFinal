@@ -40,7 +40,7 @@ Listado de Items
                     <td>{{ item.cantidad_solicitada}}</td>
                     
 
-                    {% if item.presupuesto_asociado.estado.opciones == 'EN EVALUACION' %}
+                    {% if item.presupuesto_asociado.estado.opciones == 'EN EVALUACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                    <td>
                        <a href="{% url 'presupuestos:eliminar_item' presupuesto item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>

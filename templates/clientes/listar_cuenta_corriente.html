@@ -36,13 +36,16 @@ Listado de Cuentas Corriente
                     <td>{{ cuenta.numero_cuenta }}</td>
                     <td>{{ cuenta.cliente }}</td>
                     
-
+                    {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'VENDEDOR' %}
                     <td>
                         <a href="{% url 'clientes:eliminar_cuenta_corriente' cuenta.id %}" class="btn btn-danger">
                             Eliminar </a>
+                    </td>
+                    {% endif %}
+                    
+                    <td>
                         <a href="{% url 'clientes:ver_registro' cuenta.id %}" class="btn btn-primary">
                             Ver registro </a>
-
                     </td>
                 </tr>
                 {% endfor %}

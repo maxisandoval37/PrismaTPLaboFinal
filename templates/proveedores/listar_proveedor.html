@@ -41,13 +41,14 @@ Listado de Proveedores
                     <td>{{proveedor.email}}</td>
                     <td>{{ proveedor.telefono }}</td>
 
+                    {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
                     <td>
                         <a href="{% url 'proveedores:eliminar_proveedor' proveedor.pk %}" class="btn btn-danger">
                             Eliminar </a>
                         <a href="{% url 'proveedores:actualizar_proveedor' proveedor.pk %}" class="btn btn-primary">
                             Editar </a>
-
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}

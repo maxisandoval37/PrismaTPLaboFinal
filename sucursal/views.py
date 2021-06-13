@@ -29,7 +29,7 @@ class RegistrarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Crea
 
 class EliminarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
-    permission_required = ('sucursal.view_sucursal','sucursal.delete_sucursal',)
+    permission_required = ('sucursal.view_sucursal','sucursal.add_sucursal', 'sucursal.change_sucursal','sucursal.delete_sucursal',)
     model = Sucursal
     template_name = 'sucursales/eliminar.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
@@ -180,7 +180,8 @@ def ReporteTransaccionesVentaCompra(request):
     sucursal_asociada = ""
     OperacionFromQuery = Operacion.objects.all()
     
-    if es_gerente_general:
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
         sucursalesQuery = Sucursal.objects.all()
         for sucursal in sucursalesQuery:
             sucursalesIds.append(sucursal.id)

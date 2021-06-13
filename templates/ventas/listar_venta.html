@@ -59,12 +59,15 @@ Listado de Ventas
                     {% else %}
                     <td>${{ venta.total_peso}}</td> 
                     {% endif %}
+
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             Eliminar </a>
                     </td>
+                    {% endif %}
 
-                    {% if venta.estado.opciones == 'EN PREPARACION' %}
+                    {% if venta.estado.opciones == 'EN PREPARACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     <td>
                         <a href="{% url 'ventas:registrar_itemventa' venta.sucursal_asociada.id  venta.numero_comprobante %}" class="btn btn-primary">
                             Agregar item </a>
@@ -79,7 +82,7 @@ Listado de Ventas
                             Ver detalle </a>
                     </td>
                     
-                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' %}
+                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <td>
                             <a href="{% url 'ventas:ingresar_monto' venta.pk %}" class="btn btn-info">Ingresar monto</a>
                         </td>
@@ -91,7 +94,7 @@ Listado de Ventas
                     {% endif %}
 
 
-                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' %}
+                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <td>
                             <a href="{% url 'ventas:cambiar_estado' venta.numero_comprobante  venta.cliente_asociado.id %}" class="btn btn-success">Cargar venta</a>
                         </td>

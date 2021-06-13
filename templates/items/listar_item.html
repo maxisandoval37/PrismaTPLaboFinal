@@ -77,12 +77,14 @@ Listado de Items
                     <td>{{ item.stockminimo }}</td>
                     <td>{{ item.stockseguridad }}</td>
 
+                    {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
                     <td>
                         <a href="{% url 'items:eliminar_item' item.pk %}" class="btn btn-danger"> Eliminar </a>
                         <a href="{% url 'items:actualizar_item' item.pk %}" class="btn btn-primary"> Editar </a>
                         <a href="{% url 'items:reposicion_item' item.pk %}" class="btn btn-warning"> Configurar
                             reposicion </a>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}

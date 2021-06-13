@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, HttpResponseRedirect
 from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios, ReportePreciosItems
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
-from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm
+from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm, CategoriaForm
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import ProtectedError
@@ -18,6 +18,7 @@ from sucursal.models import Caja, Operacion, Sucursal
 from decimal import Decimal
 import random
 from usuario.models import Supervisor, Rol, Usuario
+
 
 
 class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
@@ -145,25 +146,32 @@ class EliminarMezclaUsada(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, 
 
 class ListarCategorias(ValidarLoginYPermisosRequeridos, ListView):
 
-    permission_required = ('item.view_item', 'item.add_item',
-                           'item.change_item', 'item.delete_item',)
+    permission_required = ('item.view_item',)
     model = Item
+    context_object_name = 'obj'
     template_name = 'items/elegir_proveedor.html'
     queryset = Item.objects.all().order_by('id')
+    
+    def get_context_data(self, **kwargs):
+        context = super(ListarCategorias, self).get_context_data(**kwargs)
+        context["proveedor"] = Proveedor.objects.all()
+        
+        return context
+
 
 
 class ModificarCampos(ValidarLoginYPermisosRequeridos, ListView):
 
-    permission_required = ('item.view_item', 'item.add_item',
-                           'item.change_item', 'item.delete_item',)
+    permission_required = ('item.view_item', 
+                           'item.change_item', )
     model = Categoria
     template_name = 'items/ver_categorias.html'
     queryset = Categoria.objects.all().order_by('id')
     
 class ModificarCamposItems(ValidarLoginYPermisosRequeridos, ListView):
 
-    permission_required = ('item.view_item', 'item.add_item',
-                            'item.change_item', 'item.delete_item',)
+    permission_required = ('item.view_item', 
+                            'item.change_item',)
     model = Item
     template_name = 'items/ver_items.html'
     queryset = Item.objects.all().order_by('id')
@@ -331,6 +339,7 @@ def CambioMasivoItems(request):
 
 class ListadoPintura(ValidarLoginYPermisosRequeridos, ListView):
 
+    permission_required = ('item.view_pintura',)
     model = Pintura
     template_name = 'items/listar_pintura.html'
     queryset = Pintura.objects.all().order_by('id')
@@ -338,6 +347,7 @@ class ListadoPintura(ValidarLoginYPermisosRequeridos, ListView):
 
 class ListadoPinturaNueva(ValidarLoginYPermisosRequeridos, ListView):
 
+    permission_required = ('item.view_pinturanueva',)
     model = PinturaNueva
     template_name = 'items/listar_pintura_nueva.html'
     queryset = PinturaNueva.objects.all().order_by('id')
@@ -345,6 +355,7 @@ class ListadoPinturaNueva(ValidarLoginYPermisosRequeridos, ListView):
 
 class ListadoPinturaUsada(ValidarLoginYPermisosRequeridos, ListView):
 
+    permission_required = ('item.view_pinturausada',)
     model = PinturaUsada
     template_name = 'items/listar_pintura_usada.html'
     queryset = PinturaUsada.objects.all().order_by('id')
@@ -352,6 +363,7 @@ class ListadoPinturaUsada(ValidarLoginYPermisosRequeridos, ListView):
 
 class AgregarPintura(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, CreateView):
 
+    permission_required = ('item.view_pintura','item.add_pintura','item.change_pintura',)
     model = Pintura
     form_class = PinturaForm
     template_name = 'items/crear_pintura.html'
@@ -361,6 +373,7 @@ class AgregarPintura(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, Creat
 
 class ListadoMezclas(ValidarLoginYPermisosRequeridos, ListView):
 
+    permission_required = ('item.view_mezcla',)
     model = Mezcla
     template_name = 'items/listar_mezcla.html'
     queryset = Mezcla.objects.all().order_by('id')
@@ -368,6 +381,7 @@ class ListadoMezclas(ValidarLoginYPermisosRequeridos, ListView):
 
 class IniciarMezcla(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, CreateView):
 
+    permission_required = ('item.view_mezcla','item.add_mezcla', 'item.change_mezcla',)
     model = Mezcla
     form_class = MezclaForm
     template_name = 'items/iniciar_mezcla.html'
@@ -377,6 +391,7 @@ class IniciarMezcla(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, Create
 
 class ListadoMezclaUsada(ValidarLoginYPermisosRequeridos, ListView):
 
+    permission_required = ('item.view_mezclausada',)
     model = MezclaUsada
     template_name = 'items/listar_mezcla_usada.html'
     queryset = MezclaUsada.objects.all().order_by('id')
@@ -384,6 +399,7 @@ class ListadoMezclaUsada(ValidarLoginYPermisosRequeridos, ListView):
 
 class IniciarMezclaUsada(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, CreateView):
 
+    permission_required = ('item.view_mezclausada','item.add_mezclausada','item.change_mezclausada',)
     model = MezclaUsada
     form_class = MezclaUsadaForm
     template_name = 'items/iniciar_mezcla_usada.html'
@@ -558,7 +574,8 @@ def ReporteItemRiesgoStock(request):
     sucursal_asociada = ""
     ItemFromQuery = Item.objects.all()
     
-    if es_gerente_general:
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
         sucursalesQuery = Sucursal.objects.all()
         for sucursal in sucursalesQuery:
             sucursalesIds.append(sucursal.id)
@@ -617,7 +634,8 @@ def ReporteCambiosPrecios(request):
     for fila in reportePreciosFromQuery:
         supervisorBySucursal.setdefault(fila.responsable_usuario.id,fila.responsable)
     print(supervisorBySucursal)
-    if es_gerente_general:
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
         sucursalesQuery = Sucursal.objects.all()
         for sucursal in sucursalesQuery:
             sucursalesIds.append(sucursal.id)
@@ -671,7 +689,8 @@ def ReporteCuentaCorrienteProveedores(request):
     sucursal_asociada = ""
     PedidosFromQuery = Pedidos.objects.all()
     
-    if es_gerente_general:
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
         sucursalesQuery = Sucursal.objects.all()
         for sucursal in sucursalesQuery:
             sucursalesIds.append(sucursal.id)
@@ -711,3 +730,15 @@ def ReporteCuentaCorrienteProveedores(request):
         listaPedidos.append(dic)
 
     return render(request,'items/reporte_cuenta_corriente_proveedores.html',locals())
+
+def AsignarProveedor(request):
+    
+    if request.is_ajax():
+        
+        proveedor = request.POST.get('proveedor', None)
+        categoria_id = request.POST.get('categoria', None)
+        Categoria.objects.filter(id = int(categoria_id)).update(prov_preferido = int(proveedor))
+        
+    messages.success(request, 'Proveedor asignado correctamente.')
+    return HttpResponse("")
+

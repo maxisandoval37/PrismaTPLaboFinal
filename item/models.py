@@ -111,6 +111,7 @@ class Categoria(models.Model):
         
     opciones = models.CharField(choices= opcionesCategoria.choices, max_length=40)
 
+    
     def __str__(self):
         return self.opciones
 

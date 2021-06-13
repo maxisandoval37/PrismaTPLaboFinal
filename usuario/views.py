@@ -79,7 +79,7 @@ class EditarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateVi
     
 class RegistrarVendedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
-    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    permission_required = ('usuario.view_vendedor','usuario.add_vendedor',)
     model = Vendedor
     form_class = FormularioVendedor
     template_name = 'usuarios/crear_vendedor.html'
@@ -88,7 +88,7 @@ class RegistrarVendedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Crea
     
 class RegistrarSupervisor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
-    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    permission_required = ('usuario.view_supervisor','usuario.add_supervisor',)
     model = Supervisor
     form_class = FormularioSupervisor
     template_name = 'usuarios/crear_supervisor.html'
@@ -98,7 +98,7 @@ class RegistrarSupervisor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Cr
     
 class RegistrarCajero(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
    
-    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    permission_required = ('usuario.view_cajero','usuario.add_cajero',)
     model = Cajero
     form_class = FormularioCajero
     template_name = 'usuarios/crear_cajero.html'
@@ -107,7 +107,7 @@ class RegistrarCajero(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Create
 
 class RegistrarAdministrativo(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
    
-    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    permission_required = ('usuario.view_administrativo','usuario.add_administrativo',)
     model = Administrativo
     form_class = FormularioAdministrativo
     template_name = 'usuarios/crear_administrativo.html'

@@ -19,14 +19,14 @@ class ListadoProveedor(ValidarLoginYPermisosRequeridos,ListView):
 
 class ListadoCuentasCorriente(ValidarLoginYPermisosRequeridos, ListView):
     
-    permission_required = ('proveedor.view_proveedor',)
+    permission_required = ('proveedor.view_cuentacorrienteproveedor',)
     model = CuentaCorrienteProveedor
     template_name = 'proveedores/listar_cuenta_corriente.html'
     queryset = CuentaCorrienteProveedor.objects.all().order_by('id')
 
 class RegistrarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
-    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
+    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor',)
     model = Proveedor
     form_class = ProveedorForm
     template_name = 'proveedores/crear_proveedor.html'
@@ -36,7 +36,7 @@ class RegistrarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Cre
     
 class EditarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
     
-    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
+    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor',)
     model = Proveedor
     fields = ['email','telefono','calle','numero','localidad','cod_postal']
     template_name = 'proveedores/crear_proveedor.html'
@@ -66,7 +66,7 @@ class EliminarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Dele
     
 class RegistrarCuentaCorrienteProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
-    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
+    permission_required = ('proveedor.view_cuentacorrienteproveedor','proveedor.add_cuentacorrienteproveedor','proveedor.change_cuentacorrienteproveedor',)
     model = CuentaCorrienteProveedor
     form_class = CuentaCorrienteProveedorForm
     success_message = 'Se registró la cuenta corriente.'
@@ -75,7 +75,7 @@ class RegistrarCuentaCorrienteProveedor(ValidarLoginYPermisosRequeridos,SuccessM
     
 class EliminarCuentaCorrienteProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
-    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
+    permission_required = ('proveedor.view_cuentacorrienteproveedor','proveedor.add_cuentacorrienteproveedor','proveedor.change_cuentacorrienteproveedor','proveedor.delete_cuentacorrienteproveedor',)
     model = CuentaCorrienteProveedor
     template_name = 'proveedores/eliminar_cuenta_corriente.html'
     success_url = reverse_lazy('proveedores:listar_cuenta_corriente')

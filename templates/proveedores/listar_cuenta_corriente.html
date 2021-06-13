@@ -37,12 +37,15 @@ Listado de Cuentas Corriente
                     <td>{{ cuenta.proveedor }}</td>
                     
 
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     <td>
                         <a href="{% url 'proveedores:eliminar_cuenta_corriente' cuenta.id %}" class="btn btn-danger">
                             Eliminar </a>
+                    </td>
+                    {% endif %}
+                    <td>
                         <a href="{% url 'proveedores:ver_registro' cuenta.id %}" class="btn btn-primary">
                             Ver registro </a>
-
                     </td>
                 </tr>
                 {% endfor %}

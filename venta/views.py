@@ -777,7 +777,8 @@ def ReporteCuentaCorrienteClientes(request):
     sucursal_asociada = ""
     VentasFromQuery = Venta.objects.all()
     
-    if es_gerente_general:
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
         sucursalesQuery = Sucursal.objects.all()
         for sucursal in sucursalesQuery:
             sucursalesIds.append(sucursal.id)

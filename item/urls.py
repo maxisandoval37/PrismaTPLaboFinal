@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem, EliminarItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems
+from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem, EliminarItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
          login_required(ConfigurarReposicionItem.as_view()), name='reposicion_item'),
     path('listar_categorias/', login_required(ListarCategorias.as_view()),
          name='listar_categorias'),
+    path('listar_categorias/AsignarProveedor/', login_required(AsignarProveedor), name='asignar_proveedor'),
     path('visualizar_pedidos/', login_required(ListarPedidos.as_view()),
          name='visualizar_pedidos'),
     path('pedido_proveedor/<int:id_proveedor>/<int:id_sucursal>/',

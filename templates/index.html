@@ -33,7 +33,9 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
+        
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+          
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'index' %}">
@@ -56,7 +58,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            {% if user.is_staff %}
+            
             <!-- Heading -->
             <div class="sidebar-heading">
                 Interfaz
@@ -64,7 +66,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             
-
+            {% if user.is_staff or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'GERENTE GENERAL' %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
@@ -80,19 +82,24 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar Usuarios:</h6>
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or 'SUPERVISOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'usuarios:listar_usuarios' %}">Listado de Usuarios</a>
+                        {% endif %}
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'usuarios:registrar_usuario' %}">Registrar Gerente General</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_vendedor' %}">Registrar Vendedor</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_supervisor' %}">Registrar
                             Supervisor</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_cajero' %}">Registrar Cajero</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_administrativo' %}">Registrar Administrativo</a>
+                        {% endif %}
                     </div>
                 </div>
             </li>
 
             {% endif %}
 
+            {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
@@ -108,17 +115,21 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar items:</h6>
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'items:listar_items' %}">Listado de Items</a>
+                        {% endif %}
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'items:registrar_item' %}">Agregar Item</a>
-                        {% if user.rol.opciones == 'SUPERVISOR' %}
                         <a class="collapse-item" href="{% url 'items:ver_categorias' %}">Modificación por categoria</a>
                         <a class="collapse-item" href="{% url 'items:ver_items' %}">Modificación masiva</a>
                         {% endif %}
                     </div>
                 </div>
             </li>
+            {% endif %}
 
 
+            {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
             <!-- Divider -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse8"
@@ -134,22 +145,34 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar pinturas:</h6>
 
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'items:listar_pinturas' %}">Listado de pinturas</a>
+                        {% endif %}
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'VENDEDOR' %}
                         <a class="collapse-item" href="{% url 'items:listar_pinturas_nuevas' %}">Listado de pinturas
                             nuevas</a>
                         <a class="collapse-item" href="{% url 'items:listar_pinturas_usadas' %}">Listado de pinturas
                             usadas</a>
+                            {% endif %}
+                        {% if  user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'items:registrar_pintura' %}">Agregar pintura</a>
+                        {% endif %}
                         <h6 class="collapse-header">Administrar mezclas:</h6>
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'items:listar_mezclas' %}">Listado de mezclas</a>
+                        {% endif %}
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'items:iniciar_mezcla' %}">Mezclar pinturas</a>
-
+                        {% endif %}
 
                         <div class="collapse-divider"></div>
 
                     </div>
                 </div>
             </li>
+            {% endif %}
+
+            {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne"
@@ -165,14 +188,20 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar Sucursales:</h6>
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'sucursales:listar_sucursales' %}">Listado de
                             Sucursales</a>
                         <a class="collapse-item" href="{% url 'sucursales:registrar_sucursal' %}">Agregar Sucursal</a>
+                        {% endif %}
+                        {% if user.is_staff or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'GERENTE GENERAL' %}
                         <a class="collapse-item" href="{% url 'sucursales:registrar_caja' %}">Agregar Caja</a>
+                        {% endif %}
                     </div>
                 </div>
             </li>
+            {% endif %}
 
+            
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseYeah"
                     aria-expanded="true" aria-controls="collapseYeah">
@@ -189,6 +218,8 @@
                 </div>
             </li>
 
+
+            {% if user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
             <!-- Divider -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseWtf"
@@ -214,18 +245,22 @@
                         <a class="collapse-item" href="{% url 'items:reporte_riesgo_stock' %}">Ítems con riesgo de stock</a>
                     </div>
                 </div>
-
             </li>
-            <!-- Divider -->
+
+            {% endif %}
+           
 
             <!-- Divider -->
             <hr class="sidebar-divider">
+
+
 
             <!-- Heading -->
             <div class="sidebar-heading">
                 Ventas y Pedidos
             </div>
 
+            
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
@@ -241,19 +276,32 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar Proveedores:</h6>
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'GERENTE GENERAL' %}
                         <a class="collapse-item" href="{% url 'proveedores:listar_proveedores' %}">Listado de
                             Proveedores</a>
+                            {% endif %}
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'proveedores:registrar_proveedor' %}">Agregar
                             Proveedor</a>
                         <a class="collapse-item" href="{% url 'items:listar_categorias' %}">Elegir Proveedor</a>
+                        {% endif %}
+                        {% if user.rol.opciones != 'VENDEDOR' %}
                         <a class="collapse-item" href="{% url 'items:visualizar_pedidos' %}">Ver Pedidos</a>
+                        {% endif %}
+                        {% if user.is_staff or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' %}
                         <a class="collapse-item" href="{% url 'proveedores:registrar_cuenta_corriente' %}">Asignar
                             Cuenta Corriente</a>
+                        {% endif %} 
+                        {% if user.is_staff or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.rol.opciones == 'GERENTE GENERAL' %}
                         <a class="collapse-item" href="{% url 'proveedores:listar_cuenta_corriente' %}">Listado de
                             Cuentas</a>
+                        {% endif %}
                     </div>
                 </div>
             </li>
+           
+
+            
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
@@ -270,14 +318,19 @@
                         <h6 class="collapse-header">Administrar ventas:</h6>
 
                         <a class="collapse-item" href="{% url 'ventas:listar_ventas' %}">Listado de Ventas</a>
+                        {% if user.rol.opciones == 'CAJERO' or user.rol.opciones == 'ADMINISTRATIVO' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'ventas:listar_ventas_cajero' %}">Procesar Ventas</a>
+                        {% endif %}
+                        {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'ventas:registrar_venta_local' %}">Agregar Venta Local</a>
-
+                        {% endif %}
                         <div class="collapse-divider"></div>
 
                     </div>
                 </div>
             </li>
+
+           
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSix"
@@ -293,9 +346,12 @@
                 <div id="collapseSix" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar clientes:</h6>
-
+                        
                         <a class="collapse-item" href="{% url 'clientes:listar_clientes' %}">Listado de Clientes</a>
+                        
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'clientes:registrar_cliente' %}">Agregar Cliente</a>
+                        {% endif %}
                         <a class="collapse-item" href="{% url 'clientes:listar_cuenta_corriente' %}">Listado de
                             Cuentas</a>
                         <div class="collapse-divider"></div>
@@ -306,7 +362,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
 
-
+            {% if user.rol.opciones != 'CAJERO' and user.rol.opciones != 'ADMINISTRATIVO' %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSeven"
                     aria-expanded="true" aria-controls="collapseSeven">
@@ -323,17 +379,20 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar presupuestos:</h6>
 
+                        
                         <a class="collapse-item" href="{% url 'presupuestos:listar_presupuestos' %}">Listado de
                             presupuestos</a>
+                            
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'presupuestos:registrar_presupuesto' %}">Agregar
                             presupuesto</a>
-
+                        {% endif %}
                         <div class="collapse-divider"></div>
 
                     </div>
                 </div>
             </li>
-
+            {% endif %}
 
             <!-- Nav Item - Tables -->
 

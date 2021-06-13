@@ -44,11 +44,13 @@ Listado de Presupuestos
                     <td>{{ presupuesto.sucursal_asociada}}</td>
                     <td>{{ presupuesto.total}}</td>                    
 
+                    {% if user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     <td>
                         <a href="{% url 'presupuestos:eliminar_presupuesto' presupuesto.pk %}" class="btn btn-danger">
                             Eliminar </a>
                     </td>
-                    {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
+                    {% endif %}
+                    {% if presupuesto.estado.opciones == 'EN EVALUACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     <td>
                         <a href="{% url 'presupuestos:registrar_itempresupuesto' presupuesto.sucursal_asociada.id  presupuesto.pk %}" class="btn btn-primary">
                             Agregar item </a>
@@ -63,7 +65,7 @@ Listado de Presupuestos
                             Ver detalle </a>
                     </td>
                     
-                    {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
+                    {% if presupuesto.estado.opciones == 'EN EVALUACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                         <td>
                             <a href="{% url 'presupuestos:rechazar_presupuesto' presupuesto.pk %}" class="btn btn-danger">Rechazar presupuesto</a>
                         </td>

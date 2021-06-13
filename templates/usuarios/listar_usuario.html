@@ -17,12 +17,13 @@ Listado de Usuarios
             <strong class="card-title">Listado de Usuarios</strong>
         </div>
     </div>
+    {% if user.is_staff %}
     <div style="text-align:center"><a type="button" class="btn btn-info" href="/admin/usuario/rol/add/"> AGREGAR ROL</a>
     </div>
     <p></p>
     <div style="text-align:center"><a type="button" class="btn btn-info" href="/admin/auth/group"> GESTIONAR
             PERMISOS</a></div>
-
+    {% endif %}
 
     <div class="table-stats order-table ov-h">
         <table class="table">
@@ -38,7 +39,7 @@ Listado de Usuarios
                     <th>Estado</th>
                     <th>Cuit</th>
                     <th>Telefono</th>
-                    <th>Opciones</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -57,11 +58,13 @@ Listado de Usuarios
                     <td>{{usuario.estado}}</td>
                     <td>{{ usuario.cuit }}</td>
                     <td>{{ usuario.telefono }}</td>
+
+                    {% if user.is_staff %}
                     <td>
-                        
                         <a href="{% url 'usuarios:actualizar_usuario' usuario.pk %}" class="btn btn-primary"> Editar
                         </a>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% else %}
