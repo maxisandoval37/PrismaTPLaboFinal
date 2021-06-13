@@ -215,7 +215,8 @@ def ReporteTransaccionesVentaCompra(request):
             "fecha_a_comparar": str(operacion.fecha.date()),
             "es_gerente_general": str(es_gerente_general),
             "sucursales": sucursalesIds,
-            "sucursal_asociada_id": operacion.caja_asociada.sucursal_id_id
+            "sucursal_asociada_id": operacion.caja_asociada.sucursal_id_id,
+            "responsable": operacion.responsable
             
         }
         operaciones.append(dic)
