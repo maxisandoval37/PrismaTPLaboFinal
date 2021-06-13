@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from proveedor.models import Proveedor
 from django.core.exceptions import ValidationError
 from proveedor.models import CuentaCorrienteProveedor
-from usuario.models import Supervisor
+from usuario.models import Supervisor, Usuario
 import random
 from datetime import datetime
 # Create your models here.
@@ -419,11 +419,12 @@ class Pedidos(models.Model):
     
     
 class ReportePrecios(models.Model):
-    
+
     categoria_asociada = models.ForeignKey(Categoria, on_delete= models.PROTECT)
     fecha = models.DateTimeField('Fecha de modificación', auto_now_add=True)
     aumento = models.DecimalField('Aumento', decimal_places= 2, max_digits=7)
     responsable = models.ForeignKey(Supervisor, on_delete=models.PROTECT)
+    responsable_usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT,related_name= 'responsable_usuario')
     
     class Meta:
         verbose_name = 'reporte de precios'

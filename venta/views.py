@@ -16,6 +16,7 @@ from decimal import Decimal
 import json
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import EmailMessage
+from usuario.models import Supervisor, Rol
 
 
 class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
@@ -735,7 +736,7 @@ def FinalizarVenta(request, venta):
     movimiento.monto = "+" + str(total) + " (En "+ instancia.tipo_de_moneda.opciones + ")"
     movimiento.tipo = "Venta"
     movimiento.caja_asociada = caja_menor
-    movimiento.identificador = "Número de comprobante" + str(instancia.numero_comprobante)
+    movimiento.identificador = "N° de comprobante " + str(instancia.numero_comprobante)
     movimiento.responsable = request.user.id
     movimiento.save()
     
@@ -761,11 +762,62 @@ def FinalizarVenta(request, venta):
     return redirect('ventas:listar_ventas_cajero')
 
 def ReporteCuentaCorrienteClientes(request):
-    queryset = Venta.objects.all()
+    
+    sucursalesIds = []
+
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+    
+    sucursal_asociada = ""
+    VentasFromQuery = Venta.objects.all()
+    
+    if es_gerente_general:
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        supervisorQuery = Supervisor.objects.filter(username = request.user.username)
+        
+        for supervisor in supervisorQuery:
+            sucursal_asociada = supervisor.sucursal.id
+        
+        sucursalesIds.append(sucursal_asociada)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+    
+    lista = []
+    for fila in VentasFromQuery:
+        print(fila.sucursal_asociada_id)
+        print(sucursalesIds)
+        if fila.sucursal_asociada_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
     ventas = []
 
-    for venta in queryset:
-        ventas.append(venta)
+    for venta in lista:
+        dic = {
+            "numero_comprobante": venta.numero_comprobante,
+            "cuenta_corriente_numero_cuenta": venta.cuenta_corriente.numero_cuenta,
+            "sucursal_asociada_codigo": venta.sucursal_asociada.codigo,
+            "cliente_asociado_nombre": venta.cliente_asociado.nombre,
+            "mediodepago": venta.mediodepago,
+            "fecha": venta.fecha,
+            "tipo_de_moneda": venta.tipo_de_moneda,
+            "tipo_de_moneda_opciones": venta.tipo_de_moneda.opciones,
+            "total_dolar": venta.total_dolar,
+            "total_euro": venta.total_euro,
+            "total_peso": venta.total_peso,
+            "fecha_a_comparar": str(venta.fecha.date()),
+            "es_gerente_general": str(es_gerente_general),
+            "sucursales": sucursalesIds,
+            "sucursal_asociada_id": venta.sucursal_asociada_id
+        }
+        ventas.append(dic)
 
     return render(request,'ventas/reporte_cuenta_corriente_clientes.html',locals())
-

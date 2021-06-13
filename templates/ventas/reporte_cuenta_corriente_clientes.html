@@ -12,13 +12,30 @@ Listado de cuentas corrientes de clientes
     <div class="card">
         <div class="card-header">
             <strong class="card-title">Cuentas corrientes de clientes</strong>
+            <div align = "right"><input id=fechaDesde type="date">
+                <input id=fechaHasta type="date">
+                <a id="boton" class="btn btn-primary" onclick="filtrarLista()">Filtrar
+                    resultados</a></div>
+                {% if es_gerente_general %}
+                <select name="sucursal" id="sucursal">
+                    <option value="0"> Seleccioná una sucursal </option>
+                    {% for sucursal in sucursalesIds %}
+                    <option value="{{sucursal}}">{{sucursal}}</option>
+                    {% endfor %}
+                </select>
+                <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()">Filtrar resultados</a>
+                {% endif %}
+        </div>
         </div>
     </div>
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
+                    <th>N° comprobante</th>
                     <th>N° Cta corriente</th>
+                    <th>Sucursal</th>
                     <th>Responsable</th>
                     <th>Medio de pago</th>
                     <th>Fecha</th>
@@ -26,51 +43,49 @@ Listado de cuentas corrientes de clientes
                     <th>Total</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id = "table">
                 {% if ventas %}
                 {% for venta in ventas %}
-                <tr>
-                    <td>{{ venta.cuenta_corriente }}</td>
-                    <td>{{ venta.cliente_asociado}}</td>
-                    <td>{{ venta.medio_de_pago }}</td>
+
+               <tr class = "items" id = "{{ venta.numero_comprobante }}">
+                    <td></td>
+                    <td>{{ venta.numero_comprobante }}</td>
+                    <td>{{ venta.cuenta_corriente_numero_cuenta }}</td>
+                    <td>{{ venta.sucursal_asociada_codigo }}</td>
+                    <td>{{ venta.cliente_asociado_nombre }}</td>
+                    <td>{{ venta.mediodepago }}</td>
                     <td>{{ venta.fecha }}</td>
-                    <td>{{ venta.tipo_de_moneda }}</td>>
-                    {% if venta.tipo_de_moneda.opciones == 'DOLAR' %}
+                    <td>{{ venta.tipo_de_moneda }}</td>
+                    {% if venta.tipo_de_moneda_opciones == 'DOLAR' %}
                     <td>${{ venta.total_dolar}}</td>
-                    {% elif venta.tipo_de_moneda.opciones == 'EURO' %} 
+                    {% elif venta.tipo_de_moneda_opciones == 'EURO' %} 
                     <td>€{{ venta.total_euro}}</td>
                     {% else %}
                     <td>${{ venta.total_peso}}</td> 
                     {% endif %}
+                    <td hidden id = "fecha{{ venta.numero_comprobante }}">{{ venta.fecha_a_comparar }}</td>
+                    <td hidden id="responsable{{ venta.numero_comprobante }}">{{ venta.sucursal_asociada_id}}</td>
+
                 </tr>
                 {% endfor %}
                 {% else %}
-                <h5>No hay ventas registradas :(</h1>
+                <h5>No hay ventas registradas :(</h5>
                     {% endif %}
             </tbody>
         </table>
-        <div id="chartdiv"></div>
+        
 
     </div>
 
 </div>
 
-</div>
 
-Inserta Grafico
+
+
+
+
 <button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
 
-<style>
-    #chartdiv {
-        height: 350px;
-        width: 69%;
-        margin: auto;
-    }
-</style>
-
-<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 <script>
     data = [];
 
@@ -84,53 +99,88 @@ Inserta Grafico
     }
 
     window.onload = (event) => {
-        let elements = document.getElementsByClassName("moneda");
-        cont = 0;
-
-        for (i = 0; i < elements.length; i++) {
-            let element = elements[cont];
-            let moneda = document.getElementById(element.id).innerText;
-            let cantidad = document.getElementById(element.id + "cantidad").innerText;
-            let info = { "moneda": moneda, "cantidad": cantidad };
-
-            data.push(info);
-            cont++;
-        }
-
-        am4core.ready(function () {
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            // Themes end
-
-            // Create chart instance
-            let chart = am4core.create("chartdiv", am4charts.PieChart);
-
-            // Add data
-            chart.data = data;
-
-            // Add and configure Series
-            let pieSeries = chart.series.push(new am4charts.PieSeries());
-            pieSeries.dataFields.value = "cantidad";
-            pieSeries.dataFields.category = "moneda";
-            pieSeries.slices.template.stroke = am4core.color("#fff");
-            pieSeries.slices.template.strokeWidth = 2;
-            pieSeries.slices.template.strokeOpacity = 1;
-
-            // This creates initial animation
-            pieSeries.hiddenState.properties.opacity = 1;
-            pieSeries.hiddenState.properties.endAngle = -90;
-            pieSeries.hiddenState.properties.startAngle = -90;
-        });
 
         setTimeout(function () {
             document.getElementById("button").hidden = false;
         }, 1000);
     };
+    function filtrarLista() {
+        if (document.getElementById("boton").innerText == "Filtrar resultados") {
+            document.getElementById("boton").innerText = "Reiniciar";
+
+            elementos = document.getElementsByClassName("items");
+            cont = 0;
+            toDelete = []
+            for (let i = 0; i < document.getElementsByClassName("items").length; i++) {
+                elemento = elementos[cont];
+                
+                fecha = document.getElementById("fecha" + elemento.id).innerText
+                fechaDesde = document.getElementById("fechaDesde").value;
+                fechaHasta = document.getElementById("fechaHasta").value;
+                console.log("fecha:" + fecha);
+                console.log("fechaDesde:" + fechaDesde);
+                console.log("fechaHasta:" + fechaHasta);
+                ret = fecha >= fechaDesde && fecha <= fechaHasta;
+                console.log(fechaDesde + " >= " + fecha);
+                console.log(fecha + " <= " + fechaHasta);
+                console.log(ret);
+                if (!ret) {
+                    // document.getElementById("table").removeChild(document.getElementById(elemento.id));
+                    toDelete.push(document.getElementById(elemento.id))
+                    
+                }
+                cont++;
+            }
+            cont = 0;
+            
+            console.log(toDelete);
+            for (let i = 0; i < toDelete.length; i++) {
+                console.log(toDelete[cont]);
+                document.getElementById("table").removeChild(toDelete[cont]);
+                cont++;
+            }
+        }
+        else {
+            location.reload();
+        }
+    }
+    function filtrarPorSucursal() {
+        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
+        console.log("sucursalSeleccionada: " + sucursalSeleccionada);
+        if (document.getElementById("boton2").innerText == "Filtrar resultados") {
+            document.getElementById("boton2").innerText = "Reiniciar";
+
+            elementos = document.getElementsByClassName("items");
+            cont = 0;
+            toDelete = []
+            for (let i = 0; i < document.getElementsByClassName("items").length; i++) {
+                elemento = elementos[cont];
+                responsable_sucursal_id = document.getElementById("responsable" + elemento.id).innerText;
+                
+
+                ret = sucursalSeleccionada == responsable_sucursal_id;
+
+                console.log("Iguales? " + sucursalSeleccionada + " == " + responsable_sucursal_id);
+
+                if (!ret) {
+                    // document.getElementById("table").removeChild(document.getElementById(elemento.id));
+                    toDelete.push(document.getElementById(elemento.id))
+                }
+                cont++;
+            }
+
+            cont = 0;
+            for (let i = 0; i < toDelete.length; i++) {
+                document.getElementById("table").removeChild(toDelete[cont]);
+                cont++;
+            }
+        }
+        else {
+            location.reload();
+        }
+    }
+
+
+
 </script>
-
-
-
-
-
-
 {% endblock %}

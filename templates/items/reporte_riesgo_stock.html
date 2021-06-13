@@ -13,34 +13,58 @@ Listado de Items
     <div class="card">
         <div class="card-header">
             <strong class="card-title">Ítems con riesgo de stock</strong>
+            {% if es_gerente_general %}
+                    <select name="sucursal" id="sucursal">
+                        <option value="0"> Seleccioná una sucursal </option>
+                        {% for sucursal in sucursalesIds %}
+                        <option value="{{sucursal}}">{{sucursal}}</option>
+                        {% endfor %}
+                    </select>
+                    <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()">Filtrar resultados</a>
+                    {% endif %}
         </div>
     </div>
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Código de barras</th>
                     <th>Nombre</th>
                     <th>Riesgo de stock mínimo</th>
                     <th>Riesgo de stock de seguridad</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="table">
                 {% if items %}
                 {% for item in items %}
-                <tr>
+                <tr class = "other_item" id = "{{ item.nombre}}">
+                    <td></td>
                     <td>{{ item.codigo_de_barras }}</td>
                     <td class="items" id="{{ item.nombre }}">{{ item.nombre }}</td>
                     <td hidden id="{{ item.nombre }}cantidad">{{ item.cantidad }}</td>
+                    <td hidden id="responsable{{ item.nombre}}">{{ item.sucursal_id}}</td>
                     {% with stockmin=item.stockminimo|mul:100 %}
+
                     {% if item.cantidad != 0 %}
-                    <td>{{ stockmin|div:item.cantidad }}%</td>
+
+                    {% with calculo1=stockmin|div:item.cantidad %}
+                    
+                    <td>{{ calculo1|floatformat }}%</td>
+                    {% endwith %}
+                    {% else %} 
+                    <td>100 %</td>
                     {% endif %}
                     {% endwith %}
                     
                     {% with stockseg=item.stockseguridad|mul:100 %}
                     {% if item.cantidad != 0 %}
-                    <td>{{ stockseg|div:item.cantidad }}%</td>
+                    {% with calculo2=stockseg|div:item.cantidad %}
+                    
+                    <td>{{ calculo2|floatformat}}%</td>
+                    {% endwith %} 
+                    {% else %} 
+                    <td>100 %</td>
                     {% endif %}
                     {% endwith %}
                 </tr>
@@ -85,6 +109,59 @@ Listado de Items
     }
 
     window.onload = (event) => {
+        
+        GenerarGrafico()
+
+        setTimeout(function () {
+            document.getElementById("button").hidden = false;
+        }, 1000);
+    };
+
+    function filtrarPorSucursal() {
+        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
+        console.log("sucursalSeleccionada: " + sucursalSeleccionada);
+        if (document.getElementById("boton2").innerText == "Filtrar resultados") {
+            document.getElementById("boton2").innerText = "Reiniciar";
+
+            elementos = document.getElementsByClassName("other_item");
+            cont = 0;
+            toDelete = []
+            for (let i = 0; i < document.getElementsByClassName("other_item").length; i++) {
+                
+                elemento = elementos[cont];
+                console.log(elemento)
+                responsable_sucursal_id = document.getElementById("responsable" + elemento.id).innerText;
+                
+
+                ret = sucursalSeleccionada == responsable_sucursal_id;
+
+                console.log("Iguales? " + sucursalSeleccionada + " == " + responsable_sucursal_id);
+
+                if (!ret) {
+                    // document.getElementById("table").removeChild(document.getElementById(elemento.id));
+                    toDelete.push(document.getElementById(elemento.id))
+                }
+                cont++;
+            }
+
+            cont = 0;
+            for (let i = 0; i < toDelete.length; i++) {
+                console.log(toDelete[cont])
+                document.getElementById("table").removeChild(toDelete[cont]);
+                cont++;
+
+            }
+            data = [];
+            GenerarGrafico()
+        }
+
+        else {
+            location.reload();
+        }
+    }
+
+    function GenerarGrafico(){
+
         let elements = document.getElementsByClassName("items");
         cont = 0;
 
@@ -92,7 +169,7 @@ Listado de Items
             let element = elements[cont];
             let item = document.getElementById(element.id).innerText;
             let cantidad = document.getElementById(element.id + "cantidad").innerText;
-            let info = { "item": item, "cantidad": cantidad };
+            let info = { "item": elements[i].innerText, "cantidad": cantidad };
 
             data.push(info);
             cont++;
@@ -105,7 +182,7 @@ Listado de Items
 
             // Create chart instance
             let chart = am4core.create("chartdiv", am4charts.PieChart);
-
+            
             // Add data
             chart.data = data;
 
@@ -122,11 +199,8 @@ Listado de Items
             pieSeries.hiddenState.properties.endAngle = -90;
             pieSeries.hiddenState.properties.startAngle = -90;
         });
+    }
 
-        setTimeout(function () {
-            document.getElementById("button").hidden = false;
-        }, 1000);
-    };
 </script>
 
 {% endblock %}

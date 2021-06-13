@@ -12,12 +12,27 @@ Listado de cuentas corrientes de clientes
     <div class="card">
         <div class="card-header">
             <strong class="card-title">Cuentas corrientes de proveedores</strong>
+            <div align = "right"><input id=fechaDesde type="date">
+                <input id=fechaHasta type="date">
+                <a id="boton" class="btn btn-primary" onclick="filtrarLista()">Filtrar
+                    resultados</a></div>
+                    {% if es_gerente_general %}
+                    <select name="sucursal" id="sucursal">
+                        <option value="0"> Seleccioná una sucursal </option>
+                        {% for sucursal in sucursalesIds %}
+                        <option value="{{sucursal}}">{{sucursal}}</option>
+                        {% endfor %}
+                    </select>
+                    <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()">Filtrar resultados</a>
+                    {% endif %}
         </div>
     </div>
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
                 <tr>
+                    <th></th>
+                    <th>Identificador</th>
                     <th>N° Cta corriente</th>
                     <th>Sucursal</th>
                     <th>Responsable</th>
@@ -25,19 +40,23 @@ Listado de cuentas corrientes de clientes
                     <th>Total</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id = "table">
                 {% if listaPedidos %}
                 {% for pedido in listaPedidos %}
-                <tr>
-                    <td>{{ pedido.cuenta_corriente }}</td>
-                    <td>{{ pedido.sucursal.codigo }}</td>
-                    <td>{{ pedido.proveedor.razon_social }}</td>
+                <tr class = "items" id = "{{ pedido.id }}">
+                    <td></td>
+                    <td>{{ pedido.id }}</td>
+                    <td>{{ pedido.cuenta_corriente_numero_cuenta }}</td>
+                    <td>{{ pedido.sucursal_codigo }}</td>
+                    <td>{{ pedido.proveedor_razon_social }}</td>
                     <td>{{ pedido.fecha }}</td>
                     <td>{{ pedido.total }}</td>
+                    <td hidden id = "fecha{{ pedido.id }}">{{ pedido.fecha_a_comparar }}</td>
+                    <td hidden id="responsable{{ pedido.id }}">{{ pedido.sucursal_id}}</td>
                 </tr>
                 {% endfor %}
                 {% else %}
-                <h5>No hay pedidos registrados :(</h1>
+                <h5>No hay pedidos registrados :(</h5>
                     {% endif %}
             </tbody>
         </table>
@@ -48,4 +67,104 @@ Listado de cuentas corrientes de clientes
 </div>
 
 </div>
+
+<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+
+<script>
+    data = [];
+
+    function printChart(divName) {
+        let toPrint = document.getElementById(divName).innerHTML;
+        let originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = toPrint;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+
+    window.onload = (event) => {
+    
+
+        setTimeout(function () {
+            document.getElementById("button").hidden = false;
+        }, 1000);
+    };
+    function filtrarLista() {
+        if (document.getElementById("boton").innerText == "Filtrar resultados") {
+            document.getElementById("boton").innerText = "Reiniciar";
+
+            elementos = document.getElementsByClassName("items");
+            cont = 0;
+            toDelete = []
+            for (let i = 0; i < document.getElementsByClassName("items").length; i++) {
+                elemento = elementos[cont];
+                
+                fecha = document.getElementById("fecha" + elemento.id).innerText
+                fechaDesde = document.getElementById("fechaDesde").value;
+                fechaHasta = document.getElementById("fechaHasta").value;
+                console.log("fecha:" + fecha);
+                console.log("fechaDesde:" + fechaDesde);
+                console.log("fechaHasta:" + fechaHasta);
+                ret = fecha >= fechaDesde && fecha <= fechaHasta;
+                console.log(fechaDesde + " >= " + fecha);
+                console.log(fecha + " <= " + fechaHasta);
+                console.log(ret);
+                if (!ret) {
+                    // document.getElementById("table").removeChild(document.getElementById(elemento.id));
+                    toDelete.push(document.getElementById(elemento.id))
+                    
+                }
+                cont++;
+            }
+            cont = 0;
+            
+            console.log(toDelete);
+            for (let i = 0; i < toDelete.length; i++) {
+                console.log(toDelete[cont]);
+                document.getElementById("table").removeChild(toDelete[cont]);
+                cont++;
+            }
+        }
+        else {
+            location.reload();
+        }
+    }
+
+    function filtrarPorSucursal() {
+        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
+        console.log("sucursalSeleccionada: " + sucursalSeleccionada);
+        if (document.getElementById("boton2").innerText == "Filtrar resultados") {
+            document.getElementById("boton2").innerText = "Reiniciar";
+
+            elementos = document.getElementsByClassName("items");
+            cont = 0;
+            toDelete = []
+            for (let i = 0; i < document.getElementsByClassName("items").length; i++) {
+                elemento = elementos[cont];
+                responsable_sucursal_id = document.getElementById("responsable" + elemento.id).innerText;
+                
+
+                ret = sucursalSeleccionada == responsable_sucursal_id;
+
+                console.log("Iguales? " + sucursalSeleccionada + " == " + responsable_sucursal_id);
+
+                if (!ret) {
+                    // document.getElementById("table").removeChild(document.getElementById(elemento.id));
+                    toDelete.push(document.getElementById(elemento.id))
+                }
+                cont++;
+            }
+
+            cont = 0;
+            for (let i = 0; i < toDelete.length; i++) {
+                document.getElementById("table").removeChild(toDelete[cont]);
+                cont++;
+            }
+        }
+        else {
+            location.reload();
+        }
+    }
+
+</script>
 {% endblock %}

@@ -14,10 +14,10 @@ from django.http import HttpResponse
 from venta.models import Venta, ItemVenta
 from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
-from sucursal.models import Caja, Operacion
+from sucursal.models import Caja, Operacion, Sucursal
 from decimal import Decimal
 import random
-from usuario.models import Supervisor
+from usuario.models import Supervisor, Rol, Usuario
 
 
 class ListadoItem(ValidarLoginYPermisosRequeridos, ListView):
@@ -263,47 +263,29 @@ def CambioMasivo(request):
         precio = request.POST.get('precio', None)
         stock = request.POST.get('stock', None)
         items = Item.objects.filter(categoria=int(categoria))
-        
-        if precio == '':
-            precio = "vacio"
-        else:
-            if not precio.isdigit():
-                return HttpResponseBadRequest()
-        if stock == '':
-            stock = "vacio"
-        else:
-            if not stock.isdigit():
-                return HttpResponseBadRequest()
-        
-        if precio != "vacio":
-            if int(precio) < 0:
-                return HttpResponseBadRequest()
-            if int(precio) > 99999:
-                return HttpResponseBadRequest()
-        if stock != "vacio":
-            if int(stock) < 0:
-                return HttpResponseBadRequest()
-            if int(stock) > 99999:
-                return HttpResponseBadRequest()
-            
+
+        if int(precio) <= 0:
+            return HttpResponseBadRequest()
+
+        if len(stock) != 0 and int(stock) < 0:
+            return HttpResponseBadRequest()
+
         reporte_precios = ReportePrecios()
         reporte_precios.categoria_asociada_id = int(categoria)
-        if precio == "vacio":
-            reporte_precios.aumento = 0
-        else:
-            reporte_precios.aumento = int(precio)
+        reporte_precios.aumento = int(precio)
         reporte_precios.responsable_id = request.user.id
+        reporte_precios.responsable_usuario_id = request.user.id
         reporte_precios.save()
 
         for item in items:
-            if precio != "vacio":
-                item.precio += int(precio)
-            if stock != "vacio":
+            item.precio += int(precio)
+            if len(stock) != 0:
                 item.stockseguridad = int(stock)
             item.save()
 
     messages.success(request, 'Modificación masiva realizada con éxito.')
     return HttpResponse("Cambio efectuado.")
+
 
 def CambioMasivoItems(request):
 
@@ -561,21 +543,102 @@ def mezclarPinturasUsadas(request, mezcla, primerapintura, segundapintura, canti
 
 
 def ReporteItemRiesgoStock(request):
-    queryset = Item.objects.all()
+    
+    sucursalesIds = []
+
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+    
+    sucursal_asociada = ""
+    ItemFromQuery = Item.objects.all()
+    
+    if es_gerente_general:
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        supervisorQuery = Supervisor.objects.filter(username = request.user.username)
+        
+        for supervisor in supervisorQuery:
+            sucursal_asociada = supervisor.sucursal.id
+        
+        sucursalesIds.append(sucursal_asociada)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+    
+    lista = []
+    for fila in ItemFromQuery:
+        
+        print(sucursalesIds)
+        if fila.sucursal_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
+    
     items = []
 
-    for item in queryset:
-        items.append(item)
+    for item in lista:
+        dic = {
+            
+            "codigo_de_barras": item.codigo_de_barras,
+            "nombre": item.nombre,
+            "cantidad": item.cantidad,
+            "stockminimo": item.stockminimo,
+            "stockseguridad": item.stockseguridad,
+            "es_gerente_general": str(es_gerente_general),
+            "sucursales": sucursalesIds,
+            "sucursal_id": item.sucursal_id
+        }
+
+        items.append(dic)
 
     return render(request, 'items/reporte_riesgo_stock.html', locals())
 
 
 def ReporteCambiosPrecios(request):
-    queryset = ReportePrecios.objects.all()
-    filas = []
+    filasReporte = []
+    sucursalesIds = []
+    supervisorBySucursal = {}
 
-    for fila in queryset:
-        print("fila.aumento")
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+    reportePreciosFromQuery = ReportePrecios.objects.all()
+    for fila in reportePreciosFromQuery:
+        supervisorBySucursal.setdefault(fila.responsable_usuario.id,fila.responsable)
+    print(supervisorBySucursal)
+    if es_gerente_general:
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        for fila in reportePreciosFromQuery:
+            # se supone que acá es el supervisor de la sucursal!!!
+            
+            print("AAAAAAAAAAAAAAAAAA")
+            print(request.user.id)
+            print(supervisorBySucursal.get(request.user.id))
+            sucursalesIds.append(supervisorBySucursal.get(request.user.id).sucursal_id)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+    lista = []
+    for fila in reportePreciosFromQuery:
+        print(fila.responsable.sucursal_id)
+        if fila.responsable.sucursal_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
+    for fila in lista:
+        print("fila.aumento:")
         print(fila.aumento)
         dic = {
             "id": fila.id,
@@ -583,17 +646,68 @@ def ReporteCambiosPrecios(request):
             "categoria": fila.categoria_asociada.opciones,
             "aumento": fila.aumento,
             "responsable": fila.responsable.nombre,
-            "fecha_a_comparar": str(fila.fecha.date())
+            "fecha_a_comparar": str(fila.fecha.date()),
+            "es_gerente_general": str(es_gerente_general),
+            "sucursales": sucursalesIds,
+            "responsable_sucursal": fila.responsable.sucursal_id
         }
-        filas.append(dic)
+        filasReporte.append(dic)
 
     return render(request, 'items/reporte_cambios_masivos.html', locals())
 
 def ReporteCuentaCorrienteProveedores(request):
-    queryset = Pedidos.objects.all()
+    
+    sucursalesIds = []
+
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+    
+    sucursal_asociada = ""
+    PedidosFromQuery = Pedidos.objects.all()
+    
+    if es_gerente_general:
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        supervisorQuery = Supervisor.objects.filter(username = request.user.username)
+        
+        for supervisor in supervisorQuery:
+            sucursal_asociada = supervisor.sucursal.id
+        
+        sucursalesIds.append(sucursal_asociada)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+    
+    lista = []
+    for fila in PedidosFromQuery:
+        print(fila.sucursal_id)
+        print(sucursalesIds)
+        if fila.sucursal_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
+    
     listaPedidos = []
 
-    for pedido in queryset:
-        listaPedidos.append(pedido)
+    for pedido in lista:
+        dic = {
+            "id": pedido.id,
+            "cuenta_corriente_numero_cuenta": pedido.cuenta_corriente.numero_cuenta,
+            "sucursal_codigo": pedido.sucursal.codigo,
+            "proveedor_razon_social": pedido.proveedor.razon_social,
+            "fecha": pedido.fecha,
+            "total": pedido.total,
+            "fecha_a_comparar": str(pedido.fecha.date()),
+            "es_gerente_general": str(es_gerente_general),
+            "sucursales": sucursalesIds,
+            "sucursal_id": pedido.sucursal_id
+        }
+        listaPedidos.append(dic)
 
     return render(request,'items/reporte_cuenta_corriente_proveedores.html',locals())

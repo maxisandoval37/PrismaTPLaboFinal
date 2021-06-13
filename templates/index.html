@@ -63,7 +63,7 @@
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
-
+            
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -110,8 +110,10 @@
                         <h6 class="collapse-header">Administrar items:</h6>
                         <a class="collapse-item" href="{% url 'items:listar_items' %}">Listado de Items</a>
                         <a class="collapse-item" href="{% url 'items:registrar_item' %}">Agregar Item</a>
+                        {% if user.rol.opciones == 'SUPERVISOR' %}
                         <a class="collapse-item" href="{% url 'items:ver_categorias' %}">Modificación por categoria</a>
                         <a class="collapse-item" href="{% url 'items:ver_items' %}">Modificación masiva</a>
+                        {% endif %}
                     </div>
                 </div>
             </li>
@@ -208,9 +210,8 @@
                         <a class="collapse-item" href="{% url 'items:reporte_cuenta_corriente_proveedores' %}">Cta.
                             Corriente Proveedores</a>
                         <a class="collapse-item" href="{% url 'items:reporte_cambios_masivos' %}">Cambios de precios</a>
-                        <a class="collapse-item" href="{% url 'items:reporte_riesgo_stock' %}">Transacciones</a>
-                        <a class="collapse-item" href="{% url 'items:reporte_riesgo_stock' %}">Ítems con riesgo de
-                            stock</a>
+                        <a class="collapse-item" href="{% url 'sucursales:reporte_transacciones_venta_compra' %}">Transacciones</a>
+                        <a class="collapse-item" href="{% url 'items:reporte_riesgo_stock' %}">Ítems con riesgo de stock</a>
                     </div>
                 </div>
 

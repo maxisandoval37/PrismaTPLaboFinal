@@ -1,10 +1,9 @@
 {% extends 'index.html' %}
 {% load widget_tweaks %}
 {% load static %}
-{% load mathfilters %}
 
 {% block title %}
-Listado de Items
+Transacciones de venta/compra
 {% endblock title %}
 
 {% block content %}
@@ -12,13 +11,12 @@ Listado de Items
 <div class="bg-gray-100" id="report">
     <div class="card">
         <div class="card-header">
-            <strong class="card-title">Modificaciones de precios por categorías</strong>
-            <div align="right">
-                <input id=fechaDesde type="date">
+            <strong class="card-title">Transacciones de venta|compra</strong>
+            <div align = "right"><input id=fechaDesde type="date">
                 <input id=fechaHasta type="date">
                 <a id="boton" class="btn btn-primary" onclick="filtrarLista()">Filtrar
-                    resultados</a>
-                {% if es_gerente_general %}
+                    resultados</a></div>
+                    {% if es_gerente_general %}
                 <select name="sucursal" id="sucursal">
                     <option value="0"> Seleccioná una sucursal </option>
                     {% for sucursal in sucursalesIds %}
@@ -27,35 +25,39 @@ Listado de Items
                 </select>
                 <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()">Filtrar resultados</a>
                 {% endif %}
-
-            </div>
         </div>
+        
     </div>
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th></th>
+                    <th>Identificador</th>
                     <th>Fecha</th>
-                    <th>Categoría</th>
-                    <th>Monto modificado</th>
-                    <th>Responsable</th>
+                    <th>Monto</th>
+                    <th>Tipo</th>
+                    <th>Caja</th>
+                    
                 </tr>
             </thead>
-            <tbody id="table">
-                {% if filasReporte %}
-                {% for fila in filasReporte %}
-                <tr class="items" id="{{ fila.id }}">
-                    <td>{{ fila.id }}</td>
-                    <td>{{ fila.fecha }}</td>
-                    <td hidden id="fecha{{ fila.id }}">{{ fila.fecha_a_comparar }}</td>
-                    <td>{{ fila.categoria }}</td>
-                    <td>+{{ fila.aumento }}</td>
-                    <td>{{ fila.responsable }}</td>
+            <tbody id = "table">
+                {% if operaciones %}
+                {% for operacion in operaciones %}
+                <tr class = "items" id = "{{ operacion.identificador }}">
+                    <td></td>
+                    <td>{{ operacion.identificador }}</td>
+                    <td>{{ operacion.fecha  }}</td>
+                    <td>{{ operacion.monto }}</td>
+                    <td>{{ operacion.tipo }}</td>
+                    <td>{{ operacion.caja_asociada }}</td>
+                    <td hidden id = "fecha{{ operacion.identificador }}">{{ operacion.fecha_a_comparar }}</td>
+                    <td hidden id="responsable{{ operacion.identificador }}">{{ operacion.sucursal_asociada_id}}</td>
+
                 </tr>
                 {% endfor %}
                 {% else %}
-                <h5>No hay items registrados :( </h1>
+                <h5>No hay operaciones registradas :(</h1>
                     {% endif %}
             </tbody>
         </table>
@@ -70,15 +72,20 @@ Listado de Items
 <!--Inserta Grafico-->
 <button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
 
-<style>
+<!-- <style>
     #chartdiv {
         height: 350px;
         width: 69%;
         margin: auto;
     }
-</style>
+</style> -->
 
+<!-- <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script> -->
 <script>
+    data = [];
+
     function printChart(divName) {
         let toPrint = document.getElementById(divName).innerHTML;
         let originalContents = document.body.innerHTML;
@@ -89,11 +96,12 @@ Listado de Items
     }
 
     window.onload = (event) => {
+   
+
         setTimeout(function () {
             document.getElementById("button").hidden = false;
         }, 1000);
     };
-
     function filtrarLista() {
         if (document.getElementById("boton").innerText == "Filtrar resultados") {
             document.getElementById("boton").innerText = "Reiniciar";
@@ -106,18 +114,23 @@ Listado de Items
                 fecha = document.getElementById("fecha" + elemento.id).innerText
                 fechaDesde = document.getElementById("fechaDesde").value;
                 fechaHasta = document.getElementById("fechaHasta").value;
-
+                console.log("fecha:" + fecha);
+                console.log("fechaDesde:" + fechaDesde);
+                console.log("fechaHasta:" + fechaHasta);
                 ret = fecha >= fechaDesde && fecha <= fechaHasta;
-
+                console.log(fechaDesde + " >= " + fecha);
+                console.log(fecha + " <= " + fechaHasta);
+                console.log(ret);
                 if (!ret) {
                     // document.getElementById("table").removeChild(document.getElementById(elemento.id));
                     toDelete.push(document.getElementById(elemento.id))
                 }
                 cont++;
             }
-
             cont = 0;
+            console.log(toDelete);
             for (let i = 0; i < toDelete.length; i++) {
+                console.log(toDelete[cont]);
                 document.getElementById("table").removeChild(toDelete[cont]);
                 cont++;
             }
@@ -162,6 +175,7 @@ Listado de Items
             location.reload();
         }
     }
+
 
 </script>
 

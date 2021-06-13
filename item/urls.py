@@ -52,8 +52,7 @@ urlpatterns = [
          name='reporte_riesgo_stock'),
     path('reporte_cambios_masivos/', login_required(ReporteCambiosPrecios),
          name='reporte_cambios_masivos'),
-    path('reporte_cuenta_corriente_proveedores/', login_required(
-        ReporteCuentaCorrienteProveedores), name='reporte_cuenta_corriente_proveedores'),
+    path('reporte_cuenta_corriente_proveedores/', login_required(ReporteCuentaCorrienteProveedores), name='reporte_cuenta_corriente_proveedores'),
     path('ver_items/', ModificarCamposItems.as_view(), name='ver_items'),
     path('ver_items/CambioMasivoItems/', CambioMasivoItems, name='cambio_masivo_items'),
 ]

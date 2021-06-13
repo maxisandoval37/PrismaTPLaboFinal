@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.views.generic import CreateView,DeleteView,ListView,UpdateView, DetailView
 from django.urls import reverse_lazy
 from .forms import SucursalForm, CajaForm
-from .models import Sucursal, Caja
+from .models import Sucursal, Caja, Operacion
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from item.models import Item
 from django.contrib import messages
 from django.db.models import ProtectedError
 from django.contrib.messages.views import SuccessMessageMixin
+from usuario.models import Rol, Supervisor
 
 class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
     
@@ -59,9 +60,9 @@ class RegistrarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateVi
 
 
 
-def idCaja(request, id, ValidarLoginYPermisosRequeridos):
+def idCaja(request, id):
     
-    permission_required = ('sucursal.view_caja','sucursal.add_caja',)
+    
     sucursal = Sucursal.objects.get(id = id)
     queryset = Caja.objects.filter(sucursal_id = sucursal.id)
     lista = []
@@ -162,3 +163,60 @@ def consolidacionPorSucursal(request, id):
     lista.append(dic)
     
     return render(request, 'sucursales/consolidadoSucursal.html', locals())
+
+def ReporteTransaccionesVentaCompra(request):
+    
+    sucursalesIds = []
+
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+    
+    sucursal_asociada = ""
+    OperacionFromQuery = Operacion.objects.all()
+    
+    if es_gerente_general:
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        supervisorQuery = Supervisor.objects.filter(username = request.user.username)
+        
+        for supervisor in supervisorQuery:
+            sucursal_asociada = supervisor.sucursal.id
+        
+        sucursalesIds.append(sucursal_asociada)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+    
+    lista = []
+    for fila in OperacionFromQuery:
+        
+        print(sucursalesIds)
+        if fila.caja_asociada.sucursal_id_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
+    
+    operaciones = []
+
+    for operacion in lista:
+        dic = {
+            "identificador": operacion.identificador,
+            "fecha": operacion.fecha,
+            "monto": operacion.monto,
+            "tipo": operacion.tipo,
+            "caja_asociada": operacion.caja_asociada,
+            "fecha_a_comparar": str(operacion.fecha.date()),
+            "es_gerente_general": str(es_gerente_general),
+            "sucursales": sucursalesIds,
+            "sucursal_asociada_id": operacion.caja_asociada.sucursal_id_id
+            
+        }
+        operaciones.append(dic)
+
+    return render(request,'sucursales/reporte_transacciones_venta_compra.html',locals())
