@@ -66,8 +66,8 @@ Listado de Ventas
                             Eliminar </a>
                     </td>
                     {% endif %}
-
-                    {% if venta.estado.opciones == 'EN PREPARACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if venta.estado.opciones == 'EN PREPARACION' %}  
                     <td>
                         <a href="{% url 'ventas:registrar_itemventa' venta.sucursal_asociada.id  venta.numero_comprobante %}" class="btn btn-primary">
                             Agregar item </a>
@@ -77,12 +77,14 @@ Listado de Ventas
                         <a class="btn btn-secondary">Agregar item </a>
                     </td>
                     {% endif %}
+                    {% endif %}
                     <td>
                         <a href="{% url 'ventas:listar_itemsventa' venta.numero_comprobante %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
                     
-                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' %}
                         <td>
                             <a href="{% url 'ventas:ingresar_monto' venta.pk %}" class="btn btn-info">Ingresar monto</a>
                         </td>
@@ -92,9 +94,10 @@ Listado de Ventas
                             <a class="btn btn-secondary">Ingresar monto</a>
                         </td>
                     {% endif %}
+                    {% endif %}
 
-
-                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if venta.estado.opciones == 'EN PREPARACION' or venta.estado.opciones == 'EN DEUDA' %}
                         <td>
                             <a href="{% url 'ventas:cambiar_estado' venta.numero_comprobante  venta.cliente_asociado.id %}" class="btn btn-success">Cargar venta</a>
                         </td>
@@ -103,6 +106,7 @@ Listado de Ventas
                         <td>
                             <a class="btn btn-secondary">Cargar venta</a>
                         </td>
+                    {% endif %}
                     {% endif %}
                     
                 </tr>

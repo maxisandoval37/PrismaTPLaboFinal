@@ -55,7 +55,8 @@ Listado de Ventas
                     <td>${{ venta.total_peso}}</td> 
                     {% endif %}
 
-                   {% if venta.estado.opciones == 'LISTA' and user.rol.opciones == 'CAJERO' or user.is_staff %}
+                    {% if user.rol.opciones == 'CAJERO' or user.is_staff %}
+                   {% if venta.estado.opciones == 'LISTA' %}
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             Eliminar </a>
@@ -66,7 +67,10 @@ Listado de Ventas
                             Eliminar </a>
                     </td>
                     {% endif %}
-                    {% if venta.estado.opciones == 'LISTA' or venta.estado.opciones == 'PAGADA' and user.rol.opciones == 'CAJERO' or user.is_staff or user.rol.opciones == 'SUPERVISOR' %}
+                    {% endif %}
+
+                    {% if user.rol.opciones == 'CAJERO' or user.is_staff or user.rol.opciones == 'SUPERVISOR' %}
+                    {% if venta.estado.opciones == 'LISTA' or venta.estado.opciones == 'PAGADA' %}
                     <td>
                         <a href="{% url 'ventas:ver_items' venta.numero_comprobante %}" class="btn btn-warning">
                             Ver detalle </a>
@@ -77,8 +81,10 @@ Listado de Ventas
                             Ver detalle </a>
                     </td>
                     {% endif %}
+                    {% endif %}
                     
-                    {% if venta.estado.opciones == 'LISTA' and user.rol.opciones == 'CAJERO' or user.is_staff %}
+                    {% if user.rol.opciones == 'CAJERO' or user.is_staff %}
+                    {% if venta.estado.opciones == 'LISTA' %}
                     <td>
                         <a href="{% url 'ventas:finalizar_venta' venta.numero_comprobante %}" class="btn btn-success">Finalizar venta</a> 
                     </td>
@@ -86,6 +92,7 @@ Listado de Ventas
                     <td>
                         <a  class="btn btn-secondary">Finalizar venta</a>
                     </td>
+                    {% endif %}
                     {% endif %}
                 </tr>
                 {% endfor %}

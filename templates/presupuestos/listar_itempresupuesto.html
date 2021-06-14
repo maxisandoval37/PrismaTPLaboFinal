@@ -39,8 +39,8 @@ Listado de Items
                     <td>{{item.item.precio}}</td>
                     <td>{{ item.cantidad_solicitada}}</td>
                     
-
-                    {% if item.presupuesto_asociado.estado.opciones == 'EN EVALUACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if item.presupuesto_asociado.estado.opciones == 'EN EVALUACION' %}
                    <td>
                        <a href="{% url 'presupuestos:eliminar_item' presupuesto item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>
@@ -48,6 +48,7 @@ Listado de Items
                    <td>
                     <a  class="btn btn-secondary">Quitar Item</a>
                     </td>
+                   {% endif %}
                    {% endif %}
                 </tr>
                 {% endfor %}

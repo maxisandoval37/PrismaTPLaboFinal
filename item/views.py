@@ -281,7 +281,11 @@ def CambioMasivo(request):
         reporte_precios = ReportePrecios()
         reporte_precios.categoria_asociada_id = int(categoria)
         reporte_precios.aumento = int(precio)
-        reporte_precios.responsable_id = request.user.id
+        if request.user.is_staff or request.user.rol.opciones != 'SUPERVISOR':
+            messages.error(request, "Acceso denegado.")
+            return HttpResponse()
+        else:
+            reporte_precios.responsable_id = request.user.id
         reporte_precios.responsable_usuario_id = request.user.id
         reporte_precios.save()
 
@@ -322,7 +326,11 @@ def CambioMasivoItems(request):
             reporte_precios.aumento = 0
         else:
             reporte_precios.aumento = int(precio)
-        reporte_precios.responsable_id = request.user.id
+        if request.user.is_staff or request.user.rol.opciones != 'SUPERVISOR':
+            messages.error(request, "Acceso denegado.")
+            return HttpResponse()
+        else:
+            reporte_precios.responsable_id = request.user.id
         reporte_precios.save()
 
         for item in items:
@@ -366,9 +374,16 @@ class AgregarPintura(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, Creat
     permission_required = ('item.view_pintura','item.add_pintura','item.change_pintura',)
     model = Pintura
     form_class = PinturaForm
+    context_object_name = 'obj'
     template_name = 'items/crear_pintura.html'
     success_message = 'Pintura registrada con éxito.'
     success_url = reverse_lazy('items:listar_pinturas')
+    
+    def get_context_data(self, **kwargs):
+        context = super(AgregarPintura, self).get_context_data(**kwargs)
+        context["categoria"] = Categoria.objects.all()
+        context["subcategoria"] = SubCategoria.objects.all()
+        return context
 
 
 class ListadoMezclas(ValidarLoginYPermisosRequeridos, ListView):
@@ -737,7 +752,11 @@ def AsignarProveedor(request):
         
         proveedor = request.POST.get('proveedor', None)
         categoria_id = request.POST.get('categoria', None)
-        Categoria.objects.filter(id = int(categoria_id)).update(prov_preferido = int(proveedor))
+        
+        if int(proveedor) == 0:
+            return HttpResponseBadRequest()
+        else:
+            Categoria.objects.filter(id = int(categoria_id)).update(prov_preferido = int(proveedor))
         
     messages.success(request, 'Proveedor asignado correctamente.')
     return HttpResponse("")

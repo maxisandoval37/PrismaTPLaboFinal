@@ -340,6 +340,9 @@ class Mezcla(models.Model):
     
     def clean(self):
         
+        if self.primera_pintura.sucursal != self.segunda_pintura.sucursal:
+            raise ValidationError('Las pinturas deben pertenecer a la misma sucursal.')
+        
         if self.primera_pintura == None:
             raise ValidationError('Debe seleccionar la primera pintura a mezclar.')
         

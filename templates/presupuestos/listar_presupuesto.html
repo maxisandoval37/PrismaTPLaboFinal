@@ -50,7 +50,8 @@ Listado de Presupuestos
                             Eliminar </a>
                     </td>
                     {% endif %}
-                    {% if presupuesto.estado.opciones == 'EN EVALUACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
                     <td>
                         <a href="{% url 'presupuestos:registrar_itempresupuesto' presupuesto.sucursal_asociada.id  presupuesto.pk %}" class="btn btn-primary">
                             Agregar item </a>
@@ -60,12 +61,14 @@ Listado de Presupuestos
                         <a class="btn btn-secondary">Agregar item </a>
                     </td>
                     {% endif %}
+                    {% endif %}
                     <td>
                         <a href="{% url 'presupuestos:listar_itemspresupuesto' presupuesto.pk %}" class="btn btn-warning">
                             Ver detalle </a>
                     </td>
                     
-                    {% if presupuesto.estado.opciones == 'EN EVALUACION' and user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
                         <td>
                             <a href="{% url 'presupuestos:rechazar_presupuesto' presupuesto.pk %}" class="btn btn-danger">Rechazar presupuesto</a>
                         </td>
@@ -80,6 +83,7 @@ Listado de Presupuestos
                         <td>
                             <a class="btn btn-secondary">Aprobar presupuesto</a>
                         </td>
+                    {% endif %}
                     {% endif %}
                 </tr>
                 {% endfor %}

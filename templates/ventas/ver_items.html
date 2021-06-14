@@ -37,7 +37,8 @@ Listado de Items
                     <td>{{ item.item.precio}}</td>
                     <td>{{ item.cantidad_solicitada}}</td>
                     
-                    {% if item.venta_asociada.estado.opciones == 'LISTA' and user.rol.opciones == 'CAJERO' or user.is_staff  %}
+                    {% if user.rol.opciones == 'CAJERO' or user.is_staff %}
+                    {% if item.venta_asociada.estado.opciones == 'LISTA' %}
                    <td>
                        <a href="{% url 'ventas:eliminar_item_cajero' venta item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>
@@ -45,6 +46,7 @@ Listado de Items
                    <td>
                     <a class="btn btn-secondary">Quitar Item</a>
                 </td>
+                {% endif %}
                 {% endif %}
                 </tr>
                 {% endfor %}
