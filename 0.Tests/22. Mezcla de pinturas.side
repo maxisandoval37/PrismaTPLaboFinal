@@ -1241,11 +1241,11 @@
     }]
   }, {
     "id": "4ad22a94-99a2-4e02-a77d-cda1f1aa35d0",
-    "name": "4. EN ESTE PUNTO HAY QUE CARGAR STOCK MANUALMENTE",
+    "name": "5. EN ESTE PUNTO HAY QUE CARGAR STOCK MANUALMENTE",
     "commands": []
   }, {
     "id": "d773aca8-07ad-4405-979a-3aa7ccc143f2",
-    "name": "5.Cargar mezcla pint1 y pint2",
+    "name": "6.Cargar mezcla pint1 y pint2",
     "commands": [{
       "id": "0a1091f0-c38c-4374-a3ad-8c789a78be6d",
       "comment": "",
@@ -1516,7 +1516,7 @@
     }]
   }, {
     "id": "8594c662-8d85-4d11-9308-bd9c40429137",
-    "name": "6. Mezclar pint1 y pint2",
+    "name": "7. Mezclar pint1 y pint2",
     "commands": [{
       "id": "525763e4-7614-4022-b500-8056b3c93342",
       "comment": "",
@@ -1703,7 +1703,7 @@
     }]
   }, {
     "id": "e5e4d93f-b60b-4fe2-b544-44a08f8da6e3",
-    "name": "7. Mezclar dos pint del mismo color (no válido)",
+    "name": "8. Mezclar dos pint del mismo color (no válido)",
     "commands": [{
       "id": "3d9c454e-9b59-41e7-bb4c-a0b4282ba766",
       "comment": "",
@@ -1988,7 +1988,7 @@
     }]
   }, {
     "id": "996067b8-5d13-4f5a-9a03-31130696efc7",
-    "name": "8. Mezclar pint cant -1 (no válido)",
+    "name": "9. Mezclar pint cant -1 (no válido)",
     "commands": [{
       "id": "d5e15564-2ac8-4207-8f16-afbbfe7ad02d",
       "comment": "",
@@ -2273,7 +2273,7 @@
     }]
   }, {
     "id": "caae4464-4b0f-43a5-9579-19e26bcfe8b5",
-    "name": "9. Mezclar cant pint 0 (no válido)",
+    "name": "10. Mezclar cant pint 0 (no válido)",
     "commands": [{
       "id": "ebbd1be1-280d-4785-811e-3d18581608ae",
       "comment": "",
@@ -2503,7 +2503,7 @@
     }]
   }, {
     "id": "e86d61a4-ddaa-4c35-b739-0b63d26019bb",
-    "name": "10. Primera pintura supera la capacidad máxima (no válido)",
+    "name": "11. Primera pintura supera la capacidad máxima (no válido)",
     "commands": [{
       "id": "6e498914-31e6-426f-8c16-7e5507f91cdb",
       "comment": "",
@@ -2789,7 +2789,7 @@
     }]
   }, {
     "id": "c926522f-70a7-4506-88b0-bb8ed5e2923b",
-    "name": "11. Segunda pintura supera la capacidad máxima (no válido) (1)",
+    "name": "12. Segunda pintura supera la capacidad máxima (no válido) (1)",
     "commands": [{
       "id": "11b85ca9-aefb-4c51-9778-19f8c8a60eb9",
       "comment": "",
@@ -3075,7 +3075,7 @@
     }]
   }, {
     "id": "a0b07ff3-873d-48af-8d8f-938c79516571",
-    "name": "12.Cargar mezcla pint2 y pint1",
+    "name": "13.Cargar mezcla pint2 y pint1",
     "commands": [{
       "id": "2a5a7d8b-eef8-4183-869a-4ee8646e0813",
       "comment": "",
@@ -3359,7 +3359,7 @@
     }]
   }, {
     "id": "eefc4130-4a09-4119-a1b5-d94978e5b830",
-    "name": "13. Mezclar pint2 y pint1",
+    "name": "14. Mezclar pint2 y pint1",
     "commands": [{
       "id": "d8483f8d-dbf2-41ac-8b46-a49c1f0a89e4",
       "comment": "",
@@ -3550,7 +3550,7 @@
     }]
   }, {
     "id": "fb5a1bfa-a4d9-4ba4-a252-69876d8ed394",
-    "name": "15. Ver punturas nuevas (Mezclas)",
+    "name": "16. Ver punturas nuevas (Mezclas)",
     "commands": [{
       "id": "4b3930d3-198e-40ef-af8e-739239edacfa",
       "comment": "",
@@ -3679,7 +3679,7 @@
     }]
   }, {
     "id": "38eabed5-9767-47a2-902c-8254850d21cd",
-    "name": "14. Mezclar mezcla ya existente",
+    "name": "15. Mezclar mezcla ya existente",
     "commands": [{
       "id": "82b847b7-7a7b-4302-b6a6-7a6f7d5d6dfe",
       "comment": "",
@@ -4000,6 +4000,264 @@
       "value": ""
     }, {
       "id": "cfb7d53d-532e-4ca2-a6d5-0534e799f53e",
+      "comment": "",
+      "command": "close",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "4cd4405b-f8e7-41de-abb0-fd3106e8d5c8",
+    "name": "4.Cargar mezcla pint1 y pint2 (Sin stock)",
+    "commands": [{
+      "id": "6982e376-b062-4319-bc48-cadb15df4369",
+      "comment": "",
+      "command": "open",
+      "target": "/accounts/login/?next=/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "f18e7a28-4473-41b3-94fb-f18a3e2e94aa",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1137x720",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "86f0a396-3ef9-4eb5-88f2-a1dd880db655",
+      "comment": "",
+      "command": "type",
+      "target": "id=id_username",
+      "targets": [
+        ["id=id_username", "id"],
+        ["name=username", "name"],
+        ["css=#id_username", "css:finder"],
+        ["xpath=//input[@id='id_username']", "xpath:attributes"],
+        ["xpath=//div/input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "542fd619-728c-4214-a65d-32aacad4506c",
+      "comment": "",
+      "command": "type",
+      "target": "id=id_password",
+      "targets": [
+        ["id=id_password", "id"],
+        ["name=password", "name"],
+        ["css=#id_password", "css:finder"],
+        ["xpath=//input[@id='id_password']", "xpath:attributes"],
+        ["xpath=//div/div/input", "xpath:position"]
+      ],
+      "value": "admin"
+    }, {
+      "id": "0b82938e-0d30-41a7-ae40-a20966b558bb",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "id=id_password",
+      "targets": [
+        ["id=id_password", "id"],
+        ["name=password", "name"],
+        ["css=#id_password", "css:finder"],
+        ["xpath=//input[@id='id_password']", "xpath:attributes"],
+        ["xpath=//div/div/input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
+      "id": "b7e728e7-2ff3-41ae-bb1e-4a9a9a49166e",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Pinturas",
+      "targets": [
+        ["linkText=Pinturas", "linkText"],
+        ["css=.nav-item:nth-child(8) > .nav-link", "css:finder"],
+        ["xpath=//ul[@id='accordionSidebar']/li[4]/a", "xpath:idRelative"],
+        ["xpath=(//a[contains(@href, '#')])[3]", "xpath:href"],
+        ["xpath=//li[4]/a", "xpath:position"],
+        ["xpath=//a[contains(.,' Pinturas')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b2c4f84f-bd00-471a-b56c-2c625b0eb7e7",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Mezclar pinturas",
+      "targets": [
+        ["linkText=Mezclar pinturas", "linkText"],
+        ["css=.collapse-item:nth-child(8)", "css:finder"],
+        ["xpath=//a[contains(text(),'Mezclar pinturas')]", "xpath:link"],
+        ["xpath=//div[@id='collapse8']/div/a[6]", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/items/iniciar_mezcla/')]", "xpath:href"],
+        ["xpath=//a[6]", "xpath:position"],
+        ["xpath=//a[contains(.,'Mezclar pinturas')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "398057a5-a256-4c63-befb-9dd162705ead",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_primera_pintura",
+      "targets": [
+        ["id=id_primera_pintura", "id"],
+        ["name=primera_pintura", "name"],
+        ["css=#id_primera_pintura", "css:finder"],
+        ["xpath=//select[@id='id_primera_pintura']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "ace8a026-28ad-4836-8267-01226f0d4c62",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_primera_pintura",
+      "targets": [],
+      "value": "label=Sinteplast, Color:Amarillo"
+    }, {
+      "id": "0d24bc09-a0d1-4dbd-b01a-472c3b507a67",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_primera_pintura",
+      "targets": [
+        ["id=id_primera_pintura", "id"],
+        ["name=primera_pintura", "name"],
+        ["css=#id_primera_pintura", "css:finder"],
+        ["xpath=//select[@id='id_primera_pintura']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "e82395c4-ae7b-437b-a02f-0a6241b58067",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_segunda_pintura",
+      "targets": [
+        ["id=id_segunda_pintura", "id"],
+        ["name=segunda_pintura", "name"],
+        ["css=#id_segunda_pintura", "css:finder"],
+        ["xpath=//select[@id='id_segunda_pintura']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/div/select", "xpath:idRelative"],
+        ["xpath=//div/div/select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "4878b043-13e1-4f20-830b-6319a19c8fb4",
+      "comment": "",
+      "command": "select",
+      "target": "id=id_segunda_pintura",
+      "targets": [],
+      "value": "label=Tersuave, Color:Azul"
+    }, {
+      "id": "5b6958a0-c63f-455d-80fd-7313edc42453",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_segunda_pintura",
+      "targets": [
+        ["id=id_segunda_pintura", "id"],
+        ["name=segunda_pintura", "name"],
+        ["css=#id_segunda_pintura", "css:finder"],
+        ["xpath=//select[@id='id_segunda_pintura']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/div/select", "xpath:idRelative"],
+        ["xpath=//div/div/select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "4259199b-beb3-47d8-8e34-e76a8ae7e797",
+      "comment": "",
+      "command": "click",
+      "target": "id=id_cantidad_primera_pintura",
+      "targets": [
+        ["id=id_cantidad_primera_pintura", "id"],
+        ["name=cantidad_primera_pintura", "name"],
+        ["css=#id_cantidad_primera_pintura", "css:finder"],
+        ["xpath=//input[@id='id_cantidad_primera_pintura']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/div/div/input", "xpath:idRelative"],
+        ["xpath=//div/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "93f8b63c-9519-4ac7-ab74-67e4902b5090",
+      "comment": "",
+      "command": "type",
+      "target": "id=id_cantidad_primera_pintura",
+      "targets": [
+        ["id=id_cantidad_primera_pintura", "id"],
+        ["name=cantidad_primera_pintura", "name"],
+        ["css=#id_cantidad_primera_pintura", "css:finder"],
+        ["xpath=//input[@id='id_cantidad_primera_pintura']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/div/div/input", "xpath:idRelative"],
+        ["xpath=//div/div/input", "xpath:position"]
+      ],
+      "value": "100"
+    }, {
+      "id": "a84528cd-da4b-4cf1-9871-5e74e76e03b1",
+      "comment": "",
+      "command": "type",
+      "target": "id=id_cantidad_segunda_pintura",
+      "targets": [
+        ["id=id_cantidad_segunda_pintura", "id"],
+        ["name=cantidad_segunda_pintura", "name"],
+        ["css=#id_cantidad_segunda_pintura", "css:finder"],
+        ["xpath=//input[@id='id_cantidad_segunda_pintura']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/div/div/div/input", "xpath:idRelative"],
+        ["xpath=//div/div/div/div/input", "xpath:position"]
+      ],
+      "value": "100"
+    }, {
+      "id": "69c4c6a7-9a0a-456f-88b9-b3156f36acb6",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(4) > .btn-primary",
+      "targets": [
+        ["css=div:nth-child(4) > .btn-primary", "css:finder"],
+        ["xpath=//button[@type='submit']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div[2]/form/div/div/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Agregar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "23399751-e9c6-4bb3-bd8d-d335af6dbfb1",
+      "comment": "",
+      "command": "click",
+      "target": "css=.d-lg-inline",
+      "targets": [
+        ["css=.d-lg-inline", "css:finder"],
+        ["xpath=//a[@id='userDropdown']/span", "xpath:idRelative"],
+        ["xpath=//nav/ul/li[3]/a/span", "xpath:position"],
+        ["xpath=//span[contains(.,'Tomy')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3087f2c9-23a4-4e7e-a9dc-9d5046b54f45",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Salir",
+      "targets": [
+        ["linkText=Salir", "linkText"],
+        ["css=.show > .dropdown-item", "css:finder"],
+        ["xpath=//div[@id='content']/nav/ul/li[3]/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/accounts/login/')]", "xpath:href"],
+        ["xpath=//li[3]/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,' Salir')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eadda94c-91ed-4dfd-8fac-f2de61c86d0b",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Salir",
+      "targets": [
+        ["linkText=Salir", "linkText"],
+        ["css=.modal-footer > .btn-primary", "css:finder"],
+        ["xpath=//a[contains(text(),'Salir')]", "xpath:link"],
+        ["xpath=//div[@id='logoutModal']/div/div/div[3]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/logout/')]", "xpath:href"],
+        ["xpath=//div[3]/a", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "75901f9e-6e73-4452-bb5c-04ad80a45db5",
       "comment": "",
       "command": "close",
       "target": "",
