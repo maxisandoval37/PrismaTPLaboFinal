@@ -10,12 +10,40 @@ from django.db.models import ProtectedError
 from django.contrib.messages.views import SuccessMessageMixin
 from usuario.models import Rol, Supervisor
 
-class ListarSucursal(ValidarLoginYPermisosRequeridos,ListView):
+def ListarSucursal(request):
     
-    permission_required = ('sucursal.view_sucursal',)
-    model = Sucursal
-    template_name = 'sucursales/listar_sucursal.html'
-    queryset = Sucursal.objects.all().order_by('id')
+    lista = []
+    
+    if request.user.is_staff:
+        query = Sucursal.objects.all().order_by('id')
+
+        for info in query:
+            lista.append(info)
+            
+        return render(request, 'sucursales/listar_sucursal.html', locals())
+    
+    if request.user.rol.opciones == 'SUPERVISOR':
+        
+        supervisor = ""
+        QuerySupervisor = Supervisor.objects.filter(id = request.user.id)
+        for info in QuerySupervisor:
+            supervisor = info
+        
+        cod = supervisor.sucursal_id
+        sucursal = Sucursal.objects.filter(id = cod)
+        
+        for suc in sucursal:
+            
+            lista.append(suc)
+    else:
+        
+        query = Sucursal.objects.all().order_by('id')
+
+        for info in query:
+            lista.append(info)
+            
+    return render(request, 'sucursales/listar_sucursal.html', locals())
+        
 
 class RegistrarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
@@ -57,6 +85,15 @@ class RegistrarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateVi
     template_name = 'sucursales/crear_caja.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
     success_message = 'Caja registrada correctamente.'
+    
+class EditarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
+    
+    permission_required = ('sucursal.view_caja','sucursal.add_caja',)
+    model = Caja
+    fields = ['egresos']
+    template_name = 'sucursales/crear_caja.html'
+    success_url = reverse_lazy('sucursales:listar_sucursales')
+    success_message = 'Extracción realizada.'
 
 
 
@@ -68,6 +105,7 @@ def idCaja(request, id):
     lista = []
     for caja in queryset:
         dic = {
+            "caja_id": caja.id,
             "caja_codigo": caja.codigo,
             "saldo_disponible": caja.saldo_disponible,
             "saldo_disponible_dolares": caja.saldo_disponible_dolares,

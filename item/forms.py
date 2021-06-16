@@ -62,3 +62,4 @@ class CategoriaForm(forms.ModelForm):
         
         model = Categoria
         fields = '__all__'
+        

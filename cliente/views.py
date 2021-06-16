@@ -19,7 +19,7 @@ class ListadoCliente(ValidarLoginYPermisosRequeridos,ListView):
 
 class ListadoCuentasCorriente(ValidarLoginYPermisosRequeridos, ListView):
     
-    permission_required = ('proveedor.view_proveedor',)
+    permission_required = ('cliente.view_cuentacorriente',)
     model = CuentaCorriente
     template_name = 'clientes/listar_cuenta_corriente.html'
     queryset = CuentaCorriente.objects.all().order_by('id')

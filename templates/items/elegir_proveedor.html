@@ -25,9 +25,7 @@ Listado de Categorias
 
                 <tr>
                     <th> </th>
-                    <th>Item</th>
                     <th>Categoria</th>
-                    <th>SubCategoria</th>
                     <th>Proveedor</th>
                     <th>Seleccionar Proveedor</th>
 
@@ -35,22 +33,21 @@ Listado de Categorias
             </thead>
             <tbody>
 
-                {% for item in object_list %}
+                {% for cat in object_list %}
 
                 <tr>
                     <td> </td>
-                    <td>{{ item.nombre}}</td>
-                    <td>{{ item.categoria }}</td>
-                    <td>{{ item.subcategoria }}</td>
-                    <td>{{ item.categoria.prov_preferido}}</td>
+                    <td>{{ cat.opciones}}</td>
+                    <td>{{ cat.prov_preferido}}</td>
                     <td>
 
 
                         <div class="form-group">
-                            <select name="proveedor" id="select{{item.categoria.id}}" class="select form-control">
+                            <select name="proveedor" id="select{{cat.id}}" class="select form-control">
                                 <option value="0"> - </option>
 
                                 {% for prov in proveedor %}
+                                
                                 <option value="{{prov.id}}">{{prov}}</option>
                                 {% endfor %}
                             </select>
@@ -58,8 +55,11 @@ Listado de Categorias
                         </div>
                     </td>
                     <td>
-                        <a  class="btn btn-primary" id="{{item.categoria.id}}"
+                        <a  class="btn btn-primary" id="{{cat.id}}"
                             onclick="AsignarProveedor(this.id)">Asignar Proveedor</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'items:historial_preferenciados' %}" class="btn btn-primary">Historial de preferenciados</a>
                     </td>
 
                 </tr>

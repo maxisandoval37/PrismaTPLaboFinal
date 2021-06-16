@@ -28,7 +28,7 @@ class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
 
 class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
     
-    permission_required = ('venta.view_venta_cajero',)
+    permission_required = ('venta.view_ventavirtual','venta.add_ventavirtual',)
     model = Venta 
     template_name = 'ventas/listar_venta_cajero.html'
     queryset = Venta.objects.all().order_by('numero_comprobante')
@@ -715,14 +715,24 @@ def FinalizarVenta(request, venta):
     
     if instancia.tipo_de_moneda.opciones == 'EURO':
         caja_menor.saldo_disponible_euros = caja_menor.saldo_disponible_euros + total
-        caja_menor.ingresos_en_euros += total
+        if (total * Decimal("115.21".replace(',', '.'))) >= 20000 and instancia.mediodepago.opciones == 'EFECTIVO':
+            caja_menor.ingresos_en_euros += total - (total * Decimal("0.05".replace(',', '.')))
+        else:
+            caja_menor.ingresos_en_euros += total
+        
     elif instancia.tipo_de_moneda.opciones == 'DOLAR':
         caja_menor.saldo_disponible_dolares = caja_menor.saldo_disponible_dolares + total
-        caja_menor.ingresos_en_dolares += total
+        if (total * Decimal("95.18".replace(',', '.'))) >= 20000 and instancia.mediodepago.opciones == 'EFECTIVO':
+            caja_menor.ingresos_en_dolares += total - (total * Decimal("0.05".replace(',', '.')))
+        else:
+            caja_menor.ingresos_en_dolares += total
+            
     else:
         caja_menor.saldo_disponible = caja_menor.saldo_disponible + total
-        caja_menor.ingresos_en_pesos += total
-        
+        if total >= 20000 and instancia.mediodepago.opciones == 'EFECTIVO':
+            caja_menor.ingresos_en_pesos += total - (total * Decimal("0.05".replace(',', '.')))
+        else:
+            caja_menor.ingresos_en_pesos += total
     caja_menor.save()
     
     ids = EstadoVenta.objects.filter(opciones = 'PAGADA')

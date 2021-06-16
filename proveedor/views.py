@@ -66,7 +66,7 @@ class EliminarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Dele
     
 class RegistrarCuentaCorrienteProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
-    permission_required = ('proveedor.view_cuentacorrienteproveedor','proveedor.add_cuentacorrienteproveedor','proveedor.change_cuentacorrienteproveedor',)
+    permission_required = ('proveedor.view_cuentacorrienteproveedor','proveedor.add_cuentacorrienteproveedor',)
     model = CuentaCorrienteProveedor
     form_class = CuentaCorrienteProveedorForm
     success_message = 'Se registró la cuenta corriente.'

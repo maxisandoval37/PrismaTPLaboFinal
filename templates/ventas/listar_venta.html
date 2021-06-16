@@ -60,7 +60,7 @@ Listado de Ventas
                     <td>${{ venta.total_peso}}</td> 
                     {% endif %}
 
-                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
+                    {% if user.rol.opciones == 'VENDEDOR' or user.is_staff or user.rol.opciones == 'CAJERO'%}
                     <td>
                         <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             Eliminar </a>

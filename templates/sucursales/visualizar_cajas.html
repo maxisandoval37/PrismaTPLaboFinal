@@ -51,7 +51,7 @@ Listado de Cajas
                     <td>{{ caja.saldo_inicial }}</td>
                     <td>{{ caja.saldo_final }}</td>
                     
-
+                    <td><a href="{% url 'sucursales:extraer_dinero' caja.caja_id %}" class="btn btn-primary">Extraer</a></td>
                 </tr>
                 {% endfor %}
 

@@ -17,6 +17,11 @@ Listado de Items
             <strong class="card-title">Listado de Items</strong>
         </div>
     </div>
+    <div class="text-center">
+        <a href="{% url 'items:listar_item_nombre' %}" class="btn btn-info">Ordenar por nombre</a>
+        <a href="{% url 'items:listar_item_stockminimo' %}" class="btn btn-info">Ordenar por stock minimo</a>
+        <a href="{% url 'items:listar_item_stockseguridad' %}" class="btn btn-info">Ordenar por stock de seguridad</a>
+    </div>
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>

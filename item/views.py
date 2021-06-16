@@ -3,10 +3,10 @@ import decimal
 from django.http.response import HttpResponseBadRequest
 from proveedor.models import Proveedor
 from django.shortcuts import render, redirect, HttpResponseRedirect
-from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios, ReportePreciosItems
+from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios, ReportePreciosItems, HistorialPref
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
-from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm, CategoriaForm
+from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import ProtectedError
@@ -147,10 +147,10 @@ class EliminarMezclaUsada(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, 
 class ListarCategorias(ValidarLoginYPermisosRequeridos, ListView):
 
     permission_required = ('item.view_item',)
-    model = Item
+    model = Categoria
     context_object_name = 'obj'
     template_name = 'items/elegir_proveedor.html'
-    queryset = Item.objects.all().order_by('id')
+    queryset = Categoria.objects.all().order_by('id')
     
     def get_context_data(self, **kwargs):
         context = super(ListarCategorias, self).get_context_data(**kwargs)
@@ -272,15 +272,35 @@ def CambioMasivo(request):
         stock = request.POST.get('stock', None)
         items = Item.objects.filter(categoria=int(categoria))
 
-        if int(precio) <= 0:
-            return HttpResponseBadRequest()
+        if precio == '':
+            precio = "vacio"
+        
+        for p in precio:
+            
+            if p.isalpha():
+                return HttpResponseBadRequest()
+        count = 0
+        for p in precio:
+            
+            if p == "-":
+                count += 1
+            if count > 1:
+                return HttpResponseBadRequest()
+        
+        if precio != "vacio":
+            
+            if int(precio) > 99999:
+                return HttpResponseBadRequest()
 
         if len(stock) != 0 and int(stock) < 0:
             return HttpResponseBadRequest()
 
         reporte_precios = ReportePrecios()
         reporte_precios.categoria_asociada_id = int(categoria)
-        reporte_precios.aumento = int(precio)
+        if precio == "vacio":
+            reporte_precios.aumento = 0
+        else:
+            reporte_precios.aumento = int(precio)
         if request.user.is_staff or request.user.rol.opciones != 'SUPERVISOR':
             messages.error(request, "Acceso denegado.")
             return HttpResponse()
@@ -308,14 +328,21 @@ def CambioMasivoItems(request):
         
         if precio == '':
             precio = "vacio"
-        else:
-            if not precio.isdigit():
+        
+        for p in precio:
+            
+            if p.isalpha():
                 return HttpResponseBadRequest()
-       
+        count = 0
+        for p in precio:
+            
+            if p == "-":
+                count += 1
+            if count > 1:
+                return HttpResponseBadRequest()
         
         if precio != "vacio":
-            if int(precio) < 0:
-                return HttpResponseBadRequest()
+            
             if int(precio) > 99999:
                 return HttpResponseBadRequest()
        
@@ -335,7 +362,8 @@ def CambioMasivoItems(request):
 
         for item in items:
             if precio != "vacio":
-                item.precio += int(precio)
+                    item.precio += int(precio)
+        
             else:
                 messages.error(request, 'Debes ingresar un monto para realizar la modificación masiva.')
                 
@@ -746,18 +774,65 @@ def ReporteCuentaCorrienteProveedores(request):
 
     return render(request,'items/reporte_cuenta_corriente_proveedores.html',locals())
 
+class HistorialPreferenciados(ValidarLoginYPermisosRequeridos, ListView):
+    
+    permission_required = ['item.view_categoria',]
+    model = HistorialPref
+    template_name = 'items/historial_pref.html'
+    query = HistorialPref.objects.all().order_by('fecha')
+
 def AsignarProveedor(request):
     
     if request.is_ajax():
         
+        
         proveedor = request.POST.get('proveedor', None)
         categoria_id = request.POST.get('categoria', None)
         
+
         if int(proveedor) == 0:
             return HttpResponseBadRequest()
         else:
+            hist_pref = HistorialPref()
+            hist_pref.proveedor_asociado_id = int(proveedor)
+            hist_pref.save()
             Categoria.objects.filter(id = int(categoria_id)).update(prov_preferido = int(proveedor))
-        
+    
+    
     messages.success(request, 'Proveedor asignado correctamente.')
     return HttpResponse("")
 
+
+
+def ordenarItemPorNombre(request):
+    
+    lista = []
+    query = Item.objects.all().order_by('nombre')
+    
+    for info in query:
+        
+        lista.append(info)
+    
+    return render(request, 'items/listar_item_nombre.html', locals())
+
+def ordenarPorStockMinimo(request):
+    
+    lista = []
+    query = Item.objects.all().order_by('stockminimo').order_by('cantidad')
+    
+    for info in query:
+        
+        lista.append(info)
+    
+    return render(request, 'items/listar_item_stockminimo.html', locals())
+
+def ordenarPorStockSeguridad(request):
+    
+    lista = []
+    query = Item.objects.all().order_by('stockseguridad').order_by('cantidad')
+    
+    for info in query:
+        
+        lista.append(info)
+    
+    return render(request, 'items/listar_item_stockseguridad.html', locals())

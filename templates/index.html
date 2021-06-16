@@ -188,7 +188,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar Sucursales:</h6>
-                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.is_staff %}
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.is_staff or user.rol.opciones == 'SUPERVISOR' %}
                         <a class="collapse-item" href="{% url 'sucursales:listar_sucursales' %}">Listado de
                             Sucursales</a>
                         <a class="collapse-item" href="{% url 'sucursales:registrar_sucursal' %}">Agregar Sucursal</a>
@@ -260,7 +260,9 @@
                 Ventas y Pedidos
             </div>
 
-            
+
+
+            {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'VENDEDOR' %}
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
@@ -299,9 +301,9 @@
                     </div>
                 </div>
             </li>
-           
+           {% endif %}
 
-            
+            {% if user.rol.opciones == 'VENDEDOR' or user.is_staff or user.rol.opciones == 'CAJERO' or user.rol.opciones == 'ADMINISTRATIVO' or user.rol.opciones == 'GERENTE GENERAL' %}
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
@@ -316,8 +318,9 @@
                 <div id="collapseFive" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar ventas:</h6>
-
+                        {% if user.rol.opciones == 'VENDEDOR' or user.is_staff or user.rol.opciones == 'GERENTE GENERAL' %}
                         <a class="collapse-item" href="{% url 'ventas:listar_ventas' %}">Listado de Ventas</a>
+                        {% endif %}
                         {% if user.rol.opciones == 'CAJERO' or user.rol.opciones == 'ADMINISTRATIVO' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'ventas:listar_ventas_cajero' %}">Procesar Ventas</a>
                         {% endif %}
@@ -330,6 +333,7 @@
                 </div>
             </li>
 
+            {% endif %}
            
 
             <li class="nav-item">
@@ -471,14 +475,14 @@
                         </li>
 
                         <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
+                        <!-- <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">1+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
+                                <!-- <span class="badge badge-danger badge-counter">1+</span>
+                            </a> -->
+                            <!-- Dropdown - Alerts
                             <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="alertsDropdown">
                                 <h6 class="dropdown-header">
@@ -499,7 +503,7 @@
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Mostrar todas las
                                     alertas</a>
                             </div>
-                        </li>
+                        </li> 
 
                         <!-- Nav Item - Messages -->
                         <!-- <li class="nav-item dropdown no-arrow mx-1">

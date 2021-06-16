@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Historial de Preferenciados
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Historial de la categoria: {{object}}</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+
+                    <th></th>
+                    <th>Fecha</th>
+                    <th>Proveedor Asignado</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% if object_list %}
+                {% for cat in object_list %}
+                <tr>
+                    <td></td>
+                    <td>{{cat.fecha}}</td>
+                    <td>{{ cat.proveedor_asociado}}</td>
+                
+                </tr>
+                {% endfor %}
+
+
+                {% else %}
+                <h5>El historial está vacío </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+<div class="text-center">
+    <a href="{% url 'items:listar_categorias' %}" class="btn btn-primary">Volver</a>
+</div>
+
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem, EliminarItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor
+from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem, EliminarItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor, ordenarItemPorNombre, ordenarPorStockMinimo, ordenarPorStockSeguridad, HistorialPreferenciados
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -56,4 +56,9 @@ urlpatterns = [
     path('reporte_cuenta_corriente_proveedores/', login_required(ReporteCuentaCorrienteProveedores), name='reporte_cuenta_corriente_proveedores'),
     path('ver_items/', ModificarCamposItems.as_view(), name='ver_items'),
     path('ver_items/CambioMasivoItems/', CambioMasivoItems, name='cambio_masivo_items'),
+    path('listar_item_nombre/', login_required(ordenarItemPorNombre), name='listar_item_nombre'),
+    path('listar_item_stockminimo/', login_required(ordenarPorStockMinimo), name='listar_item_stockminimo'),
+    path('listar_item_stockseguridad/', login_required(ordenarPorStockSeguridad), name='listar_item_stockseguridad'),
+    path('historial_preferenciados/', login_required(HistorialPreferenciados.as_view()), name='historial_preferenciados'),
+         
 ]
