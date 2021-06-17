@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Venta, EstadoVenta, VentaLocal, ItemVenta, Cotizacion
+from .models import Venta, EstadoVenta, VentaLocal, ItemVenta, Cotizacion, ComprobantePago
 # Register your models here.
 
 
@@ -26,4 +26,7 @@ class cotadmin(ModelAdmin):
     
     icon_name = 'person'
     
-
+@register(ComprobantePago)
+class comprobantepagoADMIN(ModelAdmin):
+    
+    icon_name = 'person'

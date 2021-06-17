@@ -40,7 +40,7 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'index' %}">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <img src="{% static 'img/prisma.png' %}" style="width: 35%;">
+                    <img src="{% static 'img/prisma.png' %}" style="width: 55%;">
                 </div>
 
             </a>
@@ -411,7 +411,7 @@
 
             <!-- Sidebar Message -->
             <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="{% static 'img/prisma.png' %}" alt="...">
+                <!-- <img class="sidebar-card-illustration mb-2" src="{% static 'img/prisma.png' %}" > -->
                 <p class="text-center mb-2"><strong>Prisma Technology</strong> </p>
                 <a class="btn btn-success btn-sm" href="#">Aprende sobre nuestro sistema</a>
             </div>
@@ -636,14 +636,24 @@
 
         {% if messages %}
         {% for m in messages %}
-
-        <script>
-            Swal.fire({
-                "title": "Acción realizada",
-                "text": "{{m}}",
-                "icon": "success",
-            })
-        </script>
+            {% if m.tags == 'error' %}
+            <script>
+                Swal.fire({
+                    "title": "Error",
+                    "text": "{{m}}",
+                    "icon": "error",
+                })
+            </script>
+            {% endif %}
+            {% if m.tags == 'success' %}
+                <script>
+                    Swal.fire({
+                        "title": "Acción realizada",
+                        "text": "{{m}}",
+                        "icon": "success",
+                    })
+                </script>
+            {% endif %}
 
         {% endfor %}
         {% endif %}

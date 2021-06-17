@@ -33,14 +33,14 @@ Listado de Cajas
                     <th>Egresos</th>
                     <th>Saldo Inicial</th>
                     <th>Saldo Final</th>
-                   
+
                 </tr>
             </thead>
             <tbody>
                 {% for caja in lista %}
                 <tr>
                     <td></td>
-                    <td>{{ caja.caja_codigo }}</td>
+                    <td id="{{caja.caja_codigo}}" class="cajas">{{ caja.caja_codigo }}</td>
                     <td>{{ caja.saldo_disponible }}</td>
                     <td>{{ caja.saldo_disponible_dolares }}</td>
                     <td>{{ caja.saldo_disponible_euros }}</td>
@@ -50,8 +50,10 @@ Listado de Cajas
                     <td>{{ caja.egresos }}</td>
                     <td>{{ caja.saldo_inicial }}</td>
                     <td>{{ caja.saldo_final }}</td>
-                    
-                    <td><a href="{% url 'sucursales:extraer_dinero' caja.caja_id %}" class="btn btn-primary">Extraer</a></td>
+
+                    <td><input value="0" type="Integer" id="{{caja.caja_codigo}}cantidad_solicitada"
+                            placeholder="Ingrese la cantidad"></td>
+                    <td><a onclick="ExtraerDinero(this.id)" id="{{caja.caja_codigo}}"  class="btn btn-primary">Extraer</a></td>
                 </tr>
                 {% endfor %}
 
@@ -68,4 +70,89 @@ Listado de Cajas
 <div class="text-center">
     <a href="{% url 'sucursales:listar_sucursales' %}" class="btn btn-primary"> Volver </a>
 </div>
+
+<script>
+
+function ExtraerDinero(boton_id) {
+        
+        var csrftoken = getCookie('csrftoken');
+        const inputsCantidades = document.getElementsByClassName('cajas');
+        
+    
+        for (input of inputsCantidades) {
+            
+            console.log(document.getElementById(boton_id+"cantidad_solicitada").value)
+            console.log(document.getElementById(boton_id).innerText)
+            
+
+            $.ajax({
+                type: "POST",
+                url: "ExtraerDinero/",
+                data: {
+                    csrfmiddlewaretoken: csrftoken,
+                    cantidad: document.getElementById(boton_id+"cantidad_solicitada").value,
+                    caja: document.getElementById(boton_id).innerText,
+                    
+                },
+                dataType: "text",
+                success: function (data) {
+                    location.reload()
+                    console.log(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 0) {
+                        alert('Error al intentar Conectarse: Verifique su conexion a Internet.');
+                    }
+                    else if (jqXHR.status == 404) {
+                        alert('La Pagina solicitada no fue encontrada [404]');
+                    }
+                    else if (jqXHR.status == 500) {
+                        alert('Erro Interno [500]');
+                    }
+                    else if (textStatus === 'parsererror') {
+                        alert('Error en el retorno de Datos. [parseJson]');
+                    }
+                    else if (textStatus === 'timeout') {
+                        alert('Tiempo de Espera agotado');
+                    }
+                    else if (textStatus === 'abort') {
+                        alert('Solicitud Abortada. [Ajax Request]');
+                    }
+                    else {
+                        ErrorGeneral()
+                    }
+                }
+            });
+            break;
+        }
+    }
+
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function ErrorGeneral() {
+
+        Swal.fire({
+            "title": "Ups",
+            "text": "Ha ocurrido un error.",
+            "icon": "error",
+        })
+    }
+
+
+</script>
+
 {% endblock %}

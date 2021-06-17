@@ -81,7 +81,7 @@ class Venta(models.Model):
         if len(deudas) >= 3:
             raise ValidationError('No es posible registrar la venta, ya que el cliente posee 3 deudas impagas.')
         
-        if self.estado.opciones != 'EN PREPARACION':
+        if self.estado.opciones != 'EN PREPARACION' and self.monto_ingresado == 0:
             raise ValidationError('El estado inicial de la venta debe ser "EN PREPARACIÓN" ')
       
         try:
@@ -170,4 +170,21 @@ class Cotizacion(models.Model):
     def __str__(self):
         return "Moneda: {}, Cotización: {}".format(self.moneda, self.cotizacion)
     
+    
+class ComprobantePago(models.Model):
+    
+    fecha = models.DateTimeField('Fecha', auto_now_add=True)
+    numero_venta = models.IntegerField('N° de venta')
+    mediodepago = models.CharField('Método de pago', max_length=30)
+    moneda = models.CharField('Tipo de moneda', max_length=30)
+    vendedor = models.CharField('Vendedor Asociado', max_length=30)
+    sucursal = models.CharField('Sucursal Asociada', max_length=30)
+    total = models.CharField('Total de la compra', max_length= 30)
+    
+    class Meta:
+        verbose_name = 'comprobante de pago'
+        verbose_name_plural = 'comprobantes de pago'
+        
+    def __str__(self):
+        return "Venta: {}, Total: {}".format(self.numero_venta, self.total)
     

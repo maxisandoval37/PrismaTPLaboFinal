@@ -1,7 +1,8 @@
+from email.mime.nonmultipart import MIMENonMultipart
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.views.generic.edit import UpdateView
 from .forms import VentaLocalForm, VentaVirtualForm, ItemVentaForm
-from .models import EstadoVenta, VentaLocal, VentaVirtual, Venta, ItemVenta, Cotizacion
+from .models import ComprobantePago, EstadoVenta, VentaLocal, VentaVirtual, Venta, ItemVenta, Cotizacion
 from django.views.generic import  CreateView,  DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy
@@ -15,8 +16,13 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from decimal import Decimal
 import json
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from usuario.models import Supervisor, Rol
+import urllib.request
+from PIL import Image
+
+
+
 
 
 class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
@@ -750,18 +756,41 @@ def FinalizarVenta(request, venta):
     movimiento.responsable = request.user.id
     movimiento.save()
     
+    comprobante_de_pago = ComprobantePago()
+    comprobante_de_pago.numero_venta = instancia.numero_comprobante
+    comprobante_de_pago.mediodepago = instancia.mediodepago.opciones
+    comprobante_de_pago.moneda = instancia.tipo_de_moneda.opciones
+    comprobante_de_pago.vendedor = instancia.vendedor_asociado.nombre
+    comprobante_de_pago.sucursal = instancia.sucursal_asociada.nombre
+    comprobante_de_pago.total = "$ " + str(total)
+    comprobante_de_pago.save()
+    
     querycliente = Cliente.objects.filter(id = instancia.cliente_asociado_id)
     cliente = ""
     for cliente in querycliente:
         cliente = cliente
     
-    email = EmailMessage("Venta realizada - Prisma Technology",
-                                 "Hola {}.\n\n {} ".format(cliente.nombre,"Felicidades, te queremos informar que la venta ha sido procesada y se encuentra pagada.\n Gracias por confiar en nosotros.\n [Aquí estaría el comprobante de pago - SPRINT 4]" ),
-                                 "",[cliente.email], reply_to=["VENTA REALIZADA"])
     
+    # email = EmailMessage("Venta realizada - Prisma Technology",
+    #                              "Hola {}.\n\n {} ".format(cliente.nombre,"Felicidades, te queremos informar que la venta ha sido procesada y se encuentra pagada.\n Gracias por confiar en nosotros.\n [Aquí estaría el comprobante de pago - SPRINT 4]" ),
+    #                              "",[cliente.email], reply_to=["VENTA REALIZADA"])
+    
+    subject, from_email, to = 'Venta realizada - Prisma Technology ', 'tmmzprueba@gmail.com', cliente.email
+    text_content = 'Felicidades, te queremos informar que la venta ha sido procesada y se encuentra pagada.\n Gracias por confiar en nosotros.'
+    html_content = '<div id="comprobante" class="text-center"> <p>' + text_content + '</p><br><p><b> Comprobante de pago: </b> </p><br> <ul> <li> N° de venta: ' + str(comprobante_de_pago.numero_venta) + '</li><li> Medio de pago: ' + comprobante_de_pago.mediodepago + '</li><li> Moneda: ' + comprobante_de_pago.moneda + '</li><li> Vendedor Asignado: '+ comprobante_de_pago.vendedor + '</li><li> Sucursal Asignada: ' + comprobante_de_pago.sucursal +'</li><li> Total: '+ comprobante_de_pago.total + '</li></ul>' 
+   
+    email = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    email.attach_alternative(html_content, "text/html")
+    
+    # urllib.request.urlretrieve(
+    # 'https://image.pngaaa.com/426/34426-middle.png',
+    # "comprobantes/doge.png")
+  
+    # img = Image.open("comprobantes/doge.png")
+    
+    # email.attach_file(img.filename)
     
     try:
-        
         email.send()
     except:
         
@@ -832,3 +861,15 @@ def ReporteCuentaCorrienteClientes(request):
         ventas.append(dic)
 
     return render(request,'ventas/reporte_cuenta_corriente_clientes.html',locals())
+
+
+def verComprobantePago(request, venta_id):
+    
+    query = ComprobantePago.objects.filter(numero_venta = venta_id)
+    lista = []
+    
+    for info in query:
+        
+        lista.append(info)
+        
+    return render(request, 'ventas/ver_comprobante.html', locals())

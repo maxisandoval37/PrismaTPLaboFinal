@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.db.models import ProtectedError
 from django.contrib.messages.views import SuccessMessageMixin
 from usuario.models import Rol, Supervisor
+from django.http import HttpResponse, HttpResponseBadRequest
 
 def ListarSucursal(request):
     
@@ -86,15 +87,6 @@ class RegistrarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateVi
     success_url = reverse_lazy('sucursales:listar_sucursales')
     success_message = 'Caja registrada correctamente.'
     
-class EditarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
-    
-    permission_required = ('sucursal.view_caja','sucursal.add_caja',)
-    model = Caja
-    fields = ['egresos']
-    template_name = 'sucursales/crear_caja.html'
-    success_url = reverse_lazy('sucursales:listar_sucursales')
-    success_message = 'Extracción realizada.'
-
 
 
 def idCaja(request, id):
@@ -260,3 +252,45 @@ def ReporteTransaccionesVentaCompra(request):
         operaciones.append(dic)
 
     return render(request,'sucursales/reporte_transacciones_venta_compra.html',locals())
+
+
+def ExtraerDinero(request, id):
+    
+    if request.is_ajax():
+        
+        cantidad = request.POST.get('cantidad', None)
+        caja = request.POST.get('caja', None)
+        
+        QueryCaja = Caja.objects.filter(codigo = caja)
+        print(QueryCaja)
+        
+        for caja in QueryCaja:
+            
+            if caja.saldo_disponible < int(cantidad):
+                messages.error(request, "La caja no posee suficiente saldo para extraer.")
+                return HttpResponse()
+            
+            elif int(cantidad) < 0:
+                messages.error(request, "El monto no puede ser negativo.")
+                return HttpResponse()
+            
+            elif int(cantidad) == 0:
+                messages.error(request, 'Debes ingresar un monto a extraer.')
+                return HttpResponse()
+            
+            else:
+                
+                movimiento = Operacion()
+                movimiento.monto = "- " + str(cantidad) + " (En PESO)"
+                movimiento.tipo = "Extracción"
+                movimiento.caja_asociada_id = caja.id
+                movimiento.identificador = "Banco"
+                movimiento.responsable = request.user.id
+                movimiento.save()
+                
+                caja.saldo_disponible = caja.saldo_disponible - int(cantidad)
+                caja.egresos += int(cantidad)
+                caja.save()
+        
+    messages.success(request, 'Extracción realizada.')
+    return HttpResponse("")

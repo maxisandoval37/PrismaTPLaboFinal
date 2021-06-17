@@ -92,6 +92,9 @@ Listado de Ventas
                     <td>
                         <a  class="btn btn-secondary">Finalizar venta</a>
                     </td>
+                    <td>
+                        <a href="{% url 'ventas:ver_comprobante' venta.numero_comprobante %}" class= "btn btn-success"> Comprobante de pago</a>
+                    </td>
                     {% endif %}
                     {% endif %}
                 </tr>

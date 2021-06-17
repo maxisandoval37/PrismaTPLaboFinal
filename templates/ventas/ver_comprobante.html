@@ -1,0 +1,61 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Comprobante de pago
+{% endblock title %}
+
+
+
+{% block content %}
+
+
+<div class="bg-gray-100">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Comprobante de pago | Venta: {{object}}</strong>
+        </div>
+    </div>
+
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Número de comprobante</th>
+                    <th>Fecha</th>
+                    <th>Medio de pago</th>
+                    <th>Tipo de moneda</th>
+                    <th>Vendedor Asociado</th>
+                    <th>Total</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% if lista %}
+                {% for venta in lista %}
+                <tr>
+                    <td></td>
+                    <td>{{ venta.numero_venta }}</td>
+                    <td>{{ venta.fecha }}</td>
+                    <td>{{ venta.mediodepago }}</td>
+                    <td>{{ venta.moneda}} </td>
+                    <td>{{ venta.vendedor}}</td>
+                    <td>{{ venta.total}}</td>
+                    
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5> No existe el comprobante de pago. </h1>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+<div class="text-center">
+    <a class="btn btn-primary" href="{% url 'ventas:listar_ventas_cajero' %}">Volver</a>
+</div>
+
+{% endblock %}
