@@ -7,9 +7,9 @@ from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, FormView
-from .models import Administrativo, Usuario, Vendedor, Supervisor, Cajero
+from .models import Administrativo, GerenteGeneral, Usuario, Vendedor, Supervisor, Cajero
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from .forms import FormularioLogin, FormularioUsuario, FormularioVendedor, FormularioSupervisor, FormularioCajero, FormularioAdministrativo
+from .forms import FormularioLogin, FormularioUsuario, FormularioVendedor, FormularioSupervisor, FormularioCajero, FormularioAdministrativo, FormularioGerenteGeneral
 from .mixins import ValidarLoginYPermisosRequeridos
 from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
@@ -72,7 +72,7 @@ class EditarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateVi
     
     permission_required = ('usuario.view_usuario','usuario.change_usuario',)
     model = Usuario
-    fields = ['nombre','apellido','email','telefono','rol']
+    fields = ['nombre','apellido','email','telefono']
     template_name = 'usuarios/editar_usuario.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Se editó al usuario correctamente.'
@@ -113,9 +113,14 @@ class RegistrarAdministrativo(ValidarLoginYPermisosRequeridos,SuccessMessageMixi
     template_name = 'usuarios/crear_administrativo.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Administrativo registrado correctamente.'
-
-
-
-
+    
+class RegistrarGerenteGeneral(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, CreateView):
+    
+    permission_required = ('usuario.view_gerentegeneral','usuario.add_gerentegeneral',)    
+    model = GerenteGeneral
+    form_class = FormularioGerenteGeneral
+    template_name = 'usuarios/crear_gerentegeneral.html'
+    success_url = reverse_lazy('usuarios:listar_usuarios')
+    success_message = 'Gerente General registrado correctamente.'
 
     

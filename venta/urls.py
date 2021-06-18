@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero, EliminarVenta, ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago
+from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero, EliminarVenta, ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores
 
 urlpatterns = [
 
@@ -33,5 +33,7 @@ urlpatterns = [
     path('reporte_cuenta_corriente_clientes/', login_required(
         ReporteCuentaCorrienteClientes), name='reporte_cuenta_corriente_clientes'),
     path('ver_comprobante/<int:venta_id>/', login_required(verComprobantePago), name= 'ver_comprobante'),
+    path('reporte_ventas_vendedor/', login_required(
+        ReporteVentasVendedores), name='reporte_ventas_vendedor'),
         
 ]

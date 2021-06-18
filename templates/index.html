@@ -86,7 +86,7 @@
                         <a class="collapse-item" href="{% url 'usuarios:listar_usuarios' %}">Listado de Usuarios</a>
                         {% endif %}
                         {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
-                        <a class="collapse-item" href="{% url 'usuarios:registrar_usuario' %}">Registrar Gerente General</a>
+                        <a class="collapse-item" href="{% url 'usuarios:registrar_gerentegeneral' %}">Registrar Gerente General</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_vendedor' %}">Registrar Vendedor</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_supervisor' %}">Registrar
                             Supervisor</a>
@@ -243,6 +243,7 @@
                         <a class="collapse-item" href="{% url 'items:reporte_cambios_masivos' %}">Cambios de precios</a>
                         <a class="collapse-item" href="{% url 'sucursales:reporte_transacciones_venta_compra' %}">Transacciones</a>
                         <a class="collapse-item" href="{% url 'items:reporte_riesgo_stock' %}">Ítems con riesgo de stock</a>
+                        <a class="collapse-item" href="{% url 'ventas:reporte_ventas_vendedor' %}">Ventas por vendedor</a>
                     </div>
                 </div>
             </li>

@@ -121,18 +121,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     def clean(self):
         
         patron = '^[^ ][a-zA-Z ]+$'
-        query = Rol.objects.filter(opciones = 'GERENTE GENERAL')
-        gerente = ""
-        for obj in query:
-            gerente = obj.id
         
-        gerentes = Usuario.objects.filter(rol = gerente)
-        
-        if len(gerentes) == 1:
-            raise ValidationError('Solo puedes registrar un único gerente general.')
-        
-        if self.rol.opciones != 'GERENTE GENERAL':
-            raise ValidationError('El rol debe ser GERENTE GENERAL')
         
         if not self.username.isalnum():
             raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
@@ -223,6 +212,30 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
                     super().save(*args,**kwargs)
 
 
+class GerenteGeneral(Usuario):
+    
+    class Meta:
+        
+        verbose_name = 'gerente general'
+        verbose_name_plural = 'gerentes generales'
+
+    def __str__(self):
+        return self.username 
+    
+    def clean(self):
+        
+        query = Rol.objects.filter(opciones = 'GERENTE GENERAL')
+        gerente = ""
+        for obj in query:
+            gerente = obj.id
+        
+        gerentes = Usuario.objects.filter(rol = gerente)
+        
+        if len(gerentes) == 1:
+            raise ValidationError('Solo puedes registrar un único gerente general.')
+    
+        if self.rol.opciones != 'GERENTE GENERAL':
+         raise ValidationError('El rol debe ser GERENTE GENERAL')
 
 class Supervisor(Usuario):
     

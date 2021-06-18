@@ -1,7 +1,7 @@
 from django.contrib.admin import ModelAdmin, register
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from usuario.models import Rol, Usuario, Estado, Supervisor, Vendedor
+from usuario.models import Rol, Usuario, Estado, Supervisor, Vendedor, GerenteGeneral
 
 @register(Rol)
 class MaterialRolAdmin(ModelAdmin):
@@ -30,4 +30,9 @@ class supervisorADMIN(ModelAdmin):
 @register(Vendedor)
 class vendedorADMIN(ModelAdmin):
 
+    icon_name = 'person'
+    
+@register(GerenteGeneral)
+class gerenteGeneral(ModelAdmin):
+    
     icon_name = 'person'

@@ -264,6 +264,19 @@ def ExtraerDinero(request, id):
         QueryCaja = Caja.objects.filter(codigo = caja)
         print(QueryCaja)
         
+        if cantidad.isalpha():
+           messages.error(request, "El monto sólo puede contener dígitos.")
+           return HttpResponse()
+       
+        for c in cantidad:
+            if c.isalpha():
+                messages.error(request, "El monto sólo puede contener dígitos.")
+                return HttpResponse() 
+            
+        if not cantidad.isdigit():
+            messages.error(request, "El monto sólo puede contener dígitos.")
+            return HttpResponse()
+        
         for caja in QueryCaja:
             
             if caja.saldo_disponible < int(cantidad):

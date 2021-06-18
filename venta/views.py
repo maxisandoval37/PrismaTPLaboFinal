@@ -18,8 +18,7 @@ import json
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import EmailMultiAlternatives
 from usuario.models import Supervisor, Rol
-import urllib.request
-from PIL import Image
+from django.db.models import Count
 
 
 
@@ -761,7 +760,7 @@ def FinalizarVenta(request, venta):
     comprobante_de_pago.mediodepago = instancia.mediodepago.opciones
     comprobante_de_pago.moneda = instancia.tipo_de_moneda.opciones
     comprobante_de_pago.vendedor = instancia.vendedor_asociado.nombre
-    comprobante_de_pago.sucursal = instancia.sucursal_asociada.nombre
+    comprobante_de_pago.sucursal = instancia.sucursal_asociada.codigo
     comprobante_de_pago.total = "$ " + str(total)
     comprobante_de_pago.save()
     
@@ -873,3 +872,98 @@ def verComprobantePago(request, venta_id):
         lista.append(info)
         
     return render(request, 'ventas/ver_comprobante.html', locals())
+
+def ReporteVentasVendedores(request):
+    sucursalesIds = []
+
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+    
+    sucursal_asociada = ""
+
+    QueryEstados = EstadoVenta.objects.filter(opciones = 'PAGADA')
+    estado_pagada = ""
+    
+    for estado in QueryEstados:
+        
+        estado_pagada = estado.id
+    
+    
+    ItemFromQuery = Venta.objects.filter(estado = estado_pagada).values('vendedor_asociado_id').annotate(Count('vendedor_asociado_id')).order_by()
+    
+    
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        supervisorQuery = Supervisor.objects.filter(username = request.user.username)
+        
+        for supervisor in supervisorQuery:
+            sucursal_asociada = supervisor.sucursal.id
+        
+        sucursalesIds.append(sucursal_asociada)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+    
+    ventas = []
+    dic_vendedores = {}
+    
+    for venta in ItemFromQuery:
+        
+        ventas.append(venta.get('vendedor_asociado_id'))
+        dic_vendedores.update({venta.get('vendedor_asociado_id'):venta.get('vendedor_asociado_id__count')})
+        
+    
+    
+    vendedor_obtenido = Vendedor.objects.raw("""
+     SELECT *
+     FROM usuario_vendedor
+     WHERE usuario_ptr_id IN %s                                                                                 
+     """, [tuple(ventas)])
+    
+    
+    VentaFromQuery = Venta.objects.raw(""" 
+     SELECT *
+     FROM venta_venta
+     WHERE vendedor_asociado_id IN %s                                                                                 
+     """, [tuple(ventas)])
+    
+    total = 0
+    dic_ventas = {}
+    for venta in VentaFromQuery:
+        
+        if not dic_ventas.__contains__(venta.vendedor_asociado_id):
+            dic_ventas.update({venta.vendedor_asociado_id: 0})
+        
+        dic_ventas.update({venta.vendedor_asociado_id:dic_ventas.get(venta.vendedor_asociado_id)+venta.monto_ingresado})
+        
+    
+    lista = []
+    for fila in vendedor_obtenido:
+        print(fila.sucursal_id)
+        print(sucursalesIds)
+        if fila.sucursal_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
+    
+    items = []
+
+    for vendedor in lista:
+        dic = {
+            "vendedor": vendedor.nombre,
+            "cantidad_ventas": dic_vendedores.get(vendedor.id),
+            "sucursal_id": vendedor.sucursal_id,
+            "total": dic_ventas.get(vendedor.id),
+        }
+        items.append(dic)
+
+    
+    return render(request, 'ventas/reporte_ventas_vendedor.html', locals())
