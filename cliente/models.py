@@ -157,6 +157,12 @@ class Cliente(models.Model):
         
         patron = '^[^ ][a-zA-Z ]+$'
         
+        clientes = Cliente.objects.all() 
+        
+        for cliente in clientes:
+            if self.cuit == cliente.cuit and self.id != cliente.id:
+                raise ValidationError('Ya existe un cliente con el cuit ingresado.')
+        
         if len(self.cuit) != 11:
             raise ValidationError('El cuit debe tener exactamente 11 digitos.')
         if not self.cuit.isdigit():

@@ -45,43 +45,65 @@ Listado de Presupuestos
                     <td>{{ presupuesto.total}}</td>                    
 
                     {% if user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
-                    <td>
+                    <!-- <td>
                         <a href="{% url 'presupuestos:eliminar_presupuesto' presupuesto.pk %}" class="btn btn-danger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                              </svg>
                             Eliminar </a>
-                    </td>
+                    </td> -->
                     {% endif %}
                     {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
                     <td>
                         <a href="{% url 'presupuestos:registrar_itempresupuesto' presupuesto.sucursal_asociada.id  presupuesto.pk %}" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                <path d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2H9v6a1 1 0 1 1-2 0V9H1a1 1 0 0 1 0-2h6V1a1 1 0 0 1 1-1z"/>
+                              </svg>
                             Agregar item </a>
                     </td>
                     {% else %} 
                     <td>
-                        <a class="btn btn-secondary">Agregar item </a>
+                        <a class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                <path d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2H9v6a1 1 0 1 1-2 0V9H1a1 1 0 0 1 0-2h6V1a1 1 0 0 1 1-1z"/>
+                              </svg> Agregar item </a>
                     </td>
                     {% endif %}
                     {% endif %}
                     <td>
                         <a href="{% url 'presupuestos:listar_itemspresupuesto' presupuesto.pk %}" class="btn btn-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                              </svg>
                             Ver detalle </a>
                     </td>
                     
                     {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
                         <td>
-                            <a href="{% url 'presupuestos:rechazar_presupuesto' presupuesto.pk %}" class="btn btn-danger">Rechazar presupuesto</a>
+                            <a href="{% url 'presupuestos:rechazar_presupuesto' presupuesto.pk %}" class="btn btn-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                                  </svg> Rechazar presupuesto</a>
                         </td>
                         <td>
-                            <a href="{% url 'presupuestos:aprobar_presupuesto' presupuesto.pk %}" class="btn btn-success">Aprobar presupuesto</a>
+                            <a href="{% url 'presupuestos:aprobar_presupuesto' presupuesto.pk %}" class="btn btn-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                  </svg> Aprobar presupuesto</a>
                         </td>
                     {% else %}
                         
                         <td>
-                            <a class="btn btn-secondary">Rechazar presupuesto</a>
+                            <a class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                              </svg> Rechazar presupuesto</a>
                         </td>
                         <td>
-                            <a class="btn btn-secondary">Aprobar presupuesto</a>
+                            <a class="btn btn-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                              </svg> Aprobar presupuesto</a>
                         </td>
                     {% endif %}
                     {% endif %}

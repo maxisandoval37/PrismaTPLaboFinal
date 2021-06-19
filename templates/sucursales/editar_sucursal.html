@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+
+{% block title %} Edición de sucursales {% endblock title %}
+
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <strong class="card-tittle">Cambiar estado de la sucursal</strong>
+    </div>
+
+    <div class="card-body">
+        <form class="user" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            {{field.label_tag}}
+            {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+            
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+            <div class="form-group">
+                {% render_field field class="form-control form-control" %}
+
+                {% endfor %}
+
+            </div>
+
+            <div class="">
+                <a href="{% url 'sucursales:listar_sucursales' %}" class="btn btn-danger"> Cancelar </a>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

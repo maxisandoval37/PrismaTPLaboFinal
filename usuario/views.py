@@ -72,7 +72,7 @@ class EditarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateVi
     
     permission_required = ('usuario.view_usuario','usuario.change_usuario',)
     model = Usuario
-    fields = ['nombre','apellido','email','telefono']
+    fields = ['nombre','apellido','email','telefono','estado']
     template_name = 'usuarios/editar_usuario.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Se editó al usuario correctamente.'

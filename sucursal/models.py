@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-
+from django.db.models.enums import TextChoices
+from django.db.models.signals import post_save
 
 
 
@@ -29,18 +30,26 @@ class Caja(models.Model):
         
         if not self.codigo.isalnum():
             raise ValidationError('El identificador solo puede contener letras y números.')
-        if len(self.codigo) < 2 and len(self.codigo) > 4:
+        if len(self.codigo) < 2 or len(self.codigo) > 4:
             raise ValidationError('El indentificador debe tener entre 2 y 4 caracteres.')
-        if self.saldo_disponible < 1 and self.saldo_disponible > 9 or self.saldo_disponible_dolares < 1 and self.saldo_disponible_dolares > 9 or self.saldo_disponible_euros < 1 and self.saldo_disponible_euros > 9:
-            raise ValidationError('El saldo disponible debe tener entre 1 y 9 digitos.')
-        if self.egresos < 1 and self.egresos > 9:
-            raise ValidationError('Los egresos deben tener entre 1 y 9 digitos.')
-        if self.ingresos_en_pesos < 1 and self.ingresos_en_pesos > 9 or self.ingresos_en_dolares < 1 and self.ingresos_en_dolares > 9 or self.ingresos_en_euros < 1 and self.ingresos_en_euros > 9:
-            raise ValidationError('Los ingresos deben tener entre 1 y 9 digitos.')
-        if self.saldo_inicial < 1 and self.saldo_inicial > 9:
-            raise ValidationError('El saldo inicial debe tener entre 1 y 9 digitos.')
-        if self.saldo_final < 1 and self.saldo_final > 9:
-            raise ValidationError('El saldo final debe tener entre 1 y 9 digitos.')
+        if self.saldo_disponible < 0:
+            raise ValidationError('El saldo disponible en pesos no puede ser negativo.')
+        if self.saldo_disponible_dolares < 0:
+            raise ValidationError('El saldo disponible en dolares no puede ser negativo.')
+        if self.saldo_disponible_euros < 0:
+            raise ValidationError('El saldo disponible en euros no puede ser negativo.')
+        if self.egresos < 0 :
+            raise ValidationError('Los egresos no pueden ser negativos.')
+        if self.ingresos_en_pesos < 0:
+            raise ValidationError('Los ingresos en pesos no pueden ser negativos.')
+        if self.ingresos_en_dolares < 0:
+            raise ValidationError('Los ingresos en dolares no pueden ser negativos.')
+        if self.ingresos_en_euros < 0:
+            raise ValidationError('Los ingresos en euros no pueden ser negativos.')
+        if self.saldo_inicial < 0 :
+            raise ValidationError('El saldo inicial no puede ser negativo.')
+        if self.saldo_final < 0:
+            raise ValidationError('El saldo final no puede ser negativo.')
         
         if self.saldo_disponible < 0 or self.saldo_disponible_dolares < 0 or self.saldo_disponible_euros < 0:
             raise ValidationError('El saldo disponible no puede ser negativo.')
@@ -62,12 +71,24 @@ class Caja(models.Model):
     def __str__(self):
        return self.codigo
    
+class EstadoSucursal(models.Model):
+    
+    class opcionesEstado(TextChoices):
+        
+        ACTIVA = 'ACTIVA'
+        INACTIVA = 'INACTIVA'
+        
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length=8, default= 'ACTIVA')
+
+    def __str__(self):
+        return self.opciones
 
 
 class Sucursal (models.Model):
     
     codigo = models.CharField(max_length = 4, unique=True)
     idCasaCentral = models.IntegerField(default= 1)
+    estado = models.ForeignKey(EstadoSucursal, on_delete=models.PROTECT, null=True)
     calle = models.CharField('Calle', max_length=20)
     numero = models.CharField('Numero',  max_length=4)
     localidad = models.CharField('Localidad', max_length=20, null=True)
@@ -76,30 +97,48 @@ class Sucursal (models.Model):
    
     
     def clean(self):
+        
+
+        for char in self.localidad:
+            
+            if not char.isalpha() and char != " ":
+                raise ValidationError('La localidad solo puede tener letras y espacios.')
+            
+        for char in self.provincia:
+            
+            if not char.isalpha() and char != " ":
+                raise ValidationError('La provincia solo puede tener letras y espacios.')
+           
+        for char in self.cod_postal:
+            
+            if char.isalpha():
+                raise ValidationError("El código postal solo puede tener digitos.")
+        
         if not self.codigo.isalnum():
             raise ValidationError('El código de la sucursal solo puede contener letras y números')
-        if len(self.codigo) < 2 and len(self.codigo) > 4:
+        if len(self.codigo) < 2 or len(self.codigo) > 4:
             raise ValidationError('El código de la sucursal debe tener entre 2 y 4 caracteres')
         
-        if len(self.calle) < 4 and len(self.calle) > 20:
+        if len(self.calle) < 4 or len(self.calle) > 20:
             raise ValidationError('La calle debe tener entre 4 y 20 letras')
         
         if not self.numero.isdigit():
             raise ValidationError('El número solo puede contener digitos.') 
          
-        if len(self.numero) < 2 and len(self.numero) > 4:
+        if len(self.numero) < 2 or len(self.numero) > 4:
             raise ValidationError('El número debe tener entre 1 y 4 digitos.')
         
-        if len(self.localidad) < 4 and len(self.localidad) > 20:
+        
+        if len(self.localidad) < 4 or len(self.localidad)  > 20:
             raise ValidationError('La calle debe tener entre 4 y 20 letras')
             
-        if len(self.provincia) < 4 and len(self.provincia) > 20:
+        if len(self.provincia) < 4 or len(self.provincia)> 20:
             raise ValidationError('La provincia debe tener entre 4 y 20 letras')
         
         if not self.cod_postal.isdigit():
             raise ValidationError('El código postal solo puede contener digitos.')
         
-        if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
+        if len(self.cod_postal) < 1 or len(self.cod_postal) > 4:
             raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
     
     class Meta:
@@ -130,3 +169,18 @@ class Operacion(models.Model):
         
         
         
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    
+    if instance.estado  == None:
+        
+        estadosQuery = EstadoSucursal.objects.filter(opciones = 'ACTIVA')
+        activo = ""
+        for estado in estadosQuery:
+            activo = estado.id 
+        
+        instance.estado_id = activo 
+        instance.save()
+        
+post_save.connect(defaultActivo, sender = Sucursal)

@@ -174,7 +174,7 @@ class FormularioVendedor(forms.ModelForm):
 
     class Meta:
         model = Vendedor
-        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','estado','telefono','username','sucursal')
+        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','telefono','username','sucursal')
         widgets = {
             'email': forms.EmailInput(
                 attrs = {
@@ -245,11 +245,7 @@ class FormularioVendedor(forms.ModelForm):
                     'class': 'form-control'
                 }
             ),
-            'estado': forms.Select(
-                attrs = {
-                    'class': 'form-control'
-                }
-            ),
+            
             'username': forms.TextInput(
                 attrs = {
                     'class': 'form-control',
@@ -734,7 +730,7 @@ class FormularioGerenteGeneral(forms.ModelForm):
 
         class Meta:
             model = GerenteGeneral
-            fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','estado','telefono','username')
+            fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','telefono','username')
             widgets = {
                 'email': forms.EmailInput(
                     attrs = {
@@ -805,11 +801,7 @@ class FormularioGerenteGeneral(forms.ModelForm):
                         'class': 'form-control'
                     }
                 ),
-                'estado': forms.Select(
-                    attrs = {
-                        'class': 'form-control'
-                    }
-                ),
+                
                 'username': forms.TextInput(
                     attrs = {
                         'class': 'form-control',

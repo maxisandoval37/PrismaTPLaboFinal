@@ -120,6 +120,7 @@ class UnidadDeMedida(models.Model):
     class opcionesUDM(models.TextChoices):
         
         TONELADA = 'TONELADA'
+        UNIDAD = 'UNIDAD'
         KG = 'KG'
         GR = 'GR'
         MG = 'MG'
@@ -144,7 +145,7 @@ class Estado(models.Model):
         PENDIENTE =  'PENDIENTE'
         DESCONTINUADO = 'DESCONTINUADO'
         
-    opciones = models.CharField(choices = opcionesEstado.choices, max_length=13)
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length=13, default= 'ACTIVO')
 
     def __str__(self):
         return self.opciones

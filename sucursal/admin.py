@@ -1,5 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Sucursal, Caja, Operacion
+from .models import Sucursal, Caja, Operacion, EstadoSucursal
 
 @register(Sucursal)
 class sucursalAdmin(ModelAdmin):
@@ -16,5 +16,10 @@ class cajaADmin(ModelAdmin):
     
 @register(Operacion)
 class operacionAdmin(ModelAdmin):
+    
+    icon_name = 'home'
+    
+@register(EstadoSucursal)
+class estadoadmin(ModelAdmin):
     
     icon_name = 'home'

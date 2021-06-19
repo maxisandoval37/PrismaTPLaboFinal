@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from sucursal.models import Sucursal
 import re
+from django.db.models.signals import pre_save
 
 
 class Rol(models.Model):
@@ -60,7 +61,7 @@ class Estado(models.Model):
         ACTIVO = 'ACTIVO'
         INACTIVO = 'INACTIVO'
     
-    opciones = models.CharField(choices = opcionesEstado.choices, max_length=8)
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length=8, default= 'ACTIVO')
 
     def __str__(self):
         return self.opciones
@@ -305,3 +306,23 @@ class Administrativo(Usuario):
         
      if self.rol.opciones != 'ADMINISTRATIVO':
          raise ValidationError('El rol debe ser ADMINISTRATIVO')
+     
+     
+
+def defaultActivo(sender, instance, **kwargs):
+    
+    if instance.estado == None:
+        usuario = instance.id 
+        
+        estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+        activo = ""
+        for estado in estadosQuery:
+            activo = estado.id 
+        
+        print(instance)
+        print(activo)
+        print(usuario.estado_id)
+        usuario.estado_id = activo 
+        
+pre_save.connect(defaultActivo, sender = Usuario)
+    

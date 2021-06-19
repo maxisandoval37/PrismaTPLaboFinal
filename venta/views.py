@@ -722,6 +722,7 @@ def FinalizarVenta(request, venta):
         caja_menor.saldo_disponible_euros = caja_menor.saldo_disponible_euros + total
         if (total * Decimal("115.21".replace(',', '.'))) >= 20000 and instancia.mediodepago.opciones == 'EFECTIVO':
             caja_menor.ingresos_en_euros += total - (total * Decimal("0.05".replace(',', '.')))
+            total -= (total * Decimal("0.05".replace(',', '.')))
         else:
             caja_menor.ingresos_en_euros += total
         
@@ -729,6 +730,7 @@ def FinalizarVenta(request, venta):
         caja_menor.saldo_disponible_dolares = caja_menor.saldo_disponible_dolares + total
         if (total * Decimal("95.18".replace(',', '.'))) >= 20000 and instancia.mediodepago.opciones == 'EFECTIVO':
             caja_menor.ingresos_en_dolares += total - (total * Decimal("0.05".replace(',', '.')))
+            total -= (total * Decimal("0.05".replace(',', '.')))
         else:
             caja_menor.ingresos_en_dolares += total
             
@@ -736,6 +738,7 @@ def FinalizarVenta(request, venta):
         caja_menor.saldo_disponible = caja_menor.saldo_disponible + total
         if total >= 20000 and instancia.mediodepago.opciones == 'EFECTIVO':
             caja_menor.ingresos_en_pesos += total - (total * Decimal("0.05".replace(',', '.')))
+            total -= (total * Decimal("0.05".replace(',', '.')))
         else:
             caja_menor.ingresos_en_pesos += total
     caja_menor.save()

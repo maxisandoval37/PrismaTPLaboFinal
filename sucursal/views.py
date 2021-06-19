@@ -54,28 +54,16 @@ class RegistrarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Crea
     template_name = 'sucursales/crear_sucursal.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
     success_message = 'Sucursal registrada correctamente.'
-
-
-class EliminarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
-    permission_required = ('sucursal.view_sucursal','sucursal.add_sucursal', 'sucursal.change_sucursal','sucursal.delete_sucursal',)
+class EditarSucursal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
+    
+    permission_required = ('sucursal.view_sucursal','sucursal.add_sucursal',)
     model = Sucursal
-    template_name = 'sucursales/eliminar.html'
+    fields = ['estado']
+    template_name = 'sucursales/editar_sucursal.html'
     success_url = reverse_lazy('sucursales:listar_sucursales')
-    success_message = 'Se eliminó la sucursal correctamente.'
-    
-    def delete(self, request, *args, **kwargs):
-        
-        self.object = self.get_object()
-        success_url = self.get_success_url()
+    success_message = 'El estado de la sucursal se modificó correctamente.'
 
-        try:
-            self.object.delete()
-        except ProtectedError:
-            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Esta sucursal esta relacionada.')
-            return redirect('items:listar_items')
-
-        return HttpResponseRedirect(success_url)
     
     
 class RegistrarCaja(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):

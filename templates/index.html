@@ -66,7 +66,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             
-            {% if user.is_staff or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'GERENTE GENERAL' %}
+            {% if user.is_staff or user.rol.opciones == 'GERENTE GENERAL' %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
@@ -82,10 +82,10 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar Usuarios:</h6>
-                        {% if user.rol.opciones == 'GERENTE GENERAL' or 'SUPERVISOR' or user.is_staff %}
+                        {% if user.rol.opciones == 'GERENTE GENERAL' or user.is_staff %}
                         <a class="collapse-item" href="{% url 'usuarios:listar_usuarios' %}">Listado de Usuarios</a>
                         {% endif %}
-                        {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff %}
+                        {% if user.is_staff %}
                         <a class="collapse-item" href="{% url 'usuarios:registrar_gerentegeneral' %}">Registrar Gerente General</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_vendedor' %}">Registrar Vendedor</a>
                         <a class="collapse-item" href="{% url 'usuarios:registrar_supervisor' %}">Registrar
