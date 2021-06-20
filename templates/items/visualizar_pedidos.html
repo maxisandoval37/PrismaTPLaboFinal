@@ -26,6 +26,7 @@ Listado de Pedidos
                     <th>Item</th>
                     <th>Sucursal</th>
                     <th>Proveedor</th>
+                    <th>Estado de pedido</th>
 
                 </tr>
             </thead>
@@ -36,6 +37,11 @@ Listado de Pedidos
                     <td>{{ pedido.item }}</td>
                     <td>{{ pedido.sucursal }}</td>
                     <td>{{ pedido.proveedor }}</td>
+                    {% if pedido.estado == False %} 
+                    <td>RECIBIDO</td>
+                    {% else %} 
+                    <td>EN ESPERA</td> 
+                    {% endif %}
                            
                 </tr>
                 

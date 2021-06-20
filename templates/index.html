@@ -263,7 +263,7 @@
 
 
 
-            {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'VENDEDOR' %}
+            {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'VENDEDOR' or user.rol.opciones == 'CAJERO' %}
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
@@ -279,7 +279,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Administrar Proveedores:</h6>
-                        {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'GERENTE GENERAL' %}
+                        {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'CAJERO' %}
                         <a class="collapse-item" href="{% url 'proveedores:listar_proveedores' %}">Listado de
                             Proveedores</a>
                             {% endif %}
@@ -295,7 +295,7 @@
                         <a class="collapse-item" href="{% url 'proveedores:registrar_cuenta_corriente' %}">Asignar
                             Cuenta Corriente</a>
                         {% endif %} 
-                        {% if user.is_staff or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.rol.opciones == 'GERENTE GENERAL' %}
+                        {% if user.is_staff or user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.rol.opciones == 'GERENTE GENERAL' or user.rol.opciones == 'CAJERO' %}
                         <a class="collapse-item" href="{% url 'proveedores:listar_cuenta_corriente' %}">Listado de
                             Cuentas</a>
                         {% endif %}
@@ -654,6 +654,15 @@
                         "icon": "success",
                     })
                 </script>
+            {% endif %}
+            {% if m.tags == 'warning' %} 
+            <script>
+                Swal.fire({
+                    "title": "Acción realizada",
+                    "text": "{{m}}",
+                    "icon": "warning",
+                })
+            </script>
             {% endif %}
 
         {% endfor %}

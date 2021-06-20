@@ -22,7 +22,7 @@ class ListadoCuentasCorriente(ValidarLoginYPermisosRequeridos, ListView):
     permission_required = ('proveedor.view_cuentacorrienteproveedor',)
     model = CuentaCorrienteProveedor
     template_name = 'proveedores/listar_cuenta_corriente.html'
-    queryset = CuentaCorrienteProveedor.objects.all().order_by('id')
+    queryset = CuentaCorrienteProveedor.objects.all().order_by('numero_cuenta')
 
 class RegistrarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     

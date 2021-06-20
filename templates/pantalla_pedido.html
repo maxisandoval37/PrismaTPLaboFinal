@@ -58,23 +58,30 @@
         <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-        {% if messages %} 
-            {% for m in messages %}
-                
+
+        {% if messages %}
+        {% for m in messages %}
+            {% if m.tags == 'error' %}
+            <script>
+                Swal.fire({
+                    "title": "Error",
+                    "text": "{{m}}",
+                    "icon": "error",
+                })
+            </script>
+            {% endif %}
+            {% if m.tags == 'success' %}
                 <script>
                     Swal.fire({
                         "title": "Acción realizada",
                         "text": "{{m}}",
-                        "icon": "success", 
+                        "icon": "success",
                     })
                 </script>
-               
-            {% endfor %} 
+            {% endif %}
+
+        {% endfor %}
         {% endif %}
-
-        
-
-
 </body>
 
 </html>

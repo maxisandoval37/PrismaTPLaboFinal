@@ -414,6 +414,7 @@ class Pedidos(models.Model):
     solicitadoRandom = random.randint(20, 75)
     solicitado = models.IntegerField('Solicitado ', default=solicitadoRandom)
     total = models.DecimalField('Total', decimal_places=2, max_digits=7, default = 0)
+    estado = models.BooleanField('Estado del pedido', default= True)
     
     def __str__(self):
         return "Item:" + str(self.item) + " , " + "Sucursal:"+str(self.sucursal) + " , " + "Proveedor:"+str(self.proveedor)

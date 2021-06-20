@@ -114,7 +114,7 @@ class TipoDeMoneda(models.Model):
             
 class CuentaCorriente(models.Model):
     
-    numero_cuenta = models.BigIntegerField("Número de cuenta")
+    numero_cuenta = models.AutoField("Número de cuenta", primary_key=True)
     cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
     
     def __str__(self):

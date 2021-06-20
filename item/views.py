@@ -11,13 +11,14 @@ from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import ProtectedError
 from django.http import HttpResponse
-from venta.models import Venta, ItemVenta
 from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
 from sucursal.models import Caja, Operacion, Sucursal
 from decimal import Decimal
 import random
 from usuario.models import Supervisor, Rol, Usuario
+from django.core.mail import send_mail
+from proveedor.models import CuentaCorrienteProveedor
 
 
 
@@ -192,7 +193,7 @@ class MensajeExitoso(TemplateView):
 
 def VerPedido(request, id_proveedor, id_sucursal):
     queryset = Pedidos.objects.filter(
-        proveedor_id=id_proveedor).filter(sucursal_id=id_sucursal)
+        proveedor_id=id_proveedor).filter(sucursal_id=id_sucursal).filter(estado = True)
     return render(request, 'items/pedido_proveedor.html', {'queryset': queryset})
 
 
@@ -200,9 +201,36 @@ def RecibirStock(request, id_proveedor, id_sucursal):
     if request.is_ajax():
         itemReq = request.POST.get('item', None)
         cantidadReq = request.POST.get('cantidad', None)
+        pedido = request.POST.get('pedido', None)
         total = 0
         reintentos = True
 
+        pedidos = Pedidos.objects.filter(id = int(pedido))
+        pedido_int = int(pedido)
+        
+        
+       
+        
+        for cant in cantidadReq:
+            
+            if cant.isalpha():
+                messages.error(request, "Sólo puedes ingresar digitos.")
+                return HttpResponse()
+        
+        if not cantidadReq.isdigit():
+            messages.error(request, "Sólo puedes ingresar digitos.")
+            return HttpResponse()
+        
+        for pedido in pedidos:
+            
+            if int(cantidadReq) > pedido.solicitado:
+                messages.error(request, "Lo sentimos, pero no podemos recibir más de la cantidad que solicitamos.")
+                return HttpResponse()
+        
+        if int(cantidadReq) < 0:
+            messages.error(request, "No puedes ingresar una cantidad negativa.")
+            return HttpResponse()
+        
         itemFromQuery = Item.objects.filter(
             nombre=itemReq, sucursal=id_sucursal)
 
@@ -234,8 +262,10 @@ def RecibirStock(request, id_proveedor, id_sucursal):
             while reintentos:
 
                 if caja_mayor.saldo_disponible >= total:
-
-                    Pedidos.objects.filter(item=item.id).update(total=total)
+                    
+                    Pedidos.objects.filter(item=item.id).filter(id = pedido_int).update(total=total)
+                    Pedidos.objects.filter(item=item.id).filter(id = pedido_int).update(cantidad = int(cantidadReq))
+                    Pedidos.objects.filter(item=item.id).filter(id = pedido_int).update(estado = False) 
                     caja_mayor.saldo_disponible -= total
                     caja_mayor.egresos += total
                     caja_mayor.save()
@@ -247,7 +277,11 @@ def RecibirStock(request, id_proveedor, id_sucursal):
                     movimiento.tipo = "Pedido"
                     movimiento.caja_asociada = caja_mayor
                     movimiento.identificador = "Proveedor: " + razon_social
-                    movimiento.responsable = supervisor
+                    if supervisor == '':
+                        messages.error(request, "Lo sentimos, vuelve a intentarlo más tarde.")
+                        return HttpResponse()
+                    else:
+                        movimiento.responsable = supervisor
                     movimiento.save()
                     reintentos = False
 
@@ -836,3 +870,95 @@ def ordenarPorStockSeguridad(request):
         lista.append(info)
     
     return render(request, 'items/listar_item_stockseguridad.html', locals())
+
+
+def RealizarPedido(request, item):
+    
+    if request.is_ajax():
+        
+        cantidad = request.POST.get('cantidad_ingresada', None)
+        item = request.POST.get('item', None)
+        print("$$$$$$$$$$$$$$$$$")
+        print(cantidad)
+        if cantidad == "":
+            messages.error(request, "Sólo puedes ingresar digitos.")
+            return HttpResponse()
+        if int(cantidad) <= 0:
+            messages.error(request, "Debes solicitar una cantidad mayor a 0.")
+            return HttpResponse()
+        
+        items = Item.objects.filter(id = int(item))
+        pedido_id = 0
+
+        for item in items:
+            cuentas = CuentaCorrienteProveedor.objects.filter(proveedor = item.categoria.prov_preferido)
+            cuenta_corriente = 0
+            
+            for cuenta in cuentas:
+                cuenta_corriente = cuenta.numero_cuenta
+            
+            if item.solicitud == False:
+                item.solicitud = True
+                item.reintentos = 0
+                item.save()
+                pedido = Pedidos()
+                pedido.item = item
+                pedido.sucursal = item.sucursal
+                pedido.solicitado = int(cantidad)
+                pedido.proveedor = item.categoria.prov_preferido
+                pedido.cuenta_corriente_id = cuenta_corriente
+        
+                if item.repo_por_lote:
+                    pedido.cantidad = item.cantidad_lote * 2
+                pedido.save()
+                pedido_id = pedido.id
+            item.reintentos = 0
+            item.save()
+
+        print(pedido_id)
+        pedidos = Pedidos.objects.filter(id = pedido_id)       
+
+        for pedido in pedidos:
+            emailProv = Proveedor.objects.filter(id = pedido.proveedor_id)
+            email = ""
+            for info in emailProv:
+                email = info.email
+                
+            try:
+                send_mail('SOLICITUD DE STOCK - SUCURSAL ' + str(pedido.sucursal_id), "Buenas tardes, esta es una solicitud de stock automática. Por favor, diríjase al siguiente link para indicar las cantidades que nos puede proveer de cada ítem:\n" +
+                            "http://127.0.0.1:8000/items/pedido_proveedor/" + str(pedido.proveedor_id) + "/" + str(pedido.sucursal_id), 'tmmzprueba@gmail.com', {email})
+                print("JODERRRRRRRRRRRRRR")
+            except:
+                print("JODER NO FUNCIONA")
+                return HttpResponseBadRequest()
+    messages.success(request, "Solicitud de stock enviada correctamente.")
+    return HttpResponse("JUAN")
+
+
+def SolicitarStock(request, item):
+    
+    lista = []
+    
+    ItemQuery = Item.objects.filter(id = item)
+    item = None
+    for item in ItemQuery:
+        item = item
+        
+    sucursales = Sucursal.objects.filter(id = item.sucursal_id)
+    sucursal = 0
+    nombre = ""
+    for suc in sucursales:
+        sucursal = suc.id
+        nombre = suc.codigo
+        
+    supervisor = Supervisor.objects.filter(sucursal_id = sucursal)
+    
+    if len(supervisor) == 0:
+        messages.warning(request, "Debes asignar un supervisor para la sucursal "+ nombre + " para poder realizar ésta acción.")
+        return redirect('items:listar_items')
+    
+    for item in ItemQuery:
+        
+        lista.append(item)
+    
+    return render(request, 'items/solicitar_stock.html', locals())

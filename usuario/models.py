@@ -311,18 +311,17 @@ class Administrativo(Usuario):
 
 def defaultActivo(sender, instance, **kwargs):
     
-    if instance.estado == None:
-        usuario = instance.id 
-        
-        estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
-        activo = ""
-        for estado in estadosQuery:
-            activo = estado.id 
-        
-        print(instance)
-        print(activo)
-        print(usuario.estado_id)
-        usuario.estado_id = activo 
-        
+    
+    estados = Estado.objects.all()
+    if len(estados) > 0:
+        if instance.estado == None:
+            
+            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo 
+            
 pre_save.connect(defaultActivo, sender = Usuario)
     

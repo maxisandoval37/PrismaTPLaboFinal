@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem, EliminarItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor, ordenarItemPorNombre, ordenarPorStockMinimo, ordenarPorStockSeguridad, HistorialPreferenciados
+from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem, EliminarItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor, ordenarItemPorNombre, ordenarPorStockMinimo, ordenarPorStockSeguridad, HistorialPreferenciados, SolicitarStock, RealizarPedido
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -15,7 +15,8 @@ urlpatterns = [
          login_required(ConfigurarReposicionItem.as_view()), name='reposicion_item'),
     path('listar_categorias/', login_required(ListarCategorias.as_view()),
          name='listar_categorias'),
-    path('listar_categorias/AsignarProveedor/', login_required(AsignarProveedor), name='asignar_proveedor'),
+    path('listar_categorias/AsignarProveedor/',
+         login_required(AsignarProveedor), name='asignar_proveedor'),
     path('visualizar_pedidos/', login_required(ListarPedidos.as_view()),
          name='visualizar_pedidos'),
     path('pedido_proveedor/<int:id_proveedor>/<int:id_sucursal>/',
@@ -53,12 +54,19 @@ urlpatterns = [
          name='reporte_riesgo_stock'),
     path('reporte_cambios_masivos/', login_required(ReporteCambiosPrecios),
          name='reporte_cambios_masivos'),
-    path('reporte_cuenta_corriente_proveedores/', login_required(ReporteCuentaCorrienteProveedores), name='reporte_cuenta_corriente_proveedores'),
+    path('reporte_cuenta_corriente_proveedores/', login_required(
+        ReporteCuentaCorrienteProveedores), name='reporte_cuenta_corriente_proveedores'),
     path('ver_items/', ModificarCamposItems.as_view(), name='ver_items'),
-    path('ver_items/CambioMasivoItems/', CambioMasivoItems, name='cambio_masivo_items'),
-    path('listar_item_nombre/', login_required(ordenarItemPorNombre), name='listar_item_nombre'),
-    path('listar_item_stockminimo/', login_required(ordenarPorStockMinimo), name='listar_item_stockminimo'),
-    path('listar_item_stockseguridad/', login_required(ordenarPorStockSeguridad), name='listar_item_stockseguridad'),
-    path('historial_preferenciados/', login_required(HistorialPreferenciados.as_view()), name='historial_preferenciados'),
-         
+    path('ver_items/CambioMasivoItems/',
+         CambioMasivoItems, name='cambio_masivo_items'),
+    path('listar_item_nombre/', login_required(ordenarItemPorNombre),
+         name='listar_item_nombre'),
+    path('listar_item_stockminimo/', login_required(ordenarPorStockMinimo),
+         name='listar_item_stockminimo'),
+    path('listar_item_stockseguridad/', login_required(ordenarPorStockSeguridad),
+         name='listar_item_stockseguridad'),
+    path('historial_preferenciados/', login_required(HistorialPreferenciados.as_view()),
+         name='historial_preferenciados'),
+    path('solicitar_stock/<int:item>/', login_required(SolicitarStock), name= 'solicitar_stock'),
+    path('solicitar_stock/<int:item>/RealizarPedido/', login_required(RealizarPedido), name = 'realizar_pedido'),
 ]

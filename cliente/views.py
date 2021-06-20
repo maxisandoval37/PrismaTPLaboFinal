@@ -22,7 +22,7 @@ class ListadoCuentasCorriente(ValidarLoginYPermisosRequeridos, ListView):
     permission_required = ('cliente.view_cuentacorriente',)
     model = CuentaCorriente
     template_name = 'clientes/listar_cuenta_corriente.html'
-    queryset = CuentaCorriente.objects.all().order_by('id')
+    queryset = CuentaCorriente.objects.all().order_by('numero_cuenta')
 
 class RegistrarCliente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     

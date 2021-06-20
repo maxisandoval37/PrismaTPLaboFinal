@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-Listado de Categorias
+Solicitar Stock
 {% endblock title %}
 
 
@@ -14,63 +14,42 @@ Listado de Categorias
 <div class="bg-gray-100">
     <div class="card">
         <div class="card-header">
-            <strong class="card-title">Listado de Categorias</strong>
+            <strong class="card-title">Solicitar Stock</strong>
         </div>
     </div>
 
     <div class="table-stats order-table ov-h">
         <table class="table">
-
             <thead>
-
                 <tr>
-                    <th> </th>
-                    <th>Categoria</th>
-                    <th>Proveedor Asignado</th>
-                    <th>Seleccionar Proveedor</th>
 
+                    <th></th>
+                    <th>Item</th>
+                    <th>Proveedor</th>
+                    <th>Cantidad solicitada</th>
                 </tr>
             </thead>
             <tbody>
-
-                {% for cat in object_list %}
-
+                {% if lista %}
+                {% for item in lista %}
                 <tr>
-                    <td> </td>
-                    <td>{{ cat.opciones}}</td>
-                    <td>{{ cat.prov_preferido}}</td>
+                    <td></td>
+                    <td>{{item.nombre}}</td>
+                    <td>{{ item.categoria.prov_preferido}}</td>
+                    <td hidden id="item-id">{{item.id}}</td>
+                   <td>
+                    <input type="Number" id="cantidad" placeholder="0" min="0"
+                    max="1000" >
+                   </td>
+
                     <td>
-
-
-                        <div class="form-group">
-                            <select name="proveedor" id="select{{cat.id}}" class="select form-control">
-                                <option value="0"> - </option>
-
-                                {% for prov in proveedor %}
-                                
-                                <option value="{{prov.id}}">{{prov}}</option>
-                                {% endfor %}
-                            </select>
-
-                        </div>
+                       <a href="{% url 'items:listar_items' %}" onclick="SolicitarStock()" class="btn btn-primary">Enviar</a>
                     </td>
-                    <td>
-                        <a  class="btn btn-primary" id="{{cat.id}}"
-                            onclick="AsignarProveedor(this.id)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                              </svg> Asignar Proveedor</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'items:historial_preferenciados' %}" class="btn btn-info"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
-                            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                          </svg> Historial de preferenciados</a>
-                    </td>
-
                 </tr>
                 {% endfor %}
-
+                {% else %}
+                <h5>No hay Medios de Pago registrados </h1>
+                {% endif %}
             </tbody>
         </table>
     </div>
@@ -79,19 +58,16 @@ Listado de Categorias
 
 <script>
 
-    function AsignarProveedor(boton_id) {
+    function SolicitarStock() {
         let csrftoken = getCookie('csrftoken');
-        proveedorSeleccionado = document.getElementById("select" + boton_id).options[document.getElementById("select" + boton_id).selectedIndex].value;
-        console.log(proveedorSeleccionado)
-        console.log(boton_id)
-
+        
         $.ajax({
             type: "POST",
-            url: "AsignarProveedor/",
+            url: "RealizarPedido/",
             data: {
                 csrfmiddlewaretoken: csrftoken,
-                proveedor: proveedorSeleccionado, 
-                categoria: boton_id,
+                cantidad_ingresada: document.getElementById('cantidad').value,
+                item: document.getElementById('item-id').innerText, 
                        },
             dataType: "text",
             success: function (data) {
@@ -166,6 +142,5 @@ Listado de Categorias
     }
     
 </script>
-
 
 {% endblock %}

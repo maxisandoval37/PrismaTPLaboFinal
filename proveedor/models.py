@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 class CuentaCorrienteProveedor(models.Model):
     
-    numero_cuenta = models.BigIntegerField("Número de cuenta")
+    numero_cuenta = models.AutoField("Número de cuenta", primary_key=True)
     proveedor = models.ForeignKey('Proveedor', on_delete=models.PROTECT)
     
     class Meta:

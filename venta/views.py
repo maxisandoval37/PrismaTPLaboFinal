@@ -29,7 +29,7 @@ class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
     permission_required = ('venta.view_venta',)
     model = Venta
     template_name = 'ventas/listar_venta.html'
-    queryset = Venta.objects.all().order_by('numero_comprobante')
+    queryset = Venta.objects.all().order_by('numero_comprobante').order_by('fecha').order_by('sucursal_asociada')
 
 class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
     
@@ -672,6 +672,12 @@ def FinalizarVenta(request, venta):
        
         instancia = venta
         sucursal_asociada = venta.sucursal_asociada
+        cajas = Caja.objects.filter(sucursal_id = sucursal_asociada.id)
+    
+        if len(cajas) == 0:
+            messages.error(request, "Debes registrar una caja para la sucursal seleccionada.")
+            return redirect('ventas:listar_ventas_cajero')
+        
         if venta.tipo_de_moneda.opciones == 'EURO':
             if venta.total_euro <= 0:
                 messages.error(request, "No es posible realizar una venta sin agregar items.")
@@ -692,6 +698,7 @@ def FinalizarVenta(request, venta):
         
         
     cajas = Caja.objects.filter(sucursal_id = sucursal_asociada.id)
+    
     
     caja_menor = None
     monto = total
@@ -764,7 +771,7 @@ def FinalizarVenta(request, venta):
     comprobante_de_pago.moneda = instancia.tipo_de_moneda.opciones
     comprobante_de_pago.vendedor = instancia.vendedor_asociado.nombre
     comprobante_de_pago.sucursal = instancia.sucursal_asociada.codigo
-    comprobante_de_pago.total = "$ " + str(total)
+    comprobante_de_pago.total = "$ " + str(round(total, 2))
     comprobante_de_pago.save()
     
     querycliente = Cliente.objects.filter(id = instancia.cliente_asociado_id)

@@ -31,6 +31,7 @@
                 {% for pedido in queryset %}
                 <tr>
                     <td></td>
+                    <td hidden id="pedido">{{pedido.id}}</td>
                     <!-- <td>{{pedido.item.cantidad_lote}}</td> -->
                     <td style="color: white;">{{ pedido.item }}</td>
                     <td style="color: white;" id="{{pedido.item}}cantidadLote">{{ pedido.solicitado }}</td>
@@ -56,8 +57,10 @@
 
 </div>
 <div class="text-center">
-    <a href="{% url 'items:stock_recibido' %}" onclick="funcionCantidad()" class="btn btn-primary"> Enviar </a>
+    <!-- href="{% url 'items:stock_recibido' %}" -->
+    <a  onclick="funcionCantidad()" class="btn btn-primary"> Enviar </a>
 </div>
+
 </div>
 </div>
 </div>
@@ -90,9 +93,11 @@
                     csrfmiddlewaretoken: csrftoken,
                     item: input.id,
                     cantidad: document.getElementById(input.id).value,
+                    pedido: document.getElementById('pedido').innerText,
                 },
                 dataType: "text",
                 success: function (data) {
+                    location.reload()
                     console.log(data);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -115,7 +120,7 @@
                         alert('Solicitud Abortada. [Ajax Request]');
                     }
                     else {
-                        alert('Error desconocido: ' + jqXHR.responseText);
+                        ErrorGeneral();
                     }
                 }
             });
@@ -136,6 +141,17 @@
         }
         return cookieValue;
     }
+
+    function ErrorGeneral() {
+
+Swal.fire({
+    "title": "Ups",
+    "text": "Ha ocurrido un error.",
+    "icon": "error",
+})
+
+}
+
 </script>
 
 {% endblock %}
