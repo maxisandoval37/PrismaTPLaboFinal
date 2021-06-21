@@ -244,6 +244,8 @@
                         <a class="collapse-item" href="{% url 'sucursales:reporte_transacciones_venta_compra' %}">Transacciones</a>
                         <a class="collapse-item" href="{% url 'items:reporte_riesgo_stock' %}">Ítems con riesgo de stock</a>
                         <a class="collapse-item" href="{% url 'ventas:reporte_ventas_vendedor' %}">Ventas por vendedor</a>
+                        <a class="collapse-item" href="{% url 'ventas:reporte_ventas_por_sucursal' %}">Ventas por sucursal</a>
+                        <a class="collapse-item" href="{% url 'items:reporte_stock_faltante' %}">Stocks faltantes</a>
                     </div>
                 </div>
             </li>
@@ -658,9 +660,18 @@
             {% if m.tags == 'warning' %} 
             <script>
                 Swal.fire({
-                    "title": "Acción realizada",
+                    "title": "Cuidado.",
                     "text": "{{m}}",
                     "icon": "warning",
+                })
+            </script>
+            {% endif %}
+            {% if m.tags == 'info' %} 
+            <script>
+                Swal.fire({
+                    "title": "Recordatorio.",
+                    "text": "{{m}}",
+                    "icon": "info",
                 })
             </script>
             {% endif %}

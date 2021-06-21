@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.db.models.enums import TextChoices
+from django.db.models.signals import pre_save
 
 class CuentaCorrienteProveedor(models.Model):
     
@@ -27,6 +29,19 @@ class CuentaCorrienteProveedor(models.Model):
             
             if self.numero_cuenta == cuenta.numero_cuenta:
                 raise ValidationError('La cuenta corriente ya está registrada.')
+            
+class EstadoProveedor(models.Model):
+    
+    class opcionesEstado(TextChoices):
+        
+        ACTIVO = 'ACTIVO'
+        INACTIVO = 'INACTIVO'
+        
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length=8)
+    
+    def __str__(self):
+        return self.opciones
+    
 
 class Proveedor(models.Model):
     
@@ -39,6 +54,7 @@ class Proveedor(models.Model):
     localidad = models.CharField('Localidad', max_length=20,blank = True,null=True)
     provincia = models.CharField('Provincia', max_length= 20,blank = True,null=True)
     cod_postal = models.CharField('Código postal', blank = True,null=True, max_length= 4)
+    estado = models.ForeignKey(EstadoProveedor, on_delete=models.PROTECT)
     
    
     def clean(self):
@@ -93,3 +109,19 @@ class Proveedor(models.Model):
     def __str__(self):
         return self.razon_social
     
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    estados = EstadoProveedor.objects.all()
+    if len(estados) > 0:
+        if instance.estado_id == None:
+            
+            estadosQuery = EstadoProveedor.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo
+            
+            
+pre_save.connect(defaultActivo, sender = Proveedor)

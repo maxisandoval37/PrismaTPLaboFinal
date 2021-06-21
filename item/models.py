@@ -8,7 +8,8 @@ from proveedor.models import CuentaCorrienteProveedor
 from usuario.models import Supervisor, Usuario
 import random
 from datetime import datetime
-# Create your models here.
+from django.db.models.signals import pre_save
+
 
 
 class SubCategoria(models.Model):
@@ -465,3 +466,23 @@ class HistorialPref(models.Model):
         
     def __str__(self):
         return "Fecha: {} , Proveedor: {}".format(self.fecha, self.proveedor_asociado)
+    
+    
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    estados = Estado.objects.all()
+    if len(estados) > 0:
+        
+        if instance.estado_id == None:
+            
+            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo 
+            
+            
+pre_save.connect(defaultActivo, sender = Item)
+    

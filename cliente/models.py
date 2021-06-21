@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 import re
+from django.db.models.signals import pre_save
 
 # Create your models here.
 
@@ -180,3 +181,21 @@ class Cliente(models.Model):
             raise ValidationError('El telefono solo puede contener digitos.')
         if len(self.telefono) < 3 or len(self.telefono) > 13:
             raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
+        
+        
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    estados = EstadoCliente.objects.all()
+    if len(estados) > 0:
+        if instance.estado_cliente_id == None:
+            
+            
+            estadosQuery = EstadoCliente.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_cliente_id = activo 
+            
+pre_save.connect(defaultActivo, sender = Cliente)

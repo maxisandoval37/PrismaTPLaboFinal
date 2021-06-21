@@ -7,7 +7,7 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         
         model = Cliente
-        fields = '__all__'
+        fields = ['cuit','nombre','apellido','email','telefono','categoria_cliente']
 
 
 class MedioDePagoForm(forms.ModelForm):

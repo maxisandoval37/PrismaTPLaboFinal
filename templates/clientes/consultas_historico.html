@@ -11,74 +11,119 @@ Cotizaciones
 
 <div class="bg-gray-100" id="report">
     <div class="card">
-        <div class="card-header">
+        <div align="center" class="card-header">
             <strong class="card-title">Consulta de histórica</strong>
+            <br>
+            <input id=fechaDesde type="date">
+            <input id=fechaHasta type="date">
+            <a id="boton" class="btn btn-primary" onclick="filtrarLista()">Filtrar
+                resultados</a>
         </div>
-    </div>
 
-    <h4>Cotización Dolar</h4>
+    </div>
+    <div hidden id="divDolar">
+        <h4>Cotización Dolar</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Cotización</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTablaDolar">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div hidden id="divEuro">
+    <h4> Cotización Euro</h4>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Fecha</th>
-                <th scope="col">Cotizacion</th>
+                <th scope="col">Cotización</th>
             </tr>
         </thead>
-        <tbody id="cuerpoTablaDolar">
+        <tbody id="cuerpoTablaEuro">
         </tbody>
     </table>
 </div>
 
-<h4> Cotización Euro</h4>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Cotizacion</th>
-        </tr>
-    </thead>
-    <tbody id="cuerpoTablaEuro">
-    </tbody>
-</table>
-
 <script>
-    window.onload = function () {
+    function filtrarLista() {
+        document.getElementById("divDolar").removeAttribute("hidden");
+        document.getElementById("divEuro").removeAttribute("hidden");
+        // console.log("fechaDesde: " + document.getElementById("fechaDesde").value);
+        // console.log("fechaHasta: " + document.getElementById("fechaHasta").value);
+        const fechaDesde = new Date(document.getElementById("fechaDesde").value);
+        const fechaHasta = new Date(document.getElementById("fechaHasta").value);
+        const diffTime = Math.abs(fechaHasta - fechaDesde);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        console.log(diffDays + " days");
+
         try {
-            for (let i = 1; i < 7; i++) {
+            $("#cuerpoTablaDolar").empty();
+            $("#cuerpoTablaEuro").empty();
+
+            for (let i = 0; i <= diffDays; i++) {
                 //dolar:
-                fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/2021-0' + i + '-01/currencies/usd/ars.json')
+                let date = new Date(fechaDesde);
+                let fecha = formatDate(date.addDays(i + 1));
+                fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + fecha + '/currencies/usd/ars.json')
                     .then(res => res.json())
                     .then(json => {
-                        fecha = json.date;
+                        fechaFromJSON = json.date;
                         dolar = json.ars;
-                        fechaActualD = '2021-0' + i + '-01';
+                        console.log("Fecha from Input: " + fecha);
+                        console.log("Fecha from JSON: " + fechaFromJSON);
+                        console.log(dolar);
 
-
+                        let IdDolar = i + 1;
                         document.getElementById("cuerpoTablaDolar").innerHTML +=
-                            "<tr><th scope='row'>" + i + "</th><td>" + fechaActualD +
+                            "<tr><th scope='row'>" + IdDolar + "</th><td>" + fecha +
                             "</td><td>" + dolar.toFixed(2) + "</td></tr>";
                     });
 
                 //euro
-                fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/2021-0' + i + '-01/currencies/eur/ars.json')
+                fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/' + fecha + '/currencies/eur/ars.json')
                     .then(res => res.json())
                     .then(json => {
-                        fecha = json.date;
+                        fechaFromJSON = json.date;
                         euro = json.ars;
-                        fechaActualD = '2021-0' + i + '-01';
 
+                        let IdEuro = i + 1;
                         document.getElementById("cuerpoTablaEuro").innerHTML +=
-                            "<tr><th scope='row'>" + i + "</th><td>" + fechaActualD +
+                            "<tr><th scope='row'>" + IdEuro + "</th><td>" + fecha +
                             "</td><td>" + euro.toFixed(2) + "</td></tr>";
                     });
-
             }
         } catch (err) {
             console.error(err);
         }
     };
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    Date.prototype.addDays = function (days) {
+        var date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    }
 </script>
+</div>
 
 {% endblock %}

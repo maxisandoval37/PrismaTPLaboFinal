@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from item.models import Item
 from cliente.models import Deuda
-from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.signals import pre_save
 
 
 
@@ -81,9 +81,7 @@ class Venta(models.Model):
         if len(deudas) >= 3:
             raise ValidationError('No es posible registrar la venta, ya que el cliente posee 3 deudas impagas.')
         
-        if self.estado.opciones != 'EN PREPARACION' and self.monto_ingresado == 0:
-            raise ValidationError('El estado inicial de la venta debe ser "EN PREPARACIÓN" ')
-      
+        
         try:
             if self.cliente_asociado == None:
                 raise ValidationError('Error')
@@ -187,4 +185,23 @@ class ComprobantePago(models.Model):
         
     def __str__(self):
         return "Venta: {}, Total: {}".format(self.numero_venta, self.total)
+    
+
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    estados = EstadoVenta.objects.all()
+    if len(estados) > 0:
+        
+        if instance.estado_id == None:
+            
+            estadosQuery = EstadoVenta.objects.filter(opciones = 'EN PREPARACION')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo 
+            
+            
+pre_save.connect(defaultActivo, sender = VentaLocal)
     

@@ -1,5 +1,3 @@
-import decimal
-
 from django.http.response import HttpResponseBadRequest
 from proveedor.models import Proveedor
 from django.shortcuts import render, redirect, HttpResponseRedirect
@@ -7,7 +5,7 @@ from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubC
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from .forms import ItemForm, PinturaForm, MezclaForm, MezclaUsadaForm
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import ProtectedError
 from django.http import HttpResponse
@@ -16,9 +14,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 from sucursal.models import Caja, Operacion, Sucursal
 from decimal import Decimal
 import random
-from usuario.models import Supervisor, Rol, Usuario
+from usuario.models import Supervisor, Rol
 from django.core.mail import send_mail
 from proveedor.models import CuentaCorrienteProveedor
+from item.models import Estado
 
 
 
@@ -76,27 +75,6 @@ class ConfigurarReposicionItem(ValidarLoginYPermisosRequeridos, SuccessMessageMi
                 'EL STOCK DE SEGURIDAD NO PUEDE SER NEGATIVO!')
 
 
-class EliminarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, DeleteView):
-
-    permission_required = ('item.view_item', 'item.delete_item',)
-    model = Item
-    template_name = 'items/eliminar_item.html'
-    success_url = reverse_lazy('items:listar_items')
-    success_message = 'Se eliminó el item.'
-
-    def delete(self, request, *args, **kwargs):
-
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-
-        try:
-            self.object.delete()
-        except ProtectedError:
-            messages.add_message(
-                request, messages.ERROR, 'No se puede eliminar: Este item esta relacionado.')
-            return redirect('items:listar_items')
-
-        return HttpResponseRedirect(success_url)
 
 
 class EliminarMezcla(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, DeleteView):
@@ -184,6 +162,15 @@ class ListarPedidos(ValidarLoginYPermisosRequeridos, ListView):
     model = Pedidos
     template_name = 'items/visualizar_pedidos.html'
     queryset = Pedidos.objects.all().order_by('id')
+    
+class CambiarEstadoItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, UpdateView):
+    
+    permission_required = ('item.view_item', 'item.add_item',)
+    model = Item
+    fields = ['estado']
+    success_message = 'Se cambió el estado del item correctamente.'
+    template_name = 'items/cambiar_estado.html'
+    success_url = reverse_lazy('items:listar_items')
 
 
 class MensajeExitoso(TemplateView):
@@ -962,3 +949,72 @@ def SolicitarStock(request, item):
         lista.append(item)
     
     return render(request, 'items/solicitar_stock.html', locals())
+
+
+def ReporteItemsStockFaltante(request):
+    sucursalesIds = []
+
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+
+    sucursal_asociada = ""
+    estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+
+    estadoId = ""
+    for estado in estadosQuery:
+        estadoId = estado.id
+
+    ItemFromQuery = Item.objects.filter(cantidad = 0, estado = estadoId)
+
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        supervisorQuery = Supervisor.objects.filter(username = request.user.username)
+
+        for supervisor in supervisorQuery:
+            sucursal_asociada = supervisor.sucursal.id
+
+        sucursalesIds.append(sucursal_asociada)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+
+    lista = []
+    for fila in ItemFromQuery:
+        print(fila.sucursal_id)
+        print(sucursalesIds)
+        if fila.sucursal_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
+
+    items = []
+
+    for item in lista:
+        dic = {
+            "codigo_de_barras": item.codigo_de_barras,
+            "nombre": item.nombre,
+            "cantidad": item.cantidad,
+            "stockminimo": item.stockminimo,
+            "stockseguridad": item.stockseguridad,
+            "es_gerente_general": str(es_gerente_general),
+            "sucursales": sucursalesIds,
+            "sucursal_id": item.sucursal_id,
+            "sucursal": item.sucursal,
+            "precio": item.precio,
+            "categoria": item.categoria,
+            "subcategoria": item.subcategoria,
+            "categoria_prov_preferido": item.categoria.prov_preferido,
+            "estado": item.estado,
+            "ubicacion": item.ubicacion
+        }
+        items.append(dic)
+
+    return render(request,'items/reporte_stock_faltante.html',locals())

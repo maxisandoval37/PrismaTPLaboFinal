@@ -1,7 +1,7 @@
 from email.mime.nonmultipart import MIMENonMultipart
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.views.generic.edit import UpdateView
-from .forms import VentaLocalForm, VentaVirtualForm, ItemVentaForm
+from .forms import VentaLocalForm
 from .models import ComprobantePago, EstadoVenta, VentaLocal, VentaVirtual, Venta, ItemVenta, Cotizacion
 from django.views.generic import  CreateView,  DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
@@ -70,26 +70,26 @@ class EditarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin, Upda
     success_url = reverse_lazy('ventas:listar_ventas')
     success_message = 'Monto ingresado correctamente.'
     
-class EliminarVenta(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
+# class EliminarVenta(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
     
-    permission_required = ('venta.view_venta','venta.delete_venta',)
-    model = Venta
-    template_name = 'ventas/eliminar_venta.html'
-    success_url = reverse_lazy('ventas:listar_ventas')
-    success_message = 'Se eliminó la venta correctamente.'
+#     permission_required = ('venta.view_venta','venta.delete_venta',)
+#     model = Venta
+#     template_name = 'ventas/eliminar_venta.html'
+#     success_url = reverse_lazy('ventas:listar_ventas')
+#     success_message = 'Se eliminó la venta correctamente.'
                                     
-    def delete(self, request, *args, **kwargs):
+#     def delete(self, request, *args, **kwargs):
         
-        self.object = self.get_object()
-        success_url = self.get_success_url()
+#         self.object = self.get_object()
+#         success_url = self.get_success_url()
 
-        try:
-            self.object.delete()
-        except ProtectedError:
-            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Ésta venta está relacionada.')
-            return redirect('ventas:listar_ventas')
+#         try:
+#             self.object.delete()
+#         except ProtectedError:
+#             messages.add_message(request, messages.ERROR, 'No se puede eliminar: Ésta venta está relacionada.')
+#             return redirect('ventas:listar_ventas')
 
-        return HttpResponseRedirect(success_url)                                
+#         return HttpResponseRedirect(success_url)                                
     
     
 
@@ -307,6 +307,46 @@ def validar(request, item_venta):
     
     if item_venta.cantidad_solicitada == 0:
         return item_venta.item.nombre + " (Debe seleccionar una cantidad)"
+
+
+def AnularVenta(request, venta):
+    
+    ventas = Venta.objects.filter(numero_comprobante = venta)
+    venta = None
+    for ven in ventas:
+        venta = ven
+    estados = EstadoVenta.objects.filter(opciones = 'RECHAZADA')
+    items = ItemVenta.objects.filter(venta_asociada_id =venta.numero_comprobante)
+    rechazada = ""
+    for estado in estados:
+        rechazada = estado.id
+        
+    if venta.estado.opciones == 'EN PREPARACION':
+        if len(items) == 0:
+            try:
+                
+                venta.estado_id = rechazada
+                venta.save()
+                messages.success(request, "Venta anulada.")
+                print("hola")
+                return redirect('ventas:listar_ventas')
+                
+                
+            except:
+                
+                messages.error(request, "¡Verifica los datos!, no se ha podido anular la venta.")
+                return redirect('ventas:listar_ventas')
+        else:
+            messages.error(request, "Debes eliminar los items agregados para anular la venta.")
+            return redirect('ventas:listar_ventas')
+                
+    elif venta.estado.opciones == 'RECHAZADA':
+        messages.info(request, "La venta ya se encuentra anulada.")
+    
+    else:
+        messages.warning(request, "Sólo puedes anular ventas que se encuentren EN PREPARACIÓN.")
+        
+    return redirect('ventas:listar_ventas')
 
 
 def CambiarEstado(request, id, cliente):
@@ -594,7 +634,7 @@ def eliminarItem(request, venta, item):
         
     item_venta.delete()
     
-    messages.error(request, "Se ha quitado el item de la venta.")
+    messages.success(request, "Se ha quitado el item de la venta.")
     return redirect('ventas:listar_ventas')
 
 def eliminarItemCajero(request, venta, item):
@@ -977,3 +1017,89 @@ def ReporteVentasVendedores(request):
 
     
     return render(request, 'ventas/reporte_ventas_vendedor.html', locals())
+
+def reporteVentasPorSucursal(request):
+    sucursalesIds = []
+
+    rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
+    rolId = ""
+    for rol in rolesFromQuery:
+        print(rol.id)
+        rolId = rol.id
+
+    es_gerente_general = request.user.rol_id == rolId
+    print("es_gerente_general: " + str(es_gerente_general))
+
+    sucursal_asociada = ""
+
+    QueryEstados = EstadoVenta.objects.filter(opciones = 'PAGADA')
+    estado_pagada = ""
+
+    for estado in QueryEstados:
+
+        estado_pagada = estado.id
+
+
+    ItemFromQuery = Venta.objects.filter(estado = estado_pagada).values('sucursal_asociada_id').annotate(Count('sucursal_asociada_id')).order_by()
+
+
+    if es_gerente_general or request.user.is_staff:
+        es_gerente_general = True
+        sucursalesQuery = Sucursal.objects.all()
+        for sucursal in sucursalesQuery:
+            sucursalesIds.append(sucursal.id)
+    else:
+        supervisorQuery = Supervisor.objects.filter(username = request.user.username)
+
+        for supervisor in supervisorQuery:
+            sucursal_asociada = supervisor.sucursal.id
+
+        sucursalesIds.append(sucursal_asociada)
+
+    print("sucursalesIds: %s" % sucursalesIds)
+
+    ventas = []
+    dic_sucursales = {}
+
+    for venta in ItemFromQuery:
+        dic_sucursales.update({venta.get('sucursal_asociada_id'):venta.get('sucursal_asociada_id_count')})
+        ventas.append(venta.get('sucursal_asociada_id'))
+
+
+    VentaFromQuery = Venta.objects.raw(""" 
+     SELECT *
+     FROM venta_venta
+     WHERE sucursal_asociada_id IN %s
+     """, [tuple(ventas)])
+
+    total = 0
+    dic_ventas = {}
+    for venta in VentaFromQuery:
+
+        if not dic_ventas.__contains__(venta.sucursal_asociada_id):
+            dic_ventas.update({venta.sucursal_asociada_id: 0})
+
+        dic_ventas.update({venta.sucursal_asociada_id:dic_ventas.get(venta.sucursal_asociada_id)+venta.monto_ingresado})
+
+
+    lista = []
+    for fila in VentaFromQuery:
+        print(fila.sucursal_asociada_id)
+        print(sucursalesIds)
+        if fila.sucursal_asociada_id in sucursalesIds:
+            lista.append(fila)
+    print(lista)
+
+    items = []
+
+    for venta in lista:
+        dic = {
+            "cantidad_ventas": dic_sucursales.get(venta.sucursal_asociada_id),
+            "sucursal_id": venta.sucursal_asociada_id,
+            "total": dic_ventas.get(venta.sucursal_asociada_id),
+            "sucursal_asociada_codigo": venta.sucursal_asociada.codigo,
+        }
+        items.append(dic)
+
+
+    return render(request, 'ventas/reporte_ventas_por_sucursal.html', locals())

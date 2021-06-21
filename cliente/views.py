@@ -38,11 +38,24 @@ class EditarCliente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateVi
     
     permission_required = ('cliente.view_cliente','cliente.change_cliente',)
     model = Cliente
-    fields = ['email','telefono','categoria_cliente','estado_cliente']
+    fields = ['email','telefono','categoria_cliente']
     success_message = 'Se editó al cliente correctamente.'
     template_name = 'clientes/crear_cliente.html'
     success_url = reverse_lazy('clientes:listar_clientes')
  
+    
+class DesactivarCliente(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, UpdateView):
+    
+    permission_required = ('cliente.view_cliente','cliente.change_cliente',)
+    model = Cliente
+    fields = ['estado_cliente']
+    success_message = 'Se cambio el estado del cliente correctamente.'
+    template_name = 'clientes/editar_cliente.html'
+    success_url = reverse_lazy('clientes:listar_clientes')
+ 
+    
+    
+    
     
 # class EliminarCliente(ValidarLoginYPermisosRequeridos,DeleteView):
     

@@ -38,7 +38,7 @@ class FormularioUsuario(forms.ModelForm):
 
     class Meta:
         model = Usuario
-        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','estado','telefono','username')
+        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','telefono','username')
         widgets = {
             'email': forms.EmailInput(
                 attrs = {
@@ -105,11 +105,6 @@ class FormularioUsuario(forms.ModelForm):
                 }
             ),
             'rol': forms.Select(
-                attrs = {
-                    'class': 'form-control'
-                }
-            ),
-            'estado': forms.Select(
                 attrs = {
                     'class': 'form-control'
                 }
@@ -312,7 +307,7 @@ class FormularioSupervisor(forms.ModelForm):
 
     class Meta:
         model = Supervisor
-        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','estado','telefono','username','sucursal')
+        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','telefono','username','sucursal')
         widgets = {
             'email': forms.EmailInput(
                 attrs = {
@@ -379,11 +374,6 @@ class FormularioSupervisor(forms.ModelForm):
                 }
             ),
             'rol': forms.Select(
-                attrs = {
-                    'class': 'form-control'
-                }
-            ),
-            'estado': forms.Select(
                 attrs = {
                     'class': 'form-control'
                 }
@@ -453,7 +443,7 @@ class FormularioCajero(forms.ModelForm):
 
     class Meta:
         model = Cajero
-        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','estado','telefono','username','sucursal')
+        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','telefono','username','sucursal')
         widgets = {
             'email': forms.EmailInput(
                 attrs = {
@@ -520,11 +510,6 @@ class FormularioCajero(forms.ModelForm):
                 }
             ),
             'rol': forms.Select(
-                attrs = {
-                    'class': 'form-control'
-                }
-            ),
-            'estado': forms.Select(
                 attrs = {
                     'class': 'form-control'
                 }
@@ -593,7 +578,7 @@ class FormularioAdministrativo(forms.ModelForm):
 
     class Meta:
         model = Administrativo
-        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','estado','telefono','username','sucursal')
+        fields = ('email','cuit','nombre','apellido','calle','numero','localidad','provincia','cod_postal','rol','telefono','username','sucursal')
         widgets = {
             'email': forms.EmailInput(
                 attrs = {
@@ -660,11 +645,6 @@ class FormularioAdministrativo(forms.ModelForm):
                 }
             ),
             'rol': forms.Select(
-                attrs = {
-                    'class': 'form-control'
-                }
-            ),
-            'estado': forms.Select(
                 attrs = {
                     'class': 'form-control'
                 }

@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
-from usuario.views import InicioUsuarios,ListadoUsuario, RegistrarUsuario,EditarUsuario, RegistrarVendedor, RegistrarSupervisor, RegistrarCajero, RegistrarAdministrativo, RegistrarGerenteGeneral
+from usuario.views import InicioUsuarios,ListadoUsuario,EditarUsuario,CambiarEstadoUsuario, RegistrarVendedor, RegistrarSupervisor, RegistrarCajero, RegistrarAdministrativo, RegistrarGerenteGeneral
 urlpatterns = [
     
     path('inicio_usuarios/', login_required(InicioUsuarios.as_view()), name='inicio_usuarios'),
@@ -13,6 +13,7 @@ urlpatterns = [
     path('registrar_supervisor/', login_required(RegistrarSupervisor.as_view()),name = 'registrar_supervisor'),
     path('registrar_cajero/', login_required(RegistrarCajero.as_view()),name = 'registrar_cajero'),
     path('registrar_administrativo/', login_required(RegistrarAdministrativo.as_view()),name = 'registrar_administrativo'),
+    path('cambiar_estado/<int:pk>/', login_required(CambiarEstadoUsuario.as_view()), name = 'cambiar_estado'),
 
     
 ]

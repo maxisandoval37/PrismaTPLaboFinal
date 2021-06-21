@@ -3,12 +3,12 @@ from .forms import ProveedorForm, CuentaCorrienteProveedorForm
 from .models import Proveedor, CuentaCorrienteProveedor
 from django.views.generic import  CreateView, UpdateView, DeleteView, ListView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import ProtectedError
 from django.contrib.messages.views import SuccessMessageMixin
 from item.models import Pedidos
-from django.core.exceptions import ValidationError
+
 
 class ListadoProveedor(ValidarLoginYPermisosRequeridos,ListView):
     
@@ -43,26 +43,7 @@ class EditarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Update
     success_url = reverse_lazy('proveedores:listar_proveedores')
     success_message = 'Se editó el proveedor correctamente.'
     
-class EliminarProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
-    
-    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor','proveedor.change_proveedor','proveedor.delete_proveedor',)
-    model = Proveedor
-    template_name = 'proveedores/eliminar_proveedor.html'
-    success_url = reverse_lazy('proveedores:listar_proveedores')
-    success_message = 'Se eliminó el proveedor correctamente.'
-                                    
-    def delete(self, request, *args, **kwargs):
-        
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-
-        try:
-            self.object.delete()
-        except ProtectedError:
-            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Este proveedor esta relacionado.')
-            return redirect('proveedores:listar_proveedores')
-
-        return HttpResponseRedirect(success_url)                                
+                              
     
 class RegistrarCuentaCorrienteProveedor(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
@@ -99,6 +80,15 @@ class EliminarCuentaCorrienteProveedor(ValidarLoginYPermisosRequeridos,SuccessMe
                 return redirect('clientes:listar_cuenta_corriente')
             
         return HttpResponseRedirect(success_url) 
+    
+class CambiarEstadoProveedor(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, UpdateView):
+    
+    permission_required = ('proveedor.view_proveedor','proveedor.add_proveedor',)
+    model = Proveedor
+    fields = ['estado']
+    template_name = 'proveedores/cambiar_estado.html'
+    success_url = reverse_lazy('proveedores:listar_proveedores')
+    success_message = 'Se cambió el estado del proveedor correctamente.'
     
     
 

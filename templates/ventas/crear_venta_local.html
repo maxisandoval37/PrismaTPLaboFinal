@@ -49,7 +49,7 @@
                     <option value="0"> - </option>
 
                     {% for cc in cuenta_corriente %}
-                    <option value="{{cc.id}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
+                    <option value="{{cc.numero_cuenta}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
                     {% endfor %}
                 </select>
                 <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}">Registrar cuenta

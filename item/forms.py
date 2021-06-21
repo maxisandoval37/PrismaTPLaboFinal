@@ -21,8 +21,6 @@ class ItemForm(forms.ModelForm):
         self.fields['subcategoria'].widget.attrs['placeholder'] = 'Sub-categoria'
         self.fields['unidad_de_medida'].widget.attrs['class'] = 'form-user'
         self.fields['unidad_de_medida'].widget.attrs['placeholder'] = 'Unidad de medida'
-        self.fields['estado'].widget.attrs['class'] = 'form-user'
-        self.fields['estado'].widget.attrs['placeholder'] = 'Estado'
         self.fields['repo_por_lote'].widget.attrs['class'] = 'form-user'
         self.fields['repo_por_lote'].widget.attrs['placeholder'] = 'Reposición por lote'
         self.fields['cantidad_lote'].widget.attrs['class'] = 'form-user'
@@ -31,7 +29,7 @@ class ItemForm(forms.ModelForm):
     class Meta:
         
         model = Item
-        fields = ['nombre','precio','ubicacion','descripcion','categoria','subcategoria','unidad_de_medida','repo_por_lote','cantidad_lote','estado','sucursal']
+        fields = ['nombre','precio','ubicacion','descripcion','categoria','subcategoria','unidad_de_medida','repo_por_lote','cantidad_lote','sucursal']
         
 
 class PinturaForm(forms.ModelForm):
@@ -39,7 +37,7 @@ class PinturaForm(forms.ModelForm):
     class Meta:
         
         model = Pintura
-        fields = ['nombre','precio','color','cantidad_pintura','ubicacion','descripcion','categoria','subcategoria','unidad_de_medida','repo_por_lote','cantidad_lote','estado','sucursal']
+        fields = ['nombre','precio','color','cantidad_pintura','ubicacion','descripcion','categoria','subcategoria','unidad_de_medida','repo_por_lote','cantidad_lote','sucursal']
         
         
 class MezclaForm(forms.ModelForm):

@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero, EliminarVenta, ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores
+from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero,ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores, AnularVenta, reporteVentasPorSucursal
 
 urlpatterns = [
 
@@ -11,8 +11,6 @@ urlpatterns = [
          name='registrar_venta_local'),
     path('ingresar_monto/<int:pk>/',
          login_required(EditarVentaLocal.as_view()), name='ingresar_monto'),
-    path('eliminar_venta/<int:pk>/',
-         login_required(EliminarVenta.as_view()), name='eliminar_venta'),
     path('listado_itemsventa/<int:venta>/',
          login_required(ListarItem), name='listar_itemsventa'),
     path('registrar_itemventa/<int:sucursal>/<int:venta>',
@@ -35,5 +33,7 @@ urlpatterns = [
     path('ver_comprobante/<int:venta_id>/', login_required(verComprobantePago), name= 'ver_comprobante'),
     path('reporte_ventas_vendedor/', login_required(
         ReporteVentasVendedores), name='reporte_ventas_vendedor'),
+    path('anular_venta/<int:venta>/', login_required(AnularVenta), name = 'anular_venta'),
+    path('reporte_ventas_por_sucursal/', login_required(reporteVentasPorSucursal), name='reporte_ventas_por_sucursal'),
         
 ]

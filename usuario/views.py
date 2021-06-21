@@ -72,7 +72,7 @@ class EditarUsuario(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateVi
     
     permission_required = ('usuario.view_usuario','usuario.change_usuario',)
     model = Usuario
-    fields = ['nombre','apellido','email','telefono','estado']
+    fields = ['nombre','apellido','email','telefono']
     template_name = 'usuarios/editar_usuario.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Se editó al usuario correctamente.'
@@ -122,5 +122,16 @@ class RegistrarGerenteGeneral(ValidarLoginYPermisosRequeridos, SuccessMessageMix
     template_name = 'usuarios/crear_gerentegeneral.html'
     success_url = reverse_lazy('usuarios:listar_usuarios')
     success_message = 'Gerente General registrado correctamente.'
+    
+
+class CambiarEstadoUsuario(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, UpdateView):
+    
+    
+    permission_required = ('usuario.view_usuario','usuario.add_usuario',)
+    model = Usuario
+    fields = ['estado']
+    template_name = 'usuarios/cambiar_estado.html'
+    success_url = reverse_lazy('usuarios:listar_usuarios')
+    success_message = 'Se cambió el estado del usuario correctamente.'
 
     

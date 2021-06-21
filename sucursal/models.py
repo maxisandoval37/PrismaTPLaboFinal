@@ -172,15 +172,15 @@ class Operacion(models.Model):
 def defaultActivo(sender, instance, **kwargs):
     
     
-    
-    if instance.estado  == None:
-        
-        estadosQuery = EstadoSucursal.objects.filter(opciones = 'ACTIVA')
-        activo = ""
-        for estado in estadosQuery:
-            activo = estado.id 
-        
-        instance.estado_id = activo 
-        instance.save()
-        
+    estados = EstadoSucursal.objects.all()
+    if len(estados) > 0:
+        if instance.DoesNotExist:
+            
+            estadosQuery = EstadoSucursal.objects.filter(opciones = 'ACTIVA')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo 
+            
 post_save.connect(defaultActivo, sender = Sucursal)

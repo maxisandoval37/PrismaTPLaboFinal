@@ -1,0 +1,201 @@
+{% extends 'index.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}
+Listado de Items
+{% endblock title %}
+
+{% block content %}
+
+<div class="bg-gray-100" id="report">
+    <div class="card">
+        <div class="card-header">
+            <strong class="card-title">Ítems faltantes de stock</strong>
+            {% if es_gerente_general %}
+                <select name="sucursal" id="sucursal">
+                    <option value="0"> Seleccioná una sucursal </option>
+                    {% for sucursal in sucursalesIds %}
+                    <option value="{{sucursal}}">{{sucursal}}</option>
+                    {% endfor %}
+                </select>
+                <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()">Filtrar resultados</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="table-stats order-table ov-h">
+        <table class="table">
+           <thead>
+                <tr>
+                    <th></th>
+                    <th>Código de barras</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Categoria</th>
+                    <th>Sub Categoria</th>
+                    <th>Proveedor</th>
+                    <th>Estado</th>
+                    <th>Ubicación</th>
+                    <th>Sucursal</th>
+                    <th>Stock Minimo</th>
+                    <th>Stock de Seguridad</th>
+                </tr>
+            </thead>
+            <tbody id="table">
+                {% if items %}
+                {% for item in items %}
+                <tr class = "other_item" id = "{{ item.nombre}}">
+                    <td></td>
+                    <td>{{ item.codigo_de_barras }}</td>
+                    <td class="items" id="{{ item.nombre }}">{{ item.nombre }}</td>
+                    <td>{{ item.precio }}</td>       
+                    <td id="{{ item.nombre }}cantidad">{{ item.cantidad }}</td>
+                    <td>{{ item.categoria }}</td>
+                    <td>{{ item.subcategoria }}</td>
+                    <td>{{ item.categoria_prov_preferido}}</td>
+                    <td>{{item.estado}}</td>
+                    <td>{{ item.ubicacion}}</td>
+                    <td>{{ item.sucursal}}</td>
+                    <td hidden id="responsable{{ item.nombre}}">{{ item.sucursal_id}}</td>      
+                    <td>{{ item.stockminimo }}</td>
+                    <td>{{ item.stockseguridad }}</td>
+                </tr>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <h5>No hay items registrados :( </h1>
+                    {% endif %}
+            </tbody>
+        </table>
+        <!-- <div id="chartdiv"></div> -->
+
+    </div>
+
+</div>
+
+</div>
+
+<!--Inserta Grafico-->
+<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+
+<style>
+    #chartdiv {
+        height: 350px;
+        width: 69%;
+        margin: auto;
+    }
+</style>
+
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script>
+    data = [];
+
+    function printChart(divName) {
+        let toPrint = document.getElementById(divName).innerHTML;
+        let originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = toPrint;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+
+    window.onload = (event) => {
+        
+        GenerarGrafico()
+
+        setTimeout(function () {
+            document.getElementById("button").hidden = false;
+        }, 1000);
+    };
+
+    function filtrarPorSucursal() {
+        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
+        console.log("sucursalSeleccionada: " + sucursalSeleccionada);
+        if (document.getElementById("boton2").innerText == "Filtrar resultados") {
+            document.getElementById("boton2").innerText = "Reiniciar";
+
+            elementos = document.getElementsByClassName("other_item");
+            cont = 0;
+            toDelete = []
+            for (let i = 0; i < document.getElementsByClassName("other_item").length; i++) {
+                
+                elemento = elementos[cont];
+                console.log(elemento)
+                responsable_sucursal_id = document.getElementById("responsable" + elemento.id).innerText;
+                
+
+                ret = sucursalSeleccionada == responsable_sucursal_id;
+
+                console.log("Iguales? " + sucursalSeleccionada + " == " + responsable_sucursal_id);
+
+                if (!ret) {
+                    // document.getElementById("table").removeChild(document.getElementById(elemento.id));
+                    toDelete.push(document.getElementById(elemento.id))
+                }
+                cont++;
+            }
+
+            cont = 0;
+            for (let i = 0; i < toDelete.length; i++) {
+                console.log(toDelete[cont])
+                document.getElementById("table").removeChild(toDelete[cont]);
+                cont++;
+
+            }
+            data = [];
+            GenerarGrafico()
+        }
+
+        else {
+            location.reload();
+        }
+    }
+
+    function GenerarGrafico(){
+
+        let elements = document.getElementsByClassName("items");
+        cont = 0;
+
+        for (i = 0; i < elements.length; i++) {
+            let element = elements[cont];
+            let item = document.getElementById(element.id).innerText;
+            let cantidad = document.getElementById(element.id + "cantidad").innerText;
+            let info = { "item": elements[i].innerText, "cantidad": cantidad };
+
+            data.push(info);
+            cont++;
+        }
+
+        am4core.ready(function () {
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            let chart = am4core.create("chartdiv", am4charts.PieChart);
+            
+            // Add data
+            chart.data = data;
+
+            // Add and configure Series
+            let pieSeries = chart.series.push(new am4charts.PieSeries());
+            pieSeries.dataFields.value = "cantidad";
+            pieSeries.dataFields.category = "item";
+            pieSeries.slices.template.stroke = am4core.color("#fff");
+            pieSeries.slices.template.strokeWidth = 2;
+            pieSeries.slices.template.strokeOpacity = 1;
+
+            // This creates initial animation
+            pieSeries.hiddenState.properties.opacity = 1;
+            pieSeries.hiddenState.properties.endAngle = -90;
+            pieSeries.hiddenState.properties.startAngle = -90;
+        });
+    }
+
+</script>
+
+{% endblock %}

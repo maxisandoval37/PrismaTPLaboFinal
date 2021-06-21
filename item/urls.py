@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem, EliminarItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor, ordenarItemPorNombre, ordenarPorStockMinimo, ordenarPorStockSeguridad, HistorialPreferenciados, SolicitarStock, RealizarPedido
+from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem,ReporteItemsStockFaltante, CambiarEstadoItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor, ordenarItemPorNombre, ordenarPorStockMinimo, ordenarPorStockSeguridad, HistorialPreferenciados, SolicitarStock, RealizarPedido
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -9,8 +9,8 @@ urlpatterns = [
          name='registrar_item'),
     path('actualizar_item/<int:pk>/',
          login_required(EditarItem.as_view()), name='actualizar_item'),
-    path('eliminar_item/<int:pk>/',
-         login_required(EliminarItem.as_view()), name='eliminar_item'),
+    path('cambiar_estado/<int:pk>/',
+         login_required(CambiarEstadoItem.as_view()), name='cambiar_estado'),
     path('reposicion_item/<int:pk>/',
          login_required(ConfigurarReposicionItem.as_view()), name='reposicion_item'),
     path('listar_categorias/', login_required(ListarCategorias.as_view()),
@@ -69,4 +69,6 @@ urlpatterns = [
          name='historial_preferenciados'),
     path('solicitar_stock/<int:item>/', login_required(SolicitarStock), name= 'solicitar_stock'),
     path('solicitar_stock/<int:item>/RealizarPedido/', login_required(RealizarPedido), name = 'realizar_pedido'),
+    path('reporte_stock_faltante/', login_required(ReporteItemsStockFaltante),  name='reporte_stock_faltante'),
+
 ]

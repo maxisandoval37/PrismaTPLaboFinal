@@ -314,7 +314,7 @@ def defaultActivo(sender, instance, **kwargs):
     
     estados = Estado.objects.all()
     if len(estados) > 0:
-        if instance.estado == None:
+        if instance.estado_id == None:
             
             estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
             activo = ""
