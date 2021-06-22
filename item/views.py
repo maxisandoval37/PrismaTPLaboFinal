@@ -18,6 +18,7 @@ from usuario.models import Supervisor, Rol
 from django.core.mail import send_mail
 from proveedor.models import CuentaCorrienteProveedor
 from item.models import Estado
+from usuario.models import Vendedor
 
 
 
@@ -323,7 +324,7 @@ def CambioMasivo(request):
         else:
             reporte_precios.aumento = int(precio)
         if request.user.is_staff or request.user.rol.opciones != 'SUPERVISOR':
-            messages.error(request, "Acceso denegado.")
+            messages.warning(request, "Sólo el supervisor puede realizar el cambio masivo.")
             return HttpResponse()
         else:
             reporte_precios.responsable_id = request.user.id
@@ -375,7 +376,7 @@ def CambioMasivoItems(request):
         else:
             reporte_precios.aumento = int(precio)
         if request.user.is_staff or request.user.rol.opciones != 'SUPERVISOR':
-            messages.error(request, "Acceso denegado.")
+            messages.warning(request, "Sólo el supervisor puede realizar el cambio masivo.")
             return HttpResponse()
         else:
             reporte_precios.responsable_id = request.user.id
@@ -394,12 +395,142 @@ def CambioMasivoItems(request):
     return HttpResponse("Cambio efectuado.")
 
 
-class ListadoPintura(ValidarLoginYPermisosRequeridos, ListView):
+def ListarPintura(request):
+    
 
-    permission_required = ('item.view_pintura',)
-    model = Pintura
-    template_name = 'items/listar_pintura.html'
-    queryset = Pintura.objects.all().order_by('id')
+    if request.user.is_staff or request.user.rol.opciones == 'GERENTE GENERAL':
+        
+        lista = []
+        colores = []
+        pinturas = Pintura.objects.all()
+        
+        for pintura in pinturas:
+            
+            if pintura not in colores:
+                
+                colores.append(pintura.color)
+        
+        for pintura in pinturas:
+            
+            dic = {
+                "id": pintura.id,
+                "nombre": pintura.nombre,
+                "precio": pintura.precio,
+                "color": pintura.color,
+                "cantidad_pintura": pintura.cantidad_pintura,
+                "cantidad": pintura.cantidad,
+                "categoria": pintura.categoria,
+                "subcategoria": pintura.subcategoria,
+                "proveedor": pintura.categoria.prov_preferido,
+                "estado": pintura.estado,
+                "unidad_de_medida": pintura.unidad_de_medida,
+                "ubicacion": pintura.ubicacion,
+                "sucursal": pintura.sucursal,
+                "stockminimo": pintura.stockminimo,
+                "stockseguridad": pintura.stockseguridad,
+                "colores": colores,
+            }
+            lista.append(dic)
+    
+    elif request.user.rol.opciones == 'VENDEDOR':
+        
+        vendedorQuery = Vendedor.objects.filter(id = request.user.id)
+        cod = ""
+        for vendedor in vendedorQuery:
+            
+            cod = vendedor.sucursal_id
+            
+        sucursalQuery = Sucursal.objects.filter(id = cod)
+        
+        sucursal = None
+        for suc in sucursalQuery:
+            sucursal = suc
+        
+        pinturas = Pintura.objects.filter(sucursal_id = sucursal.id)
+        
+        lista = []
+        colores = []
+        
+        for pintura in pinturas:
+            
+            if pintura not in colores:
+                
+                colores.append(pintura.color)
+        
+        for pintura in pinturas:
+            
+            dic = {
+                "id": pintura.id,
+                "nombre": pintura.nombre,
+                "precio": pintura.precio,
+                "color": pintura.color,
+                "cantidad_pintura": pintura.cantidad_pintura,
+                "cantidad": pintura.cantidad,
+                "categoria": pintura.categoria,
+                "subcategoria": pintura.subcategoria,
+                "proveedor": pintura.categoria.prov_preferido,
+                "estado": pintura.estado,
+                "unidad_de_medida": pintura.unidad_de_medida,
+                "ubicacion": pintura.ubicacion,
+                "sucursal": pintura.sucursal,
+                "stockminimo": pintura.stockminimo,
+                "stockseguridad": pintura.stockseguridad,
+                "colores": colores,
+            }
+            lista.append(dic)
+        
+    elif request.user.rol.opciones == 'SUPERVISOR':
+        
+        supervisorQuery = Supervisor.objects.filter(id = request.user.id)
+        cod = ""
+        for supervisor in supervisorQuery:
+            
+            cod = supervisor.sucursal_id
+            
+        sucursalQuery = Sucursal.objects.filter(id = cod)
+        
+        sucursal = None
+        for suc in sucursalQuery:
+            sucursal = suc
+        
+        pinturas = Pintura.objects.filter(sucursal_id = sucursal.id)
+        
+        lista = []
+        colores = []
+        
+        for pintura in pinturas:
+            
+            if pintura not in colores:
+                
+                colores.append(pintura.color)
+        
+        for pintura in pinturas:
+            
+            dic = {
+                "id": pintura.id,
+                "nombre": pintura.nombre,
+                "precio": pintura.precio,
+                "color": pintura.color,
+                "cantidad_pintura": pintura.cantidad_pintura,
+                "cantidad": pintura.cantidad,
+                "categoria": pintura.categoria,
+                "subcategoria": pintura.subcategoria,
+                "proveedor": pintura.categoria.prov_preferido,
+                "estado": pintura.estado,
+                "unidad_de_medida": pintura.unidad_de_medida,
+                "ubicacion": pintura.ubicacion,
+                "sucursal": pintura.sucursal,
+                "stockminimo": pintura.stockminimo,
+                "stockseguridad": pintura.stockseguridad,
+                "colores": colores,
+            }
+            lista.append(dic)
+
+    return render(request, 'items/listar_pintura.html', locals())
+    
+    
+    
+    
 
 
 class ListadoPinturaNueva(ValidarLoginYPermisosRequeridos, ListView):
@@ -839,7 +970,7 @@ def ordenarItemPorNombre(request):
 def ordenarPorStockMinimo(request):
     
     lista = []
-    query = Item.objects.all().order_by('stockminimo').order_by('cantidad')
+    query = Item.objects.all().order_by('stockminimo','cantidad')
     
     for info in query:
         
@@ -850,7 +981,7 @@ def ordenarPorStockMinimo(request):
 def ordenarPorStockSeguridad(request):
     
     lista = []
-    query = Item.objects.all().order_by('stockseguridad').order_by('cantidad')
+    query = Item.objects.all().order_by('stockseguridad','cantidad')
     
     for info in query:
         
@@ -1018,3 +1149,5 @@ def ReporteItemsStockFaltante(request):
         items.append(dic)
 
     return render(request,'items/reporte_stock_faltante.html',locals())
+
+

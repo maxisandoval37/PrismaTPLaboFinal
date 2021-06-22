@@ -5,12 +5,12 @@
 
 {% block content %}
 
-<div class="card">
-    <div class="card-header">
+<div class="card" style="margin: 1%;">
+    <div class="card-header text-center">
         <strong class="card-tittle">Registro de Gerente General</strong>
     </div>
 
-<div class="card-body">
+<div class="card-body bg-gray-100" >
   <form class="user" method = "post">
     {% csrf_token %}
     {% for field in form %} 
@@ -18,7 +18,7 @@
    
             
     <div class="form-group">
-        {% render_field field class="form-control form-control" %}
+        {% render_field field class="select form-control bg-gray-100" %}
        
             {% endfor %}
 
@@ -28,11 +28,13 @@
             <strong>{{ error|escape }}</strong>
         </div>
         {% endfor %}
-        <div class="">
+        <div class="text-center">
     <a href ="{% url 'usuarios:listar_usuarios' %}" class="btn btn-danger"> Cancelar </a>
     <button type="submit" class="btn btn-success">Registrar</button>
 </div>
 </form>   
 </div>
 </div>
+
+
 {% endblock %}

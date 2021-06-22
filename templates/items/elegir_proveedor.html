@@ -12,13 +12,13 @@ Listado de Categorias
 
 
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Categorias</strong>
         </div>
-    </div>
+    
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
 
             <thead>
@@ -43,7 +43,7 @@ Listado de Categorias
 
 
                         <div class="form-group">
-                            <select name="proveedor" id="select{{cat.id}}" class="select form-control">
+                            <select name="proveedor" id="select{{cat.id}}" class="select form-control bg-gradient-light">
                                 <option value="0"> - </option>
 
                                 {% for prov in proveedor %}
@@ -76,7 +76,7 @@ Listado de Categorias
     </div>
 </div>
 </div>
-
+</div>
 <script>
 
     function AsignarProveedor(boton_id) {

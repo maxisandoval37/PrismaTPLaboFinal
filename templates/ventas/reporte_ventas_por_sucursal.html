@@ -7,22 +7,25 @@ Reporte de ventas por sucursal
 {% endblock title %}
 
 {% block content %}
-
+{% if items %}
 <div class="bg-gray-100" id="report">
-    <div class="card">
-        <div class="card-header">
+    <div class="card " style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Reporte de ventas por sucursal </strong>
+            </div>
                 {% if es_gerente_general %}
-                <select name="sucursal" id="sucursal">
+                <div class="bg-gray-100 text-center">
+                <select name="sucursal" id="sucursal" class="bg-gradient-light">
                     <option value="0"> Seleccioná una sucursal </option>
                     {% for sucursal in sucursalesIds %}
                     <option value="{{sucursal}}">{{sucursal}}</option>
                     {% endfor %}
                 </select>
                 <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()">Filtrar resultados</a>
+            </div>
                 {% endif %}
         
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
@@ -35,7 +38,7 @@ Reporte de ventas por sucursal
                 </tr>
             </thead>
             <tbody id = "table">
-                {% if items %}
+                
                 {% for venta in items %}
 
                <tr class = "items" id = "{{ venta.sucursal_id }}">
@@ -47,9 +50,7 @@ Reporte de ventas por sucursal
 
                 </tr>
                 {% endfor %}
-                {% else %}
-                <h5>No hay ventas registradas :(</h5>
-                    {% endif %}
+                
             </tbody>
         </table>
         
@@ -57,15 +58,27 @@ Reporte de ventas por sucursal
     </div>
 
 </div>
-
-
-</div>
-</div>
-</div>
-
-
-
+<div class="text-center">
 <button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+</div>
+</div>
+</div>
+
+{% else %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Sin registros</h1>
+            <h3 class="mx-auto my-0 text-center">Por el momento no hay ventas registradas. </h3>
+           
+        </div>
+    </div>
+    <br>
+</header>
+<div class="text-center">
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+                    {% endif %}
 
 <script>
     data = [];
@@ -89,7 +102,7 @@ Reporte de ventas por sucursal
     function filtrarPorSucursal() {
         sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
         console.log("sucursalSeleccionada: " + sucursalSeleccionada);
-        if (document.getElementById("boton2").innerText == "Filtrar resultados") {
+        if (document.getElementById("boton2").innerText == " Filtrar resultados") {
             document.getElementById("boton2").innerText = "Reiniciar";
 
             elementos = document.getElementsByClassName("items");

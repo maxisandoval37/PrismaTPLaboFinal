@@ -6,20 +6,20 @@
 
 {% block content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<div class="card">
-    <div class="card-header">
+<div class="card bg-gray-100" style="margin: 20px;">
+    <div class="card-header text-center">
         <strong class="card-tittle">Registro de Ventas Locales</strong>
     </div>
 
-    <div class="card-body">
+    <div class="card-body" >
         <form class="user" method="post">
             {% csrf_token %}
 
             
 
-            <div  class="form-group">Cliente asociado</div>
+            <div  class="form-group">Cliente asociado:</div>
             <div class="form-group">
-                <select  name="cliente_asociado" id="id_cliente_asociado" class="select form-control">
+                <select  name="cliente_asociado" id="id_cliente_asociado" class="select form-control bg-gray-100 bg-gradient-light">
                     <option value="0"> - </option>
 
                     {% for cli in cliente_asociado %}
@@ -31,34 +31,36 @@
 
             
 
-            <div class="form-group">Medio de pago</div>
+            <div class="form-group">Medio de pago:</div>
             <div class="form-group">
-                <select name="mediodepago" id="id_mediodepago" class="select form-control">
+                <select name="mediodepago" id="id_mediodepago" class="select form-control bg-gray-100 bg-gradient-light">
                     <option value="0"> - </option>
 
                     {% for medio in mediodepago %}
                     <option value="{{medio.id}}" data-chained="{{medio.cliente.id}}">{{medio}}</option>
                     {% endfor %}
                 </select>
-                <a href="{% url 'clientes:registrar_mdp' %}?next={{ request.path }}" >Registrar medio de pago</a>
+                <br>
+                <a href="{% url 'clientes:registrar_mdp' %}?next={{ request.path }}" class="text-gray-100 btn btn-secondary " >Registrar medio de pago</a>
             </div>
 
-            <div class="form-group">Cuenta Corriente</div>
+            <div class="form-group">Cuenta Corriente:</div>
             <div class="form-group">
-                <select name="cuenta_corriente" id="id_cuenta_corriente" class="select form-control">
+                <select name="cuenta_corriente" id="id_cuenta_corriente" class="select form-control bg-gray-100 bg-gradient-light">
                     <option value="0"> - </option>
 
                     {% for cc in cuenta_corriente %}
                     <option value="{{cc.numero_cuenta}}" data-chained="{{cc.cliente.id}}">{{cc}}</option>
                     {% endfor %}
                 </select>
-                <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}">Registrar cuenta
+                <br>
+                <a href="{% url 'clientes:registrar_cuenta_corriente' %}?next={{ request.path }}" class="text-gray-100 btn btn-secondary">Registrar cuenta
                     corriente</a>
             </div>
 
-            <div class="form-group">Sucursal asociada</div>
+            <div class="form-group">Sucursal asociada:</div>
             <div class="form-group">
-                <select name="sucursal_asociada" id="id_sucursal_asociada" class="select form-control">
+                <select name="sucursal_asociada" id="id_sucursal_asociada" class="select form-control bg-gray-100 bg-gradient-light">
                     <option value="0"> - </option>
                     {% for suc in sucursal_asociada %}
                     <option value="{{suc.id}}">{{suc}}</option>
@@ -66,9 +68,9 @@
                 </select>
             </div>
 
-            <div class="form-group">Vendedor asociado</div>
+            <div class="form-group">Vendedor asociado:</div>
             <div class="form-group">
-                <select name="vendedor_asociado" id="id_vendedor_asociado" class="select form-control">
+                <select name="vendedor_asociado" id="id_vendedor_asociado" class="select form-control bg-gray-100 bg-gradient-light">
                     <option value="0"> - </option>
                     {% for vendedor in vendedor_asociado %}
                     <option value="{{vendedor.id}}" data-chained="{{vendedor.sucursal.id}}">{{vendedor}}</option>
@@ -76,16 +78,12 @@
                 </select>
             </div>
 
-            {{form.estado.label_tag}}
-            <div class="form-group">
-                {% render_field form.estado class="select form-control" %}
-            </div>
 
             {{form.tipo_de_moneda.label_tag}}
             <div class="form-group">
-                {% render_field form.tipo_de_moneda class="form-control form-control" %}
+                {% render_field form.tipo_de_moneda class="form-control form-control bg-gray-100 bg-gradient-light" %}
             </div>
-
+            <br>
 
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
@@ -94,7 +92,7 @@
             {% endfor %}
 
 
-            <div class="">
+            <div class="text-center">
                 <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-primary">Registrar Venta</button>
                 <a href="{% url 'clientes:registrar_cliente' %}" class="btn btn-success" target="_blank">Registrar

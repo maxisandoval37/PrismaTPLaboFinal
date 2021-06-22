@@ -12,17 +12,17 @@ Listado de Pedidos
 
 {% if object_list %}
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Pedidos</strong>
         </div>
-    </div>
+    
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     <th>Item</th>
                     <th>Sucursal</th>
                     <th>Proveedor</th>
@@ -59,5 +59,6 @@ Listado de Pedidos
 {% endif %}
 <div class="text-center">
     <a href="{% url 'proveedores:listar_proveedores' %}" class="btn btn-primary"> Volver </a>
+</div>
 </div>
 {% endblock %}

@@ -242,7 +242,7 @@ class Pintura(Item):
         verbose_name_plural = 'pinturas'
 
     def __str__(self):
-        return "{}, Color:{}".format(self.nombre, self.color)
+        return "{}, Color:{}, Sucursal: {}".format(self.nombre, self.color, self.sucursal)
     
     def clean(self):
         
@@ -473,9 +473,9 @@ def defaultActivo(sender, instance, **kwargs):
     
     estados = Estado.objects.all()
     if len(estados) > 0:
-        
+        print("hola xxddx")
         if instance.estado_id == None:
-            
+            print("joder llege")
             estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
@@ -485,4 +485,22 @@ def defaultActivo(sender, instance, **kwargs):
             
             
 pre_save.connect(defaultActivo, sender = Item)
+
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    estados = Estado.objects.all()
+    if len(estados) > 0:
+        print("hola xxddx")
+        if instance.estado_id == None:
+            print("joder llege")
+            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo 
+            
+            
+pre_save.connect(defaultActivo, sender = Pintura)
     

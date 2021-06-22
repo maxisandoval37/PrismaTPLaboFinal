@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import re
 from django.db.models.signals import pre_save
+from django.db.models.enums import TextChoices
 
 # Create your models here.
 
@@ -112,11 +113,25 @@ class TipoDeMoneda(models.Model):
             
             if self.opciones == moneda.opciones:
                 raise ValidationError('No es posible añadir un tipo de moneda ya registrado.')
-            
+
+class EstadoCuentaCorriente(models.Model):
+    
+    class opcionesEstado(TextChoices):
+        
+        ACTIVA = 'ACTIVA'
+        INACTIVA = 'INACTIVA'
+        
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length= 8)
+    
+    def __str__(self):
+        return self.opciones
+
+   
 class CuentaCorriente(models.Model):
     
     numero_cuenta = models.AutoField("Número de cuenta", primary_key=True)
     cliente = models.ForeignKey('Cliente', on_delete=models.PROTECT)
+    estado = models.ForeignKey(EstadoCuentaCorriente, on_delete=models.PROTECT)
     
     def __str__(self):
         return "Cliente: {}, Cuenta: {}".format(self.cliente.nombre, self.numero_cuenta)
@@ -132,8 +147,6 @@ class CuentaCorriente(models.Model):
             
         for cuenta in cuentas_corriente:
             
-            if self.numero_cuenta == cuenta.numero_cuenta:
-                raise ValidationError('La cuenta corriente ya está registrada.')
 
             if self.cliente.nombre == 'CONSUMIDOR FINAL' and contador == 1:
                 raise ValidationError('El consumidor final sólo puede tener una cuenta corriente genérica.')
@@ -199,3 +212,21 @@ def defaultActivo(sender, instance, **kwargs):
             instance.estado_cliente_id = activo 
             
 pre_save.connect(defaultActivo, sender = Cliente)
+
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    estados = EstadoCuentaCorriente.objects.all()
+    if len(estados) > 0:
+        print("xddd")
+        if instance.estado_id == None:
+            print("holaaa")
+            estadosQuery = EstadoCuentaCorriente.objects.filter(opciones = 'ACTIVA')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo
+            
+            
+pre_save.connect(defaultActivo, sender = CuentaCorriente)

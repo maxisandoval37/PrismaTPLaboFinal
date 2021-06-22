@@ -7,16 +7,16 @@
 {% block content %}
 
 {% if lista %}
-<div class="card">
-    <div class="card-header">
+<div class="card" style="margin: 20px;">
+    <div class="card-header text-center">
         <strong class="card-tittle">Agregar Items a la venta</strong>
     </div>
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100 ">
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     <th>Nombre</th>
                     <th>Precio</th>
                     <th>Unidad de medida</th>
@@ -26,14 +26,15 @@
             <tbody>
                 {% for item in lista %}
                 <tr>
-                    <td id="{{item.id}}" class="items">{{ item.id}}</td>
+                    <td></td>
+                    <td id="{{item.id}}" class="items" hidden>{{ item.id}}</td>
                     <td id="{{item.id}}nombre">{{ item.nombre }}</td>
                     <td id="{{item.id}}precio">{{ item.precio }}</td>
                     <td>{{ item.unidad }}</td>
                     <td hidden id="{{item.id}}sucursal">{{ item.sucursal.id }}</td>
                     <td hidden id="{{item.id}}venta">{{item.venta}}</td>
                     <td>
-                        <input value="0" type="Integer" class="form-control-user" id="{{item.id}}cantidad_solicitada" placeholder="Ingrese la cantidad"> 
+                        <input  type="Integer"  id="{{item.id}}cantidad_solicitada" class="bg-gray-100" placeholder="Ingrese la cantidad"> 
                     </td>
                     <td><a onclick="AgregarItem(this.id)" id="{{item.id}}" class="btn btn-primary">Agregar items</a></td>  
                 </tr>
@@ -46,15 +47,26 @@
 </div>
 </div>
 
+
+
+{% else %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Sin disponibilidad</h1>
+            <h3 class="mx-auto my-0 text-center">La sucursal no posee items con stock. </h3>
+           
+        </div>
+    </div>
+    <br>
+</header>
+
+{% endif %}
+
 <div class="text-center">
     <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-info"> Volver </a>
     
-</div>
-
-{% else %}
-<h1>La sucursal no tiene items :c </h1>
-{% endif %}
-            
+</div>      
         
 
 <script>

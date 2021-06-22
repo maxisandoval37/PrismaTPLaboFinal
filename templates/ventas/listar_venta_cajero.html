@@ -10,21 +10,21 @@ Listado de Ventas
 
 {% block content %}
 
-
-<div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+{% if lista %}
+<div class="bg-gray-100" >
+    <div class="card bg-gray-100" style="margin: 20px;">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Ventas</strong>
         </div>
-    </div>
+    
 
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Número de comprobante</th>
-                    <th>Fecha</th>
+                    <th></th>
+                    <th>N° de comprobante</th>
+                    <!-- <th>Fecha</th> -->
                     <th>Cliente</th>
                     <th>Vendedor</th>
                     <th>Sucursal</th>
@@ -35,12 +35,12 @@ Listado de Ventas
                 </tr>
             </thead>
             <tbody>
-                {% if object_list %}
-                {% for venta in object_list %}
+                
+                {% for venta in lista %}
                 <tr>
                     <td></td>
                     <td>{{ venta.numero_comprobante }}</td>
-                    <td>{{ venta.fecha }}</td>
+                    <!-- <td>{{ venta.fecha }}</td> -->
                     <td>{{ venta.cliente_asociado }}</td>
                     <td>{{ venta.vendedor_asociado }}</td>
                     <td>{{ venta.sucursal_asociada }}</td>
@@ -58,7 +58,7 @@ Listado de Ventas
                     {% if user.rol.opciones == 'CAJERO' or user.is_staff or user.rol.opciones == 'ADMINISTRATIVO' %}
                    {% if venta.estado.opciones == 'LISTA' %}
                     <td>
-                        <a href="{% url 'ventas:eliminar_venta' venta.numero_comprobante %}" class="btn btn-danger">
+                        <a href="{% url 'ventas:anular_venta' venta.numero_comprobante %}" class="btn btn-danger">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
                               </svg>
@@ -67,10 +67,10 @@ Listado de Ventas
                     {% else %} 
                     <td>
                         <a class="btn btn-secondary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
-                              </svg>
-                            Anular </a>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                                  </svg>
+                                Anular </a>
                     </td>
                     {% endif %}
                     {% endif %}
@@ -112,6 +112,8 @@ Listado de Ventas
                             <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
                           </svg> Finalizar venta</a>
                     </td>
+
+                    
                     <td>
                         <a href="{% url 'ventas:ver_comprobante' venta.numero_comprobante %}" class= "btn btn-success">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-checklist" viewBox="0 0 16 16">
@@ -119,18 +121,34 @@ Listado de Ventas
                                 <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
                               </svg> Comprobante de pago</a>
                     </td>
+                    
+
                     {% endif %}
                     {% endif %}
                 </tr>
                 {% endfor %}
-                {% else %}
-                <h5> No hay Ventas registradas :( </h1>
-                {% endif %}
+                
             </tbody>
         </table>
     </div>
 </div>
 </div>
+</div>
+{% else %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Sin ventas</h1>
+            <h3 class="mx-auto my-0 text-center">Por el momento no hay ventas para procesar. </h3>
+           
+        </div>
+    </div>
+    <br>
+</header>
+<div class="text-center">
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endif %}
 
 
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem,ReporteItemsStockFaltante, CambiarEstadoItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListadoPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor, ordenarItemPorNombre, ordenarPorStockMinimo, ordenarPorStockSeguridad, HistorialPreferenciados, SolicitarStock, RealizarPedido
+from .views import ListadoItem, EliminarMezcla, RegistrarItem, EditarItem,ReporteItemsStockFaltante, CambiarEstadoItem, ConfigurarReposicionItem, ListarCategorias, ListarPedidos,  VerPedido, RecibirStock, MensajeExitoso, ModificarCampos, CambioMasivo, ListarPintura, AgregarPintura, ListadoPinturaUsada, IniciarMezcla, mezclarPinturas, ListadoMezclas, ListadoPinturaNueva, ListadoMezclaUsada, IniciarMezclaUsada, mezclarPinturasUsadas, EliminarMezclaUsada, ReporteItemRiesgoStock, ReporteCambiosPrecios, ReporteCuentaCorrienteProveedores, CambioMasivoItems, ModificarCamposItems, AsignarProveedor, ordenarItemPorNombre, ordenarPorStockMinimo, ordenarPorStockSeguridad, HistorialPreferenciados, SolicitarStock, RealizarPedido
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -26,7 +26,7 @@ urlpatterns = [
     path('stock_recibido/', MensajeExitoso.as_view(), name='stock_recibido'),
     path('ver_categorias/', ModificarCampos.as_view(), name='ver_categorias'),
     path('ver_categorias/CambioMasivo/', CambioMasivo, name='cambio_masivo'),
-    path('listar_pinturas/', login_required(ListadoPintura.as_view()),
+    path('listar_pinturas/', login_required(ListarPintura),
          name='listar_pinturas'),
     path('registrar_pintura/', login_required(AgregarPintura.as_view()),
          name='registrar_pintura'),

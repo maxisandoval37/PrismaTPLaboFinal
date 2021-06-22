@@ -12,19 +12,19 @@ Listado de Categorias
 
 
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Categorias</strong>
         </div>
-    </div>
+   
     
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             
             <thead>
 
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     <th>Categoria</th>
                     <th>Precio de items</th>
                     <th>Stock de seguridad</th>
@@ -36,12 +36,13 @@ Listado de Categorias
                 {% for cat in object_list %}
 
                 <tr>
-                    <td id="{{cat.id}}" class="input-cantidad">{{cat.id}}</td>
+                    <td></td>
+                    <td id="{{cat.id}}" hidden class="input-cantidad">{{cat.id}}</td>
                     <td>{{ cat.opciones}}</td>
                     <td><input type="Integer"  id="{{ cat.id }}precio" placeholder="0" min="0"
-                        max="100000"></td>
+                        max="100000" class="bg-gray-100"></td>
                     <td><input type="Integer" id="{{ cat.id }}stock" placeholder="0" min="0"
-                         max="1000"></td>
+                         max="1000" class="bg-gray-100"></td>
                     <td><a id="{{cat.id}}" onclick="ModificacionMasiva(this.id)" class="btn btn-primary">Modificar</a></td>
                     
                 </tr>
@@ -55,7 +56,7 @@ Listado de Categorias
     </div>
 </div>
 </div>
-
+</div>
 <script>
 function ModificacionMasiva(boton_id) {
         

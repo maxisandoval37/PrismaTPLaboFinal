@@ -12,13 +12,13 @@ Listado de Cajas
 
 {% if lista %}
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Cajas</strong>
         </div>
-    </div>
+    
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
@@ -51,7 +51,7 @@ Listado de Cajas
                     <td>{{ caja.saldo_inicial }}</td>
                     <td>{{ caja.saldo_final }}</td>
 
-                    <td><input value="0" type="Integer" id="{{caja.caja_codigo}}cantidad_solicitada"
+                    <td><input value="0" type="Integer" class="bg-gray-100" id="{{caja.caja_codigo}}cantidad_solicitada"
                             placeholder="Ingrese la cantidad"></td>
                     <td><a onclick="ExtraerDinero(this.id)" id="{{caja.caja_codigo}}"  class="btn btn-primary">Extraer</a></td>
                 </tr>
@@ -70,7 +70,7 @@ Listado de Cajas
 <div class="text-center">
     <a href="{% url 'sucursales:listar_sucursales' %}" class="btn btn-primary"> Volver </a>
 </div>
-
+</div>
 <script>
 
 function ExtraerDinero(boton_id) {

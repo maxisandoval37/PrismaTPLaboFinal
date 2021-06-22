@@ -104,3 +104,15 @@ def verRegistro(request, cuentacorriente):
         
     return render(request, 'proveedores/ver_registro.html', locals())
         
+        
+class CambiarEstadoCuentaCorriente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
+    
+    permission_required = ('proveedor.view_cuentacorrienteproveedor','proveedor.add_cuentacorrienteproveedor','proveedor.change_cuentacorrienteproveedor',)
+    model = CuentaCorrienteProveedor
+    fields = ['estado']
+    template_name = 'proveedores/cambiar_estado_cuenta.html'
+    success_url = reverse_lazy('proveedores:listar_cuenta_corriente')
+    success_message = 'Se editó el estado de la cuenta correctamente.'
+    
+    
+    

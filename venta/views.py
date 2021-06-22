@@ -1,4 +1,5 @@
 from email.mime.nonmultipart import MIMENonMultipart
+from proveedor.models import EstadoCuentaCorriente
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.views.generic.edit import UpdateView
 from .forms import VentaLocalForm
@@ -8,8 +9,8 @@ from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import ProtectedError
-from cliente.models import Cliente, CuentaCorriente,MedioDePago, Deuda, EstadoDeuda, CategoriaCliente, TipoDeMoneda
-from sucursal.models import Sucursal, Caja, Operacion
+from cliente.models import Cliente, CuentaCorriente, EstadoCliente,MedioDePago, Deuda, EstadoDeuda, CategoriaCliente, TipoDeMoneda
+from sucursal.models import EstadoSucursal, Sucursal, Caja, Operacion
 from usuario.models import Vendedor
 from item.models import Item, Estado
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -17,26 +18,226 @@ from decimal import Decimal
 import json
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import EmailMultiAlternatives
-from usuario.models import Supervisor, Rol
+from usuario.models import Supervisor, Rol, Cajero, Administrativo
 from django.db.models import Count
 
 
 
 
 
-class ListadoVenta(ValidarLoginYPermisosRequeridos,ListView):
+def ListadoVenta(request):
     
-    permission_required = ('venta.view_venta',)
-    model = Venta
-    template_name = 'ventas/listar_venta.html'
-    queryset = Venta.objects.all().order_by('numero_comprobante').order_by('fecha').order_by('sucursal_asociada')
+    if request.user.is_staff or request.user.rol.opciones == 'GERENTE GENERAL':
+        
+        ventas = Venta.objects.all().order_by('numero_comprobante','fecha','sucursal_asociada')
+        
+        lista = []
+       
+        
+        for venta in ventas:
+            
+            dic = {
+                "numero_comprobante": venta.numero_comprobante,
+                "fecha": venta.fecha,
+                "cliente_asociado": venta.cliente_asociado,
+                "vendedor_asociado": venta.vendedor_asociado,
+                "sucursal_asociada": venta.sucursal_asociada,
+                "mediodepago": venta.mediodepago,
+                "estado": venta.estado,
+                "tipo_de_venta": venta.tipo_de_venta,
+                "monto_ingresado": venta.monto_ingresado,
+                "tipo_de_moneda": venta.tipo_de_moneda,
+                "total_dolar": venta.total_dolar,
+                "total_euro": venta.total_euro,
+                "total_peso": venta.total_peso,
+                
+            }
+            lista.append(dic)
+        
+    
+    elif request.user.rol.opciones == 'VENDEDOR':
+        
+        vendedorQuery = Vendedor.objects.filter(id = request.user.id)
+        cod = ""
+        for vendedor in vendedorQuery:
+            
+            cod = vendedor.sucursal_id
+            
+        sucursalQuery = Sucursal.objects.filter(id = cod)
+        
+        sucursal = None
+        for suc in sucursalQuery:
+            sucursal = suc
+        
+        ventas = Venta.objects.filter(sucursal_asociada_id = sucursal.id).order_by('numero_comprobante','fecha','sucursal_asociada')
+        
+        lista = []
+       
+        
+        for venta in ventas:
+            
+            dic = {
+                "numero_comprobante": venta.numero_comprobante,
+                "fecha": venta.fecha,
+                "cliente_asociado": venta.cliente_asociado,
+                "vendedor_asociado": venta.vendedor_asociado,
+                "sucursal_asociada": venta.sucursal_asociada,
+                "mediodepago": venta.mediodepago,
+                "estado": venta.estado,
+                "tipo_de_venta": venta.tipo_de_venta,
+                "monto_ingresado": venta.monto_ingresado,
+                "tipo_de_moneda": venta.tipo_de_moneda,
+                "total_dolar": venta.total_dolar,
+                "total_euro": venta.total_euro,
+                "total_peso": venta.total_peso,
+                
+            }
+            lista.append(dic)
+            
+    return render(request, 'ventas/listar_venta.html', locals())
+    
 
-class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
+def ListadoVentaCajero(request):
     
-    permission_required = ('venta.view_ventavirtual','venta.add_ventavirtual',)
-    model = Venta 
-    template_name = 'ventas/listar_venta_cajero.html'
-    queryset = Venta.objects.all().order_by('numero_comprobante')
+    if request.user.is_staff or request.user.rol.opciones == 'GERENTE GENERAL':
+        
+        estados = EstadoVenta.objects.filter(opciones = 'LISTA')
+        estados2 = EstadoVenta.objects.filter(opciones = 'PAGADA')
+        lista = 0
+        pagada = 0
+        for estado in estados:
+            lista = estado.id
+        for estado in estados2:
+            pagada = estado.id
+            
+        queryLista = Venta.objects.filter(estado = lista)
+        queryPagada = Venta.objects.filter(estado = pagada)
+        
+        ventas = queryLista.union(queryPagada).order_by('numero_comprobante','fecha','sucursal_asociada')
+        
+        lista = []
+       
+        
+        for venta in ventas:
+            
+            dic = {
+                "numero_comprobante": venta.numero_comprobante,
+                "fecha": venta.fecha,
+                "cliente_asociado": venta.cliente_asociado,
+                "vendedor_asociado": venta.vendedor_asociado,
+                "sucursal_asociada": venta.sucursal_asociada,
+                "mediodepago": venta.mediodepago,
+                "estado": venta.estado,
+                "tipo_de_venta": venta.tipo_de_venta,
+                "monto_ingresado": venta.monto_ingresado,
+                "tipo_de_moneda": venta.tipo_de_moneda,
+                "total_dolar": venta.total_dolar,
+                "total_euro": venta.total_euro,
+                "total_peso": venta.total_peso,
+                
+            }
+            lista.append(dic)
+        
+    
+    elif request.user.rol.opciones == 'CAJERO':
+        
+        estados = EstadoVenta.objects.filter(opciones = 'LISTA')
+        lista = 0
+        for estado in estados:
+            lista = estado.id
+            
+        cajeroQuery = Cajero.objects.filter(id = request.user.id)
+        cod = ""
+        for cajero in cajeroQuery:
+            
+            cod = cajero.sucursal_id
+            
+        sucursalQuery = Sucursal.objects.filter(id = cod)
+        
+        sucursal = None
+        for suc in sucursalQuery:
+            sucursal = suc
+        
+        ventas = Venta.objects.filter(sucursal_asociada_id = sucursal.id, estado = lista).order_by('numero_comprobante','fecha','sucursal_asociada')
+        
+        lista = []
+       
+        
+        for venta in ventas:
+            
+            dic = {
+                "numero_comprobante": venta.numero_comprobante,
+                "fecha": venta.fecha,
+                "cliente_asociado": venta.cliente_asociado,
+                "vendedor_asociado": venta.vendedor_asociado,
+                "sucursal_asociada": venta.sucursal_asociada,
+                "mediodepago": venta.mediodepago,
+                "estado": venta.estado,
+                "tipo_de_venta": venta.tipo_de_venta,
+                "monto_ingresado": venta.monto_ingresado,
+                "tipo_de_moneda": venta.tipo_de_moneda,
+                "total_dolar": venta.total_dolar,
+                "total_euro": venta.total_euro,
+                "total_peso": venta.total_peso,
+                
+            }
+            lista.append(dic)
+            
+    elif request.user.rol.opciones == 'ADMINISTRATIVO':
+        
+        estados = EstadoVenta.objects.filter(opciones = 'LISTA')
+        lista = 0
+        for estado in estados:
+            lista = estado.id
+            
+        administrativoQuery = Administrativo.objects.filter(id = request.user.id)
+        cod = ""
+        for administrativo in administrativoQuery:
+            
+            cod = administrativo.sucursal_id
+            
+        sucursalQuery = Sucursal.objects.filter(id = cod)
+        
+        sucursal = None
+        for suc in sucursalQuery:
+            sucursal = suc
+        
+        ventas = Venta.objects.filter(sucursal_asociada_id = sucursal.id, estado = lista).order_by('numero_comprobante','fecha','sucursal_asociada')
+        
+        lista = []
+       
+        
+        for venta in ventas:
+            
+            dic = {
+                "numero_comprobante": venta.numero_comprobante,
+                "fecha": venta.fecha,
+                "cliente_asociado": venta.cliente_asociado,
+                "vendedor_asociado": venta.vendedor_asociado,
+                "sucursal_asociada": venta.sucursal_asociada,
+                "mediodepago": venta.mediodepago,
+                "estado": venta.estado,
+                "tipo_de_venta": venta.tipo_de_venta,
+                "monto_ingresado": venta.monto_ingresado,
+                "tipo_de_moneda": venta.tipo_de_moneda,
+                "total_dolar": venta.total_dolar,
+                "total_euro": venta.total_euro,
+                "total_peso": venta.total_peso,
+                
+            }
+            lista.append(dic)
+        
+            
+    return render(request, 'ventas/listar_venta_cajero.html', locals())
+    
+
+
+# class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
+    
+#     permission_required = ('venta.view_ventavirtual','venta.add_ventavirtual',)
+#     model = Venta 
+#     template_name = 'ventas/listar_venta_cajero.html'
+#     queryset = Venta.objects.all().order_by('numero_comprobante')
 
 class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
@@ -51,11 +252,36 @@ class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Cr
     
     def get_context_data(self, **kwargs):
         context = super(RegistrarVentaLocal, self).get_context_data(**kwargs)
-        context["cliente_asociado"] = Cliente.objects.all()
-        context["mediodepago"] = MedioDePago.objects.all()
-        context["cuenta_corriente"] = CuentaCorriente.objects.all()
-        context["sucursal_asociada"] = Sucursal.objects.all()
-        context["vendedor_asociado"] = Vendedor.objects.all()
+        
+        estados_cliente1 = EstadoCliente.objects.filter(opciones = 'ACTIVO')
+        estados_cliente2 = EstadoCliente.objects.filter(opciones = 'DEUDOR')
+        estados_cuenta = EstadoCuentaCorriente.objects.filter(opciones = 'ACTIVA')
+        estados_sucursal = EstadoSucursal.objects.filter(opciones = 'ACTIVA')
+        estados_vendedor = Estado.objects.filter(opciones = 'ACTIVO')
+        cliente = 0
+        cliente2 = 0
+        cuenta_corriente = 0
+        sucursal = 0
+        vendedor = 0
+        for estado in estados_cliente1:
+            cliente = estado.id
+        for estado in estados_cliente2:
+            cliente2 = estado.id  
+        for estado in estados_cuenta:
+            cuenta_corriente = estado.id
+        for estado in estados_sucursal:
+            sucursal = estado.id
+        for estado in estados_vendedor:
+            vendedor = estado.id
+        
+        query_activo = Cliente.objects.filter(estado_cliente = cliente)
+        query_deudor = Cliente.objects.filter(estado_cliente = cliente2)
+        
+        context["cliente_asociado"] = query_activo.union(query_deudor).order_by('categoria_cliente')
+        context["mediodepago"] = MedioDePago.objects.all().order_by('opciones')
+        context["cuenta_corriente"] = CuentaCorriente.objects.filter(estado = cuenta_corriente).order_by('numero_cuenta')
+        context["sucursal_asociada"] = Sucursal.objects.filter(estado = sucursal).order_by('codigo')
+        context["vendedor_asociado"] = Vendedor.objects.filter(estado = vendedor).order_by('nombre')
         return context
     
     
@@ -97,30 +323,41 @@ def ListarItem(request, venta):
     
     
     items = ItemVenta.objects.filter(venta_asociada = venta)
-   
+    
     lista = []
+     
     for item in items:
         
         lista.append(item)
+    
+    fecha = ""
+    venta = Venta.objects.filter(numero_comprobante = venta)
+    for ven in venta:
+        fecha = ven.fecha
+    
    
     return render(request, 'ventas/listar_itemventa.html', locals())
 
 def VerItems(request, venta):
     
-    
     items = ItemVenta.objects.filter(venta_asociada = venta)
    
     lista = []
     for item in items:
-        
+       
         lista.append(item)
+        
+    fecha = ""
+    venta = Venta.objects.filter(numero_comprobante = venta)
+    for ven in venta:
+        fecha = ven.fecha
    
     return render(request, 'ventas/ver_items.html', locals())
         
         
 def VerDetalle(request, sucursal, venta):
     
-   
+    
     sucursal = Sucursal.objects.get(id = sucursal)
     estados = Estado.objects.filter(opciones = 'ACTIVO')
     nuevo_estado = 0
@@ -130,19 +367,21 @@ def VerDetalle(request, sucursal, venta):
     queryset = Item.objects.filter(sucursal = sucursal.id, estado = nuevo_estado)
     lista = []
     for item in queryset:
-        dic = {
-            "nombre": item.nombre,
-            "categoria": item.categoria,
-            "precio": item.precio,
-            "estado": item.estado,
-            "unidad": item.unidad_de_medida,
-            "ubicacion": item.ubicacion,
-            "id": item.id,
-            "sucursal": item.sucursal,
-            "venta": venta,
-            
-        }
-        lista.append(dic)
+        
+        if item.cantidad > 0:
+            dic = {
+                "nombre": item.nombre,
+                "categoria": item.categoria,
+                "precio": item.precio,
+                "estado": item.estado,
+                "unidad": item.unidad_de_medida,
+                "ubicacion": item.ubicacion,
+                "id": item.id,
+                "sucursal": item.sucursal,
+                "venta": venta,
+                
+            }
+            lista.append(dic)
          
    
     
@@ -347,6 +586,46 @@ def AnularVenta(request, venta):
         messages.warning(request, "Sólo puedes anular ventas que se encuentren EN PREPARACIÓN.")
         
     return redirect('ventas:listar_ventas')
+
+
+def AnularVentaCajero(request, venta):
+    
+    ventas = Venta.objects.filter(numero_comprobante = venta)
+    venta = None
+    for ven in ventas:
+        venta = ven
+    estados = EstadoVenta.objects.filter(opciones = 'RECHAZADA')
+    items = ItemVenta.objects.filter(venta_asociada_id =venta.numero_comprobante)
+    rechazada = ""
+    for estado in estados:
+        rechazada = estado.id
+        
+    if venta.estado.opciones == 'EN PREPARACION':
+        if len(items) == 0:
+            try:
+                
+                venta.estado_id = rechazada
+                venta.save()
+                messages.success(request, "Venta anulada.")
+                print("hola")
+                return redirect('ventas:listar_ventas_cajero')
+                
+                
+            except:
+                
+                messages.error(request, "¡Verifica los datos!, no se ha podido anular la venta.")
+                return redirect('ventas:listar_ventas_cajero')
+        else:
+            messages.error(request, "Debes eliminar los items agregados para anular la venta.")
+            return redirect('ventas:listar_ventas_cajero')
+                
+    elif venta.estado.opciones == 'RECHAZADA':
+        messages.info(request, "La venta ya se encuentra anulada.")
+    
+    else:
+        messages.warning(request, "Sólo puedes anular ventas que se encuentren EN PREPARACIÓN.")
+        
+    return redirect('ventas:listar_ventas_cajero')
 
 
 def CambiarEstado(request, id, cliente):
@@ -892,7 +1171,7 @@ def ReporteCuentaCorrienteClientes(request):
     for venta in lista:
         dic = {
             "numero_comprobante": venta.numero_comprobante,
-            "cuenta_corriente_numero_cuenta": venta.cuenta_corriente.numero_cuenta,
+            "cuenta_corriente_numero_cuenta": venta.cuenta_corriente_id,
             "sucursal_asociada_codigo": venta.sucursal_asociada.codigo,
             "cliente_asociado_nombre": venta.cliente_asociado.nombre,
             "mediodepago": venta.mediodepago,
@@ -1024,11 +1303,9 @@ def reporteVentasPorSucursal(request):
     rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
     rolId = ""
     for rol in rolesFromQuery:
-        print(rol.id)
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
 
     sucursal_asociada = ""
 
@@ -1041,7 +1318,6 @@ def reporteVentasPorSucursal(request):
 
 
     ItemFromQuery = Venta.objects.filter(estado = estado_pagada).values('sucursal_asociada_id').annotate(Count('sucursal_asociada_id')).order_by()
-
 
     if es_gerente_general or request.user.is_staff:
         es_gerente_general = True
@@ -1056,15 +1332,13 @@ def reporteVentasPorSucursal(request):
 
         sucursalesIds.append(sucursal_asociada)
 
-    print("sucursalesIds: %s" % sucursalesIds)
 
     ventas = []
     dic_sucursales = {}
 
     for venta in ItemFromQuery:
-        dic_sucursales.update({venta.get('sucursal_asociada_id'):venta.get('sucursal_asociada_id_count')})
+        dic_sucursales.update({venta.get('sucursal_asociada_id'):venta.get('sucursal_asociada_id__count')})
         ventas.append(venta.get('sucursal_asociada_id'))
-
 
     VentaFromQuery = Venta.objects.raw(""" 
      SELECT *
@@ -1084,11 +1358,8 @@ def reporteVentasPorSucursal(request):
 
     lista = []
     for fila in VentaFromQuery:
-        print(fila.sucursal_asociada_id)
-        print(sucursalesIds)
         if fila.sucursal_asociada_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
 
     items = []
 
@@ -1099,7 +1370,7 @@ def reporteVentasPorSucursal(request):
             "total": dic_ventas.get(venta.sucursal_asociada_id),
             "sucursal_asociada_codigo": venta.sucursal_asociada.codigo,
         }
-        items.append(dic)
-
+        if dic not in items:
+            items.append(dic)
 
     return render(request, 'ventas/reporte_ventas_por_sucursal.html', locals())

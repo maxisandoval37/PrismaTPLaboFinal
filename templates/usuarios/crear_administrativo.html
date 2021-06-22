@@ -1,39 +1,40 @@
-{% extends 'index.html' %} 
+{% extends 'index.html' %}
 {% load widget_tweaks %}
 
 {% block title %} Registro de administrativos {% endblock title %}
 
-
 {% block content %}
 
-<div class="card">
-    <div class="card-header">
+<div class="card" style="margin: 1%;">
+    <div class="card-header text-center">
         <strong class="card-tittle">Registro de Administrativos</strong>
     </div>
 
-<div class="card-body">
-  <form class="user" method = "post">
-    {% csrf_token %}
-    {% for field in form %} 
-    {{field.label_tag}}
-   
-            
-    <div class="form-group">
-        {% render_field field class="form-control form-control" %}
-       
-            {% endfor %}
+    <div class="card-body bg-gray-100">
+        <form class="user" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            {{field.label_tag}}
 
-        </div>
-        {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
-        {% endfor %}
-        <div class="">
-    <a href ="{% url 'usuarios:listar_usuarios' %}" class="btn btn-danger"> Cancelar </a>
-    <button type="submit" class="btn btn-success">Registrar</button>
+
+            <div class="form-group">
+                {% render_field field class="select form-control bg-gray-100" %}
+
+                {% endfor %}
+
+            </div>
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+            <div class="text-center">
+                <a href="{% url 'usuarios:listar_usuarios' %}" class="btn btn-danger"> Cancelar </a>
+                <button type="submit" class="btn btn-success">Registrar</button>
+            </div>
+        </form>
+    </div>
 </div>
-</form>   
-</div>
-</div>
+
+
 {% endblock %}

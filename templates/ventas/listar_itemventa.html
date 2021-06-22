@@ -10,19 +10,22 @@ Listado de Items
 
 {% block content %}
 
-
+{% if lista %}
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin: 2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Items</strong>
         </div>
-    </div>
+        <div class="card-header text-center">
+            <strong class="card-title">Fecha de la venta: {{fecha}}</strong>
+        </div>
+    
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     <th>Número de Venta</th>
                     <th>Item</th>
                     <th>Precio</th>
@@ -30,7 +33,7 @@ Listado de Items
                 </tr>
             </thead>
             <tbody>
-                {% if lista %}
+                
                 {% for item in lista %}
                 <tr>
                     <td></td>
@@ -42,7 +45,7 @@ Listado de Items
                     {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     {% if item.venta_asociada.estado.opciones == 'EN PREPARACION' %}
                    <td>
-                       <a href="{% url 'ventas:eliminar_item' venta item.id %}" class="btn btn-danger">Quitar Item</a>
+                       <a href="{% url 'ventas:eliminar_item' item.venta_asociada item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>
                    {% else %} 
                    <td>
@@ -52,16 +55,27 @@ Listado de Items
                    {% endif %}
                 </tr>
                 {% endfor %}
-                {% else %}
-                <h5> No hay items agregados. </h1>
-                {% endif %}
+               
             </tbody>
         </table>
-        
     </div>
-    
+    </div>
+    </div>
 </div>
-</div>
+{% else %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Lista vacía</h1>
+            <h3 class="mx-auto my-0 text-center">Por el momento no has agregado items a la venta. </h3>
+           
+        </div>
+    </div>
+    <br>
+</header>
+
+{% endif %}
+
 <div class="text-center">
     <a href="{% url 'ventas:listar_ventas' %}" class="btn btn-info"> Volver </a>
 </div>

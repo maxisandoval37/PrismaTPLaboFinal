@@ -6,8 +6,8 @@
 
 {% block content %}
 
-<div class="card">
-    <div class="card-header">
+<div class="card bg-gray-100" style="margin:2%">
+    <div class="card-header text-center">
         <strong class="card-tittle">Registro de Cuenta Corriente</strong>
     </div>
 
@@ -18,24 +18,23 @@
             {{field.label_tag}}
 
             <div class="form-group">
-                {% render_field field class="form-control form-control" %}
-
-                {% endfor %}
+                {% render_field field class="select form-control bg-gradient-light" %}
 
             </div>
-            
-            
+            {% endfor %}
+
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
             {% endfor %}
-            
-            <div class="">
+
+            <div class="text-center">
                 <a href="{% url 'proveedores:listar_proveedores' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-primary">Registrar</button>
             </div>
         </form>
     </div>
+</div>
 </div>
 {% endblock %}

@@ -6,34 +6,37 @@
 
 {% block content %}
 
-<div class="card">
-    <div class="card-header">
+<div class="card bg-gray-100" style="margin: 20px;">
+    <div class="card-header text-center">
         <strong class="card-tittle">Registro de Medios de Pago</strong>
     </div>
 
     <div class="card-body">
-        <form class="user" method="post">
+        <form class="user" method="post" >
             {% csrf_token %}
             {% for field in form %}
             {{field.label_tag}}
             
             
             <div class="form-group">
-                {% render_field field class="form-control form-control" %}
-
-                {% endfor %}
+                {% render_field field class="form-control form-control bg-gray-100 bg-gradient-light" %}
 
             </div>
+            {% endfor %}
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
+            
             {% endfor %}
-            <div class="">
+            
+            <div class="text-center">
                 <a href="{% url 'ventas:registrar_venta_local' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-primary">Registrar</button>
             </div>
         </form>
     </div>
 </div>
+</div>
+
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
-from .models import Proveedor, CuentaCorrienteProveedor, EstadoProveedor
+from .models import Proveedor, CuentaCorrienteProveedor, EstadoProveedor, EstadoCuentaCorriente
+
 
 
 @register(Proveedor)
@@ -14,5 +15,10 @@ class ccAdmin(ModelAdmin):
     
 @register(EstadoProveedor)
 class estAdmin(ModelAdmin):
+    
+    icon_name = 'person_add'
+    
+@register(EstadoCuentaCorriente)
+class estctAdmin(ModelAdmin):
     
     icon_name = 'person_add'

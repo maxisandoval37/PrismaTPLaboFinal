@@ -1,11 +1,11 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero,ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores, AnularVenta, reporteVentasPorSucursal
+from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero,AnularVentaCajero,ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores, AnularVenta, reporteVentasPorSucursal
 
 urlpatterns = [
 
-    path('listado_ventas/', login_required(ListadoVenta.as_view()),
+    path('listado_ventas/', login_required(ListadoVenta),
          name='listar_ventas'),
     path('registrar_venta_local/', login_required(RegistrarVentaLocal.as_view()),
          name='registrar_venta_local'),
@@ -23,7 +23,7 @@ urlpatterns = [
          login_required(eliminarItem), name='eliminar_item'),
     path('eliminar_item_cajero/<int:venta>/<int:item>/',
          login_required(eliminarItemCajero), name='eliminar_item_cajero'),
-    path('listado_ventas_cajero/', login_required(ListadoVentaCajero.as_view()),
+    path('listado_ventas_cajero/', login_required(ListadoVentaCajero),
          name='listar_ventas_cajero'),
     path('finalizar_venta/<int:venta>/',
          login_required(FinalizarVenta), name='finalizar_venta'),
@@ -35,5 +35,6 @@ urlpatterns = [
         ReporteVentasVendedores), name='reporte_ventas_vendedor'),
     path('anular_venta/<int:venta>/', login_required(AnularVenta), name = 'anular_venta'),
     path('reporte_ventas_por_sucursal/', login_required(reporteVentasPorSucursal), name='reporte_ventas_por_sucursal'),
+    path('anular_venta_cajero/<int:venta>/', login_required(AnularVentaCajero), name = 'anular_venta_cajero'),
         
 ]

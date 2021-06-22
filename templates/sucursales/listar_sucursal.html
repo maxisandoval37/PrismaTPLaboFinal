@@ -10,9 +10,13 @@ Listado de Sucursales
 
 {% block content %}
 
-
+{% if lista %}
 <div class="bg-gray-100">
-    <div class="card">
+    <div class="card" style="margin:2%">
+       
+        <div class="card-header text-center">
+            <strong class="card-title">Listado de Sucursales</strong>
+        </div>
         <div class= "bg-gray-100 text-center">
             <a href="{% url 'sucursales:consolidado_sucursales' %}" class="btn btn-info"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"/>
@@ -22,28 +26,24 @@ Listado de Sucursales
               </svg> Consolidado de Sucursales
             </a>
         </div>
-        <div class="card-header">
-            <strong class="card-title">Listado de Sucursales</strong>
-        </div>
-    </div>
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
 
-                    <th>#</th>
+                    <th></th>
                     <th>Código</th>
                     <th>Direccion</th>
                     <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
-                {% if lista %}
+                
                 {% for sucursal in lista %}
                 <tr>
                     
-                    <td>{{sucursal.id}}</td>
+                    <td></td>
                     <td>{{ sucursal.codigo }}</td>
                     <td>{{ sucursal.calle}}, {{ sucursal.numero}}, {{ sucursal.localidad}}, {{ sucursal.provincia }}, {{ sucursal.cod_postal}}</td>
                     <td>{{sucursal.estado}}</td>
@@ -84,6 +84,6 @@ Listado de Sucursales
     </div>
 </div>
 </div>
-
+</div>
 
 {% endblock %}

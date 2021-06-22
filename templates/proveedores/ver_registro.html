@@ -10,50 +10,60 @@ Registro de la cuenta
 
 {% block content %}
 
-
+{% if lista %}
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Registro de la cuenta</strong>
         </div>
+
+
+        <div class="table-stats order-table ov-h bg-gray-100">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Número de Pedido</th>
+                        <th>Proveedor</th>
+                        <th>Cantidad de items solicitados</th>
+                        <th>Cantidad de items entregados</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for pedido in lista %}
+                    <tr>
+                        <td></td>
+                        <td>{{pedido.id}}</td>
+                        <td>{{ pedido.proveedor}}</td>
+                        <td>{{pedido.solicitado}}</td>
+                        <td>{{pedido.cantidad}}</td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <div class="table-stats order-table ov-h">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Número de Pedido</th>
-                    <th>Proveedor</th>
-                    <th>Cantidad de items solicitados</th>
-                    <th>Cantidad de items entregados</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
-                {% if lista %}
-                {% for pedido in lista %}
-                <tr>
-                    <td></td>
-                    <td>{{pedido.id}}</td>
-                    <td>{{ pedido.proveedor}}</td>
-                    <td>{{pedido.solicitado}}</td>
-                    <td>{{pedido.cantidad}}</td>
-
-                </tr>
-                {% endfor %}
-                {% else %}
-                <h5>La cuenta no posee ningún registro. :( </h1>
-                {% endif %}
-            </tbody>
-        </table>
+</div>
+{% else %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Lista vacía</h1>
+            <h3 class="mx-auto my-0 text-center">Por el momento la cuenta no tiene registros. </h3>
+           
+        </div>
     </div>
-</div>
-</div>
-<div class="text-center">
+    <br>
+</header>
+    {% endif %}
+    <div class="text-center">
 
-    <a href="{% url 'proveedores:listar_cuenta_corriente' %}" class="btn btn-primary" > Volver</a>
+        <a href="{% url 'proveedores:listar_cuenta_corriente' %}" class="btn btn-primary"> Volver</a>
 
-</div>
-
-{% endblock %}
+    </div>
+    </div>
+    {% endblock %}

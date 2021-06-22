@@ -3,10 +3,24 @@ from django.core.exceptions import ValidationError
 from django.db.models.enums import TextChoices
 from django.db.models.signals import pre_save
 
+
+class EstadoCuentaCorriente(models.Model):
+    
+    class opcionesEstado(TextChoices):
+        
+        ACTIVA = 'ACTIVA'
+        INACTIVA = 'INACTIVA'
+        
+    opciones = models.CharField(choices = opcionesEstado.choices, max_length= 8)
+    
+    def __str__(self):
+        return self.opciones
+
 class CuentaCorrienteProveedor(models.Model):
     
     numero_cuenta = models.AutoField("Número de cuenta", primary_key=True)
     proveedor = models.ForeignKey('Proveedor', on_delete=models.PROTECT)
+    estado = models.ForeignKey(EstadoCuentaCorriente, on_delete=models.PROTECT)
     
     class Meta:
         
@@ -16,19 +30,7 @@ class CuentaCorrienteProveedor(models.Model):
     def __str__(self):
         return "Proveedor: {}, Cuenta: {}".format(self.proveedor.razon_social, self.numero_cuenta)
 
-    def clean(self):
-        
-        cuentas_corriente = CuentaCorrienteProveedor.objects.all()
-        cuenta_corriente = CuentaCorrienteProveedor.objects.filter(proveedor = self.proveedor)
-        contador = 0
-        
-        for cuenta in cuenta_corriente:
-            contador += 1
-            
-        for cuenta in cuentas_corriente:
-            
-            if self.numero_cuenta == cuenta.numero_cuenta:
-                raise ValidationError('La cuenta corriente ya está registrada.')
+
             
 class EstadoProveedor(models.Model):
     
@@ -55,6 +57,7 @@ class Proveedor(models.Model):
     provincia = models.CharField('Provincia', max_length= 20,blank = True,null=True)
     cod_postal = models.CharField('Código postal', blank = True,null=True, max_length= 4)
     estado = models.ForeignKey(EstadoProveedor, on_delete=models.PROTECT)
+    
     
    
     def clean(self):
@@ -125,3 +128,21 @@ def defaultActivo(sender, instance, **kwargs):
             
             
 pre_save.connect(defaultActivo, sender = Proveedor)
+
+
+def defaultActivo(sender, instance, **kwargs):
+    
+    
+    estados = EstadoCuentaCorriente.objects.all()
+    if len(estados) > 0:
+        if instance.estado_id == None:
+            
+            estadosQuery = EstadoCuentaCorriente.objects.filter(opciones = 'ACTIVA')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo
+            
+            
+pre_save.connect(defaultActivo, sender = CuentaCorrienteProveedor)

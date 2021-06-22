@@ -8,13 +8,15 @@ Listado de Items
 {% endblock title %}
 
 {% block content %}
-
+{% if items %}
 <div class="bg-gray-100" id="report">
-    <div class="card">
-        <div class="card-header">
+    <div class="card bg-gray-100" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Ítems con riesgo de stock</strong>
+        </div>
             {% if es_gerente_general %}
-                    <select name="sucursal" id="sucursal">
+            <div class="bg-gray-100 text-center">
+                    <select name="sucursal" id="sucursal" class="bg-gradient-light">
                         <option value="0"> Seleccioná una sucursal </option>
                         {% for sucursal in sucursalesIds %}
                         <option value="{{sucursal}}">{{sucursal}}</option>
@@ -23,9 +25,10 @@ Listado de Items
                     <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                       </svg> Filtrar resultados</a>
+                    </div>
                     {% endif %}
-        </div>
-    </div>
+        
+    
     <div class="table-stats order-table ov-h">
         <table class="table">
             <thead>
@@ -38,7 +41,7 @@ Listado de Items
                 </tr>
             </thead>
             <tbody id="table">
-                {% if items %}
+                
                 {% for item in items %}
                 <tr class = "other_item" id = "{{ item.nombre}}">
                     <td></td>
@@ -71,21 +74,22 @@ Listado de Items
                     {% endwith %}
                 </tr>
                 {% endfor %}
-                {% else %}
-                <h5>No hay items registrados :( </h1>
-                    {% endif %}
+                
             </tbody>
         </table>
-        <div id="chartdiv"></div>
+       
 
     </div>
-
 </div>
-
+<div id="chartdiv"></div>
+</div>
+<div class="text-center">
+<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+</div>
 </div>
 
 <!--Inserta Grafico-->
-<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+
 
 <style>
     #chartdiv {
@@ -94,6 +98,22 @@ Listado de Items
         margin: auto;
     }
 </style>
+
+{% else %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Sin registros</h1>
+            <h3 class="mx-auto my-0 text-center">Por el momento no hay items para realizar el reporte. </h3>
+           
+        </div>
+    </div>
+    <br>
+</header>
+<div class="text-center">
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+                    {% endif %}
 
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -122,7 +142,7 @@ Listado de Items
     function filtrarPorSucursal() {
         sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
         console.log("sucursalSeleccionada: " + sucursalSeleccionada);
-        if (document.getElementById("boton2").innerText == "Filtrar resultados") {
+        if (document.getElementById("boton2").innerText == " Filtrar resultados") {
             document.getElementById("boton2").innerText = "Reiniciar";
 
             elementos = document.getElementsByClassName("other_item");

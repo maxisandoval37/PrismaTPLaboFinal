@@ -22,4 +22,4 @@ class CuentaCorrienteForm(forms.ModelForm):
     
     class Meta:
         model = CuentaCorriente
-        fields = '__all__'
+        fields = ['cliente']

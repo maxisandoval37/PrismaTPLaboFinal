@@ -6,19 +6,19 @@
 
 {% block content %}
 
-<div class="card">
-    <div class="card-header">
+<div class="card" style="margin:2%">
+    <div class="card-header text-center">
         <strong class="card-tittle">Registro de Cuenta Corriente</strong>
     </div>
 
-    <div class="card-body">
+    <div class="card-body bg-gray-100">
         <form class="user" method="post">
             {% csrf_token %}
             {% for field in form %}
             {{field.label_tag}}
 
             <div class="form-group">
-                {% render_field field class="form-control form-control" %}
+                {% render_field field class="select form-control bg-gradient-light" %}
 
                 {% endfor %}
 
@@ -31,11 +31,12 @@
             </div>
             {% endfor %}
             
-            <div class="">
+            <div class="text-center">
                 <a href="{% url 'ventas:registrar_venta_local' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-primary">Registrar</button>
             </div>
         </form>
     </div>
+</div>
 </div>
 {% endblock %}

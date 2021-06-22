@@ -10,14 +10,14 @@ Listado de Mezclas
 
 {% block content %}
 
-
+{% if object_list %}
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Mezclas de pinturas usadas</strong>
         </div>
     </div>
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
@@ -31,7 +31,7 @@ Listado de Mezclas
                 </tr>
             </thead>
             <tbody>
-                {% if object_list %}
+                
                 {% for pintura in object_list %}
                 
                
@@ -49,14 +49,24 @@ Listado de Mezclas
                    
                 </tr>
                 {% endfor %}
-                {% else %}
-                <h5>No hay mezclas preparadas :( </h1>
-                    {% endif %}
+                
             </tbody>
         </table>
     </div>
 </div>
 </div>
+{% else %}
+                <header class="masthead">
+                    <div class="container d-flex h-100 align-items-center"> 
+                        <div class="mx-auto text-center">
+                            <h1 class="mx-auto my-0 text-uppercase">Sin mezclas</h1>
+                            <h3 class="mx-auto my-0 text-center">Por el momento no hay mezclas de pinturas usadas preparadas. </h3>
+                           
+                        </div>
+                    </div>
+                    <br>
+                </header>
+                    {% endif %}
 <div class="text-center">
     <a href="{% url 'items:listar_pinturas_usadas' %}" class="btn btn-primary">Volver</a>
 </div>

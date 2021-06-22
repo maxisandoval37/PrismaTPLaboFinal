@@ -11,18 +11,18 @@ Listado de Proveedores
 {% block content %}
 
 
-<div class="bg-gray-100">
+<div class="bg-gray-100" style="margin:2%">
     <div class="card">
-        <div class="card-header">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Proveedores</strong>
         </div>
-    </div>
+   
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
-
+                    <th></th>
                     <th>Razón Social</th>
                     <th>Cuit</th>
                     <th>Domicilio</th>
@@ -35,7 +35,7 @@ Listado de Proveedores
                 {% if object_list %}
                 {% for proveedor in object_list %}
                 <tr>
-
+                    <td></td>
                     <td>{{ proveedor.razon_social }}</td>
                     <td>{{ proveedor.cuit }}</td>
                     <td>{{ proveedor.calle}}, {{ proveedor.numero}}, {{ proveedor.localidad}}, {{ proveedor.provincia}}, {{ proveedor.cod_postal}}</td>
@@ -67,6 +67,6 @@ Listado de Proveedores
     </div>
 </div>
 </div>
-
+</div>
 
 {% endblock %}

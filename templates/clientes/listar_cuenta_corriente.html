@@ -11,20 +11,21 @@ Listado de Cuentas Corriente
 {% block content %}
 
 
-<div class="bg-gray-100">
+<div class="bg-gray-100" style="margin: 2%">
     <div class="card">
-        <div class="card-header">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Cuentas Corriente</strong>
         </div>
-    </div>
+   
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
                     <th></th>
                     <th>Número de cuenta</th>
                     <th>Cliente</th>
+                    <th>Estado</th>
                     
                 </tr>
             </thead>
@@ -35,10 +36,11 @@ Listado de Cuentas Corriente
                     <td></td>
                     <td>{{ cuenta.numero_cuenta }}</td>
                     <td>{{ cuenta.cliente }}</td>
+                    <td>{{ cuenta.estado}}</td>
                     
                     {% if user.rol.opciones == 'SUPERVISOR' or user.is_staff or user.rol.opciones == 'VENDEDOR' %}
                     <td>
-                        <a href="{% url 'clientes:eliminar_cuenta_corriente' cuenta.id %}" class="btn btn-danger">
+                        <a href="{% url 'clientes:cambiar_estado_cuenta' cuenta.numero_cuenta %}" class="btn btn-danger">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
                               </svg> Inhabilitar </a>
@@ -62,6 +64,6 @@ Listado de Cuentas Corriente
     </div>
 </div>
 </div>
-
+</div>
 
 {% endblock %}

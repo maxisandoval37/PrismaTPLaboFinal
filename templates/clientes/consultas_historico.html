@@ -10,8 +10,8 @@ Cotizaciones
 {% block content %}
 
 <div class="bg-gray-100" id="report">
-    <div class="card">
-        <div align="center" class="card-header">
+    <div class="card bg-gray-100" style="margin:2%">
+        <div align="center" class="card-header text-center">
             <strong class="card-title">Consulta de histórica</strong>
             <br>
             <input id=fechaDesde type="date">
@@ -20,13 +20,15 @@ Cotizaciones
                 resultados</a>
         </div>
 
-    </div>
+    
     <div hidden id="divDolar">
-        <h4>Cotización Dolar</h4>
+        <div class="card-header text-center">
+            <strong class="card-tittle">Cotización Dólar</strong>
+        </div>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col"></th>
                     <th scope="col">Fecha</th>
                     <th scope="col">Cotización</th>
                 </tr>
@@ -35,13 +37,15 @@ Cotizaciones
             </tbody>
         </table>
     </div>
-</div>
+<br>
 <div hidden id="divEuro">
-    <h4> Cotización Euro</h4>
+    <div class="card-header text-center">
+        <strong class="card-tittle">Cotización Euro</strong>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">#</th>
+                <th scope="col"></th>
                 <th scope="col">Fecha</th>
                 <th scope="col">Cotización</th>
             </tr>
@@ -50,7 +54,8 @@ Cotizaciones
         </tbody>
     </table>
 </div>
-
+</div>
+</div>
 <script>
     function filtrarLista() {
         document.getElementById("divDolar").removeAttribute("hidden");

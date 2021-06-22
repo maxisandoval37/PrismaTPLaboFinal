@@ -148,3 +148,13 @@ def consultaDiaria(request):
 
 def consultaHistorico(request):
     return render(request, 'clientes/consultas_historico.html')
+
+
+class CambiarEstadoCuentaCorriente(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,UpdateView):
+    
+    permission_required = ('cliente.view_cuentacorriente','cliente.change_cuentacorriente',)
+    model = CuentaCorriente
+    fields = ['estado']
+    template_name = 'clientes/cambiar_estado_cuenta.html'
+    success_url = reverse_lazy('clientes:listar_cuenta_corriente')
+    success_message = 'Se editó el estado de la cuenta correctamente.'

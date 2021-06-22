@@ -11,14 +11,14 @@ Historial de Preferenciados
 {% block content %}
 
 
-<div class="bg-gray-100">
+<div class="bg-gray-100" style="margin:2%">
     <div class="card">
-        <div class="card-header">
+        <div class="card-header text-center">
             <strong class="card-title">Historial de la categoria: {{object}}</strong>
         </div>
-    </div>
+    
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
@@ -52,6 +52,6 @@ Historial de Preferenciados
 <div class="text-center">
     <a href="{% url 'items:listar_categorias' %}" class="btn btn-primary">Volver</a>
 </div>
-
+</div>
 
 {% endblock %}

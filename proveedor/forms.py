@@ -14,4 +14,4 @@ class CuentaCorrienteProveedorForm(forms.ModelForm):
     
     class Meta:
         model = CuentaCorrienteProveedor
-        fields = '__all__'
+        fields = ['proveedor']

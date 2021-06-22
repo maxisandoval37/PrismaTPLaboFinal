@@ -12,19 +12,19 @@ Listado de Items
 
 {% if object_list %}
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Items</strong>
         </div>
-    </div>
+   
     
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             
             <thead>
 
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     <th>Item</th>
                     <th>Precio</th>
                     
@@ -36,7 +36,7 @@ Listado de Items
                 {% for item in object_list %}
 
                 <tr>
-                    <td>{{item.id}}</td>
+                    <td></td>
                     <td>{{item.nombre}}</td>
                     <td>{{ item.precio}}</td>
                     
@@ -46,18 +46,21 @@ Listado de Items
             </tbody>
         </table>
         <div class="text-center">
-            <td><input type="Integer" id="input-precio"  placeholder="0" min="0"
+            <td><input type="Integer" id="input-precio"  class="bg-gray-100" placeholder="0" min="0"
                 max="100000"></td>
             
             <td><a  onclick="ModificacionMasiva()" class="btn btn-primary">Modificar</a></td>
         </div>
-        
+        <br>
     </div>
+</div>
 </div>
 </div>
 {% else %}
         <h5>No hay items registrados :(</h1> 
         {% endif %}
+
+
 <script>
 function ModificacionMasiva() {
         

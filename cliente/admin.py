@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
 from django.db import models
-from .models import Cliente, EstadoCliente, EstadoDeuda, Deuda, CategoriaCliente, MedioDePago, CuentaCorriente, TipoDeMoneda
+from .models import Cliente, EstadoCliente, EstadoDeuda, Deuda, CategoriaCliente, MedioDePago, CuentaCorriente, TipoDeMoneda, EstadoCuentaCorriente
 
 @register(Cliente)
 class clienteADMIN(ModelAdmin):
@@ -32,4 +32,8 @@ class ccADMIN(ModelAdmin):
     
 @register(TipoDeMoneda)
 class monedaADMIN(ModelAdmin):
+    icon_name = 'person'
+    
+@register(EstadoCuentaCorriente)
+class estctADMIN(ModelAdmin):
     icon_name = 'person'
