@@ -7,12 +7,12 @@
 {% block content %}
 
 {% if lista %}
-<div class="card">
-    <div class="card-header">
+<div class="card" style="margin:2%">
+    <div class="card-header text-center">
         <strong class="card-tittle">Agregar Items al presupuesto</strong>
     </div>
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
@@ -38,7 +38,7 @@
 
                     
                     <td>
-                        <input value="0" type="Integer" class="form-control-user" id="{{item.id}}cantidad_solicitada" placeholder="Ingrese la cantidad"> 
+                        <input value="0" type="Integer" class="form-control-user bg-gray-100"" id="{{item.id}}cantidad_solicitada" placeholder="Ingrese la cantidad"> 
                     </td>
                     
                 </tr>
@@ -61,7 +61,19 @@
 </div>
 
 {% else %}
-<h1>La sucursal no tiene items :c </h1>
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Sin stock</h1>
+            <h3 class="mx-auto my-0 text-center">Por el momento no hay items disponibles. </h3>
+           
+        </div>
+    </div>
+    <br>
+</header>
+<div class="text-center">
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
 {% endif %}
             
         
@@ -86,7 +98,7 @@ function AgregarItem() {
             let objeto = '{"item":"' + item_obtenido + '","cantidad":"' + cantidad_obtenida + '","sucursal":"' + sucursal_obtenida + '","presupuesto":"' + presupuesto_obtenido + '","precio":"' + precio_obtenido + '"}'
             console.log(JSON.parse(objeto).sucursal)
             items.push(objeto)
-            
+            break;
         }
         peticion_ajax(items)
 }

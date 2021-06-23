@@ -10,19 +10,19 @@ Listado de Presupuestos
 
 {% block content %}
 
-
+{% if object_list %}
 <div class="bg-gray-100">
-    <div class="card">
-        <div class="card-header">
+    <div class="card" style="margin:2%">
+        <div class="card-header text-center">
             <strong class="card-title">Listado de Presupuestos</strong>
         </div>
-    </div>
+    
 
-    <div class="table-stats order-table ov-h">
+    <div class="table-stats order-table ov-h bg-gray-100">
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th></th>
                     <th>Fecha de emisión</th>
                     <th>Fecha de expiración</th>
                     <th>Estado</th>
@@ -33,7 +33,7 @@ Listado de Presupuestos
                 </tr>
             </thead>
             <tbody>
-                {% if object_list %}
+                
                 {% for presupuesto in object_list %}
                 <tr>
                     <td></td>
@@ -44,15 +44,7 @@ Listado de Presupuestos
                     <td>{{ presupuesto.sucursal_asociada}}</td>
                     <td>{{ presupuesto.total}}</td>                    
 
-                    {% if user.rol.opciones == 'SUPERVISOR' or user.rol.opciones == 'VENDEDOR' or user.is_staff %}
-                    <!-- <td>
-                        <a href="{% url 'presupuestos:eliminar_presupuesto' presupuesto.pk %}" class="btn btn-danger">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
-                              </svg>
-                            Eliminar </a>
-                    </td> -->
-                    {% endif %}
+                   
                     {% if user.rol.opciones == 'VENDEDOR' or user.is_staff %}
                     {% if presupuesto.estado.opciones == 'EN EVALUACION' %}
                     <td>
@@ -109,14 +101,26 @@ Listado de Presupuestos
                     {% endif %}
                 </tr>
                 {% endfor %}
-                {% else %}
-                <h5>No hay presupuestos registrados. </h1>
-                {% endif %}
+                
             </tbody>
         </table>
     </div>
 </div>
 </div>
-
-
+</div>
+{% else %}
+<header class="masthead">
+    <div class="container d-flex h-100 align-items-center"> 
+        <div class="mx-auto text-center">
+            <h1 class="mx-auto my-0 text-uppercase">Sin registros</h1>
+            <h3 class="mx-auto my-0 text-center">Por el momento no hay presupuestos registrados. </h3>
+           
+        </div>
+    </div>
+    <br>
+</header>
+<div class="text-center">
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endif %}
 {% endblock %}

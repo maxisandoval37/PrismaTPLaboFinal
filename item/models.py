@@ -23,7 +23,7 @@ class SubCategoria(models.Model):
         ANDAMIOS = 'Andamios'
         ELEVADORES = 'Elevadores'
         CERAMICA = 'Cerámica'
-        PIEDA_NATURAL = 'Piedra natural'
+        PIEDRA_NATURAL = 'Piedra natural'
         PERFILERIA_Y_ACCESORIOS = 'Perfilería y accesorios'
         TERMOSTATOS = 'Termostatos'
         TIMBRES = 'Timbres'
@@ -186,9 +186,9 @@ class Item(models.Model):
         
         for item in items:
             
-            if self.nombre == item.nombre and self.precio == item.precio and self.codigo_de_barras != item.codigo_de_barras:
+            if self.nombre.lower() == item.nombre.lower() and self.sucursal == item.sucursal and self.codigo_de_barras != item.codigo_de_barras:
                 
-                raise ValidationError('Ya existe un item con el mismo nombre.')
+                raise ValidationError('Ya existe un item con el mismo nombre en la sucursal '+str(self.sucursal)+".")
         
         
         if len(self.nombre) < 4 and len(self.nombre) > 50:
@@ -342,6 +342,9 @@ class Mezcla(models.Model):
     
     def clean(self):
         
+        if self.primera_pintura.color == self.segunda_pintura.color:
+            raise ValidationError("No puedes mezclar dos pinturas del mismo color.")
+        
         if self.primera_pintura.sucursal != self.segunda_pintura.sucursal:
             raise ValidationError('Las pinturas deben pertenecer a la misma sucursal.')
         
@@ -468,7 +471,7 @@ class HistorialPref(models.Model):
         return "Fecha: {} , Proveedor: {}".format(self.fecha, self.proveedor_asociado)
     
     
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoItem(sender, instance, **kwargs):
     
     
     estados = Estado.objects.all()
@@ -482,11 +485,11 @@ def defaultActivo(sender, instance, **kwargs):
                 activo = estado.id 
             
             instance.estado_id = activo 
+           
             
-            
-pre_save.connect(defaultActivo, sender = Item)
+pre_save.connect(defaultActivoItem, sender = Item)
 
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoPintura(sender, instance, **kwargs):
     
     
     estados = Estado.objects.all()
@@ -500,7 +503,7 @@ def defaultActivo(sender, instance, **kwargs):
                 activo = estado.id 
             
             instance.estado_id = activo 
+           
             
-            
-pre_save.connect(defaultActivo, sender = Pintura)
+pre_save.connect(defaultActivoPintura, sender = Pintura)
     

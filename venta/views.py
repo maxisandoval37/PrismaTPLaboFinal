@@ -1135,11 +1135,11 @@ def ReporteCuentaCorrienteClientes(request):
     rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
     rolId = ""
     for rol in rolesFromQuery:
-        print(rol.id)
+        
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
+    
     
     sucursal_asociada = ""
     VentasFromQuery = Venta.objects.all()
@@ -1154,21 +1154,29 @@ def ReporteCuentaCorrienteClientes(request):
         
         for supervisor in supervisorQuery:
             sucursal_asociada = supervisor.sucursal.id
-        
+            
         sucursalesIds.append(sucursal_asociada)
 
-    print("sucursalesIds: %s" % sucursalesIds)
+    
     
     lista = []
     for fila in VentasFromQuery:
-        print(fila.sucursal_asociada_id)
-        print(sucursalesIds)
+        
         if fila.sucursal_asociada_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
+   
     ventas = []
-
+    sucursales = []
+    
     for venta in lista:
+        
+        sucursalQuery = Sucursal.objects.filter(id = venta.sucursal_asociada_id)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                sucursales.append(suc)
+            
+    for venta in lista:
+        
         dic = {
             "numero_comprobante": venta.numero_comprobante,
             "cuenta_corriente_numero_cuenta": venta.cuenta_corriente_id,
@@ -1183,10 +1191,11 @@ def ReporteCuentaCorrienteClientes(request):
             "total_peso": venta.total_peso,
             "fecha_a_comparar": str(venta.fecha.date()),
             "es_gerente_general": str(es_gerente_general),
-            "sucursales": sucursalesIds,
+            "sucursales": sucursales,
             "sucursal_asociada_id": venta.sucursal_asociada_id
         }
         ventas.append(dic)
+          
 
     return render(request,'ventas/reporte_cuenta_corriente_clientes.html',locals())
 
@@ -1239,7 +1248,22 @@ def ReporteVentasVendedores(request):
             sucursal_asociada = supervisor.sucursal.id
         
         sucursalesIds.append(sucursal_asociada)
+        
+        
+    sucursales = []
+    dic_sucursales_cod = {}
+    
+    for suc in sucursalesIds:
+        
+        sucursalQuery = Sucursal.objects.filter(id = suc)
+        print(sucursalQuery)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                dic_sucursales_cod.update({suc.id:suc.codigo})
+                sucursales.append(suc)
 
+    
+    
     print("sucursalesIds: %s" % sucursalesIds)
     
     ventas = []
@@ -1284,13 +1308,17 @@ def ReporteVentasVendedores(request):
     print(lista)
     
     items = []
+    
+    
 
     for vendedor in lista:
         dic = {
             "vendedor": vendedor.nombre,
             "cantidad_ventas": dic_vendedores.get(vendedor.id),
             "sucursal_id": vendedor.sucursal_id,
+            "sucursal_cod": dic_sucursales_cod.get(vendedor.sucursal_id),
             "total": dic_ventas.get(vendedor.id),
+            "sucursales": sucursales,
         }
         items.append(dic)
 
@@ -1332,6 +1360,18 @@ def reporteVentasPorSucursal(request):
 
         sucursalesIds.append(sucursal_asociada)
 
+        
+    sucursales = []
+    dic_sucursales_cod = {}
+    
+    for suc in sucursalesIds:
+        
+        sucursalQuery = Sucursal.objects.filter(id = suc)
+        print(sucursalQuery)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                dic_sucursales_cod.update({suc.id:suc.codigo})
+                sucursales.append(suc)
 
     ventas = []
     dic_sucursales = {}
@@ -1340,6 +1380,9 @@ def reporteVentasPorSucursal(request):
         dic_sucursales.update({venta.get('sucursal_asociada_id'):venta.get('sucursal_asociada_id__count')})
         ventas.append(venta.get('sucursal_asociada_id'))
 
+    if len(ventas) == 0:
+        messages
+    
     VentaFromQuery = Venta.objects.raw(""" 
      SELECT *
      FROM venta_venta
@@ -1369,6 +1412,7 @@ def reporteVentasPorSucursal(request):
             "sucursal_id": venta.sucursal_asociada_id,
             "total": dic_ventas.get(venta.sucursal_asociada_id),
             "sucursal_asociada_codigo": venta.sucursal_asociada.codigo,
+            "sucursal_cod": dic_sucursales_cod.get(venta.sucursal_asociada_id),
         }
         if dic not in items:
             items.append(dic)

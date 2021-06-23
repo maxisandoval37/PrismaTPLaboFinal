@@ -309,7 +309,7 @@ class Administrativo(Usuario):
      
      
 
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoUsuario(sender, instance, **kwargs):
     
     
     estados = Estado.objects.all()
@@ -323,9 +323,62 @@ def defaultActivo(sender, instance, **kwargs):
             
             instance.estado_id = activo 
             
-pre_save.connect(defaultActivo, sender = Usuario)
+            
+pre_save.connect(defaultActivoUsuario, sender = Usuario)
 
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoVendedor(sender, instance, **kwargs):
+    
+    
+    estados = Estado.objects.all()
+    if len(estados) > 0:
+        if instance.estado_id == None:
+            
+            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo
+           
+            
+pre_save.connect(defaultActivoVendedor, sender = Vendedor)
+
+def defaultActivoSupervisor(sender, instance, **kwargs):
+    
+    
+    estados = Estado.objects.all()
+    if len(estados) > 0:
+        if instance.estado_id == None:
+            
+            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo
+    
+            
+pre_save.connect(defaultActivoSupervisor, sender = Supervisor)
+
+
+def defaultActivoGerenteGeneral(sender, instance, **kwargs):
+    
+    
+    estados = Estado.objects.all()
+    if len(estados) > 0:
+        if instance.estado_id == None:
+            
+            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            activo = ""
+            for estado in estadosQuery:
+                activo = estado.id 
+            
+            instance.estado_id = activo
+
+            
+pre_save.connect(defaultActivoGerenteGeneral, sender = GerenteGeneral)
+
+def defaultActivoCajero(sender, instance, **kwargs):
     
     
     estados = Estado.objects.all()
@@ -338,10 +391,11 @@ def defaultActivo(sender, instance, **kwargs):
                 activo = estado.id 
             
             instance.estado_id = activo 
+        
             
-pre_save.connect(defaultActivo, sender = Vendedor)
+pre_save.connect(defaultActivoCajero, sender = Cajero)
 
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoAdministrativo(sender, instance, **kwargs):
     
     
     estados = Estado.objects.all()
@@ -353,56 +407,8 @@ def defaultActivo(sender, instance, **kwargs):
             for estado in estadosQuery:
                 activo = estado.id 
             
-            instance.estado_id = activo 
+            instance.estado_id = activo
+     
             
-pre_save.connect(defaultActivo, sender = Supervisor)
-
-
-def defaultActivo(sender, instance, **kwargs):
-    
-    
-    estados = Estado.objects.all()
-    if len(estados) > 0:
-        if instance.estado_id == None:
-            
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
-            activo = ""
-            for estado in estadosQuery:
-                activo = estado.id 
-            
-            instance.estado_id = activo 
-            
-pre_save.connect(defaultActivo, sender = GerenteGeneral)
-
-def defaultActivo(sender, instance, **kwargs):
-    
-    
-    estados = Estado.objects.all()
-    if len(estados) > 0:
-        if instance.estado_id == None:
-            
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
-            activo = ""
-            for estado in estadosQuery:
-                activo = estado.id 
-            
-            instance.estado_id = activo 
-            
-pre_save.connect(defaultActivo, sender = Cajero)
-
-def defaultActivo(sender, instance, **kwargs):
-    
-    
-    estados = Estado.objects.all()
-    if len(estados) > 0:
-        if instance.estado_id == None:
-            
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
-            activo = ""
-            for estado in estadosQuery:
-                activo = estado.id 
-            
-            instance.estado_id = activo 
-            
-pre_save.connect(defaultActivo, sender = Administrativo)
+pre_save.connect(defaultActivoAdministrativo, sender = Administrativo)
     

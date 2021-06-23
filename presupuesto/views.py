@@ -14,6 +14,7 @@ from decimal import Decimal
 import json
 from item.models import Item, Estado
 from django.contrib.messages.views import SuccessMessageMixin
+from venta.models import TipoDeMoneda, Cotizacion
 
 
 
@@ -40,32 +41,12 @@ class RegistrarPresupuesto(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,C
         context["vendedor_asociado"] = Vendedor.objects.all()
         return context
     
-class EliminarPresupuesto(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
-    
-    permission_required = ('presupuesto.view_presupuesto','presupuesto.delete_presupuesto',)
-    model = Presupuesto
-    template_name = 'presupuestos/eliminar_presupuesto.html'
-    success_message = 'Presupuesto eliminado correctamente.'
-    success_url = reverse_lazy('presupuestos:listar_presupuestos')
-                                    
-    def delete(self, request, *args, **kwargs):
-        
-        self.object = self.get_object()
-        success_url = self.get_success_url()
 
-        try:
-            self.object.delete()
-        except ProtectedError:
-            messages.add_message(request, messages.ERROR, 'No se puede eliminar: Este presupuesto esta relacionado.')
-            return redirect('presupuestos:listar_presupuestos')
-
-        return HttpResponseRedirect(success_url)                                
-    
     
 def ListarItem(request, presupuesto):
     
     
-    items = ItemPresupuesto.objects.filter(presupuesto_asociado = presupuesto)
+    items = ItemPresupuesto.objects.filter(presupuesto_asociado = presupuesto).order_by('id')
    
     lista = []
     for item in items:
@@ -85,22 +66,24 @@ def VerDetalle(request, sucursal, presupuesto):
     for id in ids:
         estado_activo = id
     
-    queryset = Item.objects.filter(sucursal = sucursal.id, estado = estado_activo)
+    queryset = Item.objects.filter(sucursal = sucursal.id, estado = estado_activo).order_by('id')
     lista = []
     for item in queryset:
-        dic = {
-            "nombre": item.nombre,
-            "categoria": item.categoria,
-            "precio": item.precio,
-            "estado": item.estado,
-            "unidad": item.unidad_de_medida,
-            "ubicacion": item.ubicacion,
-            "id": item.id,
-            "sucursal": item.sucursal,
-            "presupuesto": presupuesto,
-            
-        }
-        lista.append(dic)
+        
+        if item.cantidad > 0:
+            dic = {
+                "nombre": item.nombre,
+                "categoria": item.categoria,
+                "precio": item.precio,
+                "estado": item.estado,
+                "unidad": item.unidad_de_medida,
+                "ubicacion": item.ubicacion,
+                "id": item.id,
+                "sucursal": item.sucursal,
+                "presupuesto": presupuesto,
+                
+            }
+            lista.append(dic)
          
    
     
@@ -110,13 +93,14 @@ def VerDetalle(request, sucursal, presupuesto):
 def AgregarItem(request, sucursal, presupuesto):
     
     
-    if request.is_ajax():
+     if request.is_ajax():
         object = json.loads(request.POST.get('items'))
         
         lista_items = []
         lista_presupuestos = []
         lista_errores = []
         lista_success = []
+        
         
         for info in object:
             objeto = json.loads(info)
@@ -129,7 +113,13 @@ def AgregarItem(request, sucursal, presupuesto):
             
             item_presupuesto = ItemPresupuesto()
             item_presupuesto.item_id = int(item)
-            item_presupuesto.cantidad_solicitada = int(cantidad)
+        
+            if cantidad.isdigit():
+                item_presupuesto.cantidad_solicitada = int(cantidad)
+            else:
+                return HttpResponseBadRequest()
+    
+                
             item_presupuesto.sucursal_asociada_id = str(sucursal)
             item_presupuesto.presupuesto_asociado_id = int(presupuesto)
             item_presupuesto.monto = Decimal(cantidad.replace(',', '.')) * Decimal(precio.replace(',', '.'))
@@ -139,11 +129,12 @@ def AgregarItem(request, sucursal, presupuesto):
             validacion = validar(request, item_presupuesto)
             
             if validacion != None:
+                
                 lista_errores.append(validacion)
                 continue
             else:
                 lista_success.append(item_presupuesto.item.nombre)
-                
+            
             lista_items.append(item_presupuesto.item_id)
             lista_presupuestos.append(item_presupuesto.presupuesto_asociado_id)
             
@@ -155,15 +146,12 @@ def AgregarItem(request, sucursal, presupuesto):
                 WHERE id IN %s               
             """, [tuple(lista_presupuestos)])  
             
-        
+            
             for presupuesto in queryset:
                 
                 presupuesto.total += item_presupuesto.monto
-               
                 presupuesto.save()
-        
-        
-            
+    
         mensaje = "Se añadieron: "
         for m in lista_success:
             mensaje += m + ", "
@@ -179,6 +167,8 @@ def AgregarItem(request, sucursal, presupuesto):
             mensaje = mensaje[0:len(mensaje)-18] 
         else:
             mensaje = mensaje[0:len(mensaje)-2] + "."
+        print(lista_success)
+        print(lista_errores)
         #messages.success(request, "Item agregado correctamente.")
         return HttpResponse(mensaje)
     
@@ -186,23 +176,21 @@ def AgregarItem(request, sucursal, presupuesto):
 def validar(request, item_presupuesto):
     
     if item_presupuesto.item.cantidad == 0:
-           
-            return item_presupuesto.item.nombre
+        #messages.error(request, "No hay stock del item solicitado.")
+        return item_presupuesto.item.nombre + " (No hay stock del item solicitado)"
         
     
     if item_presupuesto.item.cantidad < item_presupuesto.cantidad_solicitada:
-        messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_presupuesto.item.cantidad))
-        return item_presupuesto.item.nombre 
+        #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_presupuesto.item.cantidad))
+        return item_presupuesto.item.nombre + " (No disponemos de la cantidad solicitada. Stock actual: " + str(item_presupuesto.item.cantidad) + ")"
     
     
     if item_presupuesto.cantidad_solicitada < 0:
-        
-        return item_presupuesto.item.nombre 
+        #messages.error(request,"La cantidad no puede ser negativa.") 
+        return item_presupuesto.item.nombre + " (La cantidad no puede ser negativa)"
     
-    if item_presupuesto.cantidad_solicitada == None or item_presupuesto.cantidad_solicitada == 0:
-        
-        return item_presupuesto.item.nombre 
-        
+    if item_presupuesto.cantidad_solicitada == 0:
+        return item_presupuesto.item.nombre + " (Debe seleccionar una cantidad)"
 
 
 
@@ -269,5 +257,5 @@ def eliminarItem(request, presupuesto, item):
         
     item_presupuesto.delete()
     
-    messages.error(request, "Se ha quitado el item del presupuesto.")
+    messages.success(request, "Se ha quitado el item del presupuesto.")
     return redirect('presupuestos:listar_presupuestos')

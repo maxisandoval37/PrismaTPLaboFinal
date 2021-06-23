@@ -48,10 +48,13 @@ Solicitar Stock
                 </tr>
                 {% endfor %}
                 {% else %}
-                <h5>No hay Medios de Pago registrados </h1>
+                <h5>No hay nada aquí. </h1>
                 {% endif %}
             </tbody>
         </table>
+    </div>
+    <div class="text-center">
+        <a href="{% url 'items:listar_items' %}" class="btn btn-primary">Volver</a>
     </div>
 </div>
 </div>

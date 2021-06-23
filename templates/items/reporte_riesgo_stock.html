@@ -18,8 +18,8 @@ Listado de Items
             <div class="bg-gray-100 text-center">
                     <select name="sucursal" id="sucursal" class="bg-gradient-light">
                         <option value="0"> Seleccioná una sucursal </option>
-                        {% for sucursal in sucursalesIds %}
-                        <option value="{{sucursal}}">{{sucursal}}</option>
+                        {% for sucursal in sucursales %}
+                        <option value="{{sucursal.id}}">{{sucursal.codigo}}</option>
                         {% endfor %}
                     </select>
                     <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -43,12 +43,12 @@ Listado de Items
             <tbody id="table">
                 
                 {% for item in items %}
-                <tr class = "other_item" id = "{{ item.nombre}}">
+                <tr class = "other_item" id = "{{ item.codigo_de_barras}}">
                     <td></td>
                     <td>{{ item.codigo_de_barras }}</td>
-                    <td class="items" id="{{ item.nombre }}">{{ item.nombre }}</td>
-                    <td hidden id="{{ item.nombre }}cantidad">{{ item.cantidad }}</td>
-                    <td hidden id="responsable{{ item.nombre}}">{{ item.sucursal_id}}</td>
+                    <td class="items" id="{{ item.codigo_de_barras }}">{{ item.nombre }}</td>
+                    <td hidden id="{{ item.codigo_de_barras }}cantidad">{{ item.cantidad }}</td>
+                    <td hidden id="responsable{{ item.codigo_de_barras}}">{{ item.sucursal_id}}</td>
                     {% with stockmin=item.stockminimo|mul:100 %}
 
                     {% if item.cantidad != 0 %}
@@ -83,11 +83,11 @@ Listado de Items
 </div>
 <div id="chartdiv"></div>
 </div>
-<div class="text-center">
-<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
-</div>
-</div>
 
+</div>
+<div class="text-center">
+    <button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+    </div>
 <!--Inserta Grafico-->
 
 
@@ -140,7 +140,7 @@ Listado de Items
     };
 
     function filtrarPorSucursal() {
-        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
+        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].value;
         console.log("sucursalSeleccionada: " + sucursalSeleccionada);
         if (document.getElementById("boton2").innerText == " Filtrar resultados") {
             document.getElementById("boton2").innerText = "Reiniciar";

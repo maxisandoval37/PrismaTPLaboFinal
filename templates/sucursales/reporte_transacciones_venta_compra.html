@@ -21,8 +21,8 @@ Transacciones
                     <div class="text-center bg-gray-100">
                 <select name="sucursal" id="sucursal" class="bg-gradient-light">
                     <option value="0"> Seleccioná una sucursal </option>
-                    {% for sucursal in sucursalesIds %}
-                    <option value="{{sucursal}}">{{sucursal}}</option>
+                    {% for sucursal in sucursales %}
+                    <option value="{{sucursal.id}}">{{sucursal.codigo}}</option>
                     {% endfor %}
                 </select>
                 <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -38,7 +38,7 @@ Transacciones
             <thead>
                 <tr>
                     <th></th>
-                    <th>Identificador</th>
+                    <th>id</th>
                     <th>Responsable</th>
                     <th>Fecha</th>
                     <th>Monto</th>
@@ -50,7 +50,7 @@ Transacciones
             <tbody id = "table">
                
                 {% for operacion in operaciones %}
-                <tr class = "items" id = "{{ operacion.identificador }}">
+                <tr class = "items" id = "{{ operacion.id }}">
                     <td></td>
                     <td>{{ operacion.identificador }}</td>
                     <td>{{ operacion.responsable}}</td>
@@ -58,8 +58,8 @@ Transacciones
                     <td>{{ operacion.monto }}</td>
                     <td>{{ operacion.tipo }}</td>
                     <td>{{ operacion.caja_asociada }}</td>
-                    <td hidden id = "fecha{{ operacion.identificador }}">{{ operacion.fecha_a_comparar }}</td>
-                    <td hidden id="responsable{{ operacion.identificador }}">{{ operacion.sucursal_asociada_id}}</td>
+                    <td hidden id = "fecha{{ operacion.id }}">{{ operacion.fecha_a_comparar }}</td>
+                    <td hidden id="responsable{{ operacion.id }}">{{ operacion.sucursal_asociada_id}}</td>
 
                 </tr>
                 {% endfor %}
@@ -71,10 +71,11 @@ Transacciones
     </div>
     
 </div>
+
+</div>
 <div class="text-center">
-<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
-</div>
-</div>
+    <button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+    </div>
 </div>
 
 {% else %}
@@ -165,7 +166,7 @@ Transacciones
     }
 
     function filtrarPorSucursal() {
-        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
+        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].value;
         console.log("sucursalSeleccionada: " + sucursalSeleccionada);
         if (document.getElementById("boton2").innerText == " Filtrar resultados") {
             document.getElementById("boton2").innerText = "Reiniciar";

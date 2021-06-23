@@ -17,8 +17,8 @@ Reporte de ventas por sucursal
                 <div class="bg-gray-100 text-center">
                 <select name="sucursal" id="sucursal" class="bg-gradient-light">
                     <option value="0"> Seleccioná una sucursal </option>
-                    {% for sucursal in sucursalesIds %}
-                    <option value="{{sucursal}}">{{sucursal}}</option>
+                    {% for sucursal in sucursales %}
+                    <option value="{{sucursal.id}}">{{sucursal.codigo}}</option>
                     {% endfor %}
                 </select>
                 <a id="boton2" class="btn btn-primary" onclick="filtrarPorSucursal()">Filtrar resultados</a>
@@ -58,10 +58,11 @@ Reporte de ventas por sucursal
     </div>
 
 </div>
+
+</div>
 <div class="text-center">
-<button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
-</div>
-</div>
+    <button hidden name="button" class="fa fa-print" id="button" onclick="printChart('report')"> Imprimir</button>
+    </div>
 </div>
 
 {% else %}
@@ -100,9 +101,9 @@ Reporte de ventas por sucursal
     };
    
     function filtrarPorSucursal() {
-        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].text;
+        sucursalSeleccionada = document.getElementById("sucursal").options[document.getElementById("sucursal").selectedIndex].value;
         console.log("sucursalSeleccionada: " + sucursalSeleccionada);
-        if (document.getElementById("boton2").innerText == " Filtrar resultados") {
+        if (document.getElementById("boton2").innerText == "Filtrar resultados") {
             document.getElementById("boton2").innerText = "Reiniciar";
 
             elementos = document.getElementsByClassName("items");

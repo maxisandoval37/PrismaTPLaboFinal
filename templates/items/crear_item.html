@@ -14,7 +14,7 @@
     <div class="card-body bg-gray-100">
         <form class="user" method="post">
             {% csrf_token %}
-            {{form.errors}}
+         
 
             {{form.nombre.label_tag}}
             <div class="form-group">
@@ -67,7 +67,7 @@
             <div class="form-group">
                 {% render_field form.cantidad_lote class="form-control form-control bg-gray-100" %}
             </div>
-            {% for field in form %}
+         
             
             
             {% for error in form.non_field_errors %}
@@ -75,7 +75,7 @@
                 <strong>{{ error|escape }}</strong>
             </div>
             {% endfor %}
-            {% endfor %}
+        
 
 
             <div class="text-center">

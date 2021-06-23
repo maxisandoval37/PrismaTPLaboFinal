@@ -6,7 +6,6 @@ from .models import Sucursal, Caja, Operacion
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from item.models import Item
 from django.contrib import messages
-from django.db.models import ProtectedError
 from django.contrib.messages.views import SuccessMessageMixin
 from usuario.models import Rol, Supervisor
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -211,20 +210,29 @@ def ReporteTransaccionesVentaCompra(request):
         
         sucursalesIds.append(sucursal_asociada)
 
-    print("sucursalesIds: %s" % sucursalesIds)
+    
     
     lista = []
     for fila in OperacionFromQuery:
         
-        print(sucursalesIds)
+        
         if fila.caja_asociada.sucursal_id_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
     
     operaciones = []
+    
+    sucursales = []
+    
+    for operacion in lista:
+        
+        sucursalQuery = Sucursal.objects.filter(id = operacion.caja_asociada.sucursal_id_id)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                sucursales.append(suc)
 
     for operacion in lista:
         dic = {
+            "id": operacion.id,
             "identificador": operacion.identificador,
             "fecha": operacion.fecha,
             "monto": operacion.monto,
@@ -232,7 +240,7 @@ def ReporteTransaccionesVentaCompra(request):
             "caja_asociada": operacion.caja_asociada,
             "fecha_a_comparar": str(operacion.fecha.date()),
             "es_gerente_general": str(es_gerente_general),
-            "sucursales": sucursalesIds,
+            "sucursales": sucursales,
             "sucursal_asociada_id": operacion.caja_asociada.sucursal_id_id,
             "responsable": operacion.responsable
             

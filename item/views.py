@@ -1,5 +1,5 @@
 from django.http.response import HttpResponseBadRequest
-from proveedor.models import Proveedor
+from proveedor.models import EstadoProveedor, Proveedor
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from .models import Categoria,  PinturaNueva, PinturaUsada, ReportePrecios, SubCategoria,  Item, Pedidos, Pintura, Mezcla, MezclaUsada, ReportePrecios, ReportePreciosItems, HistorialPref
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView
@@ -52,7 +52,7 @@ class EditarItem(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, UpdateVie
 
     permission_required = ('item.view_item', 'item.change_item')
     model = Item
-    fields = ['descripcion', 'estado']
+    fields = ['descripcion']
     template_name = 'items/editar_item.html'
     success_message = 'Se editó el item correctamente.'
     success_url = reverse_lazy('items:listar_items')
@@ -134,7 +134,13 @@ class ListarCategorias(ValidarLoginYPermisosRequeridos, ListView):
     
     def get_context_data(self, **kwargs):
         context = super(ListarCategorias, self).get_context_data(**kwargs)
-        context["proveedor"] = Proveedor.objects.all()
+        
+        estados = EstadoProveedor.objects.filter(opciones = 'ACTIVO')
+        activo = 0
+        for estado in estados:
+            activo = estado.id
+        
+        context["proveedor"] = Proveedor.objects.filter(estado = activo)
         
         return context
 
@@ -186,6 +192,7 @@ def VerPedido(request, id_proveedor, id_sucursal):
 
 
 def RecibirStock(request, id_proveedor, id_sucursal):
+    
     if request.is_ajax():
         itemReq = request.POST.get('item', None)
         cantidadReq = request.POST.get('cantidad', None)
@@ -196,8 +203,6 @@ def RecibirStock(request, id_proveedor, id_sucursal):
         pedidos = Pedidos.objects.filter(id = int(pedido))
         pedido_int = int(pedido)
         
-        
-       
         
         for cant in cantidadReq:
             
@@ -406,7 +411,7 @@ def ListarPintura(request):
         
         for pintura in pinturas:
             
-            if pintura not in colores:
+            if pintura.color not in colores:
                 
                 colores.append(pintura.color)
         
@@ -793,6 +798,15 @@ def ReporteItemRiesgoStock(request):
     print(lista)
     
     items = []
+    
+    sucursales = []
+    
+    for item in lista:
+        
+        sucursalQuery = Sucursal.objects.filter(id = item.sucursal_id)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                sucursales.append(suc)
 
     for item in lista:
         dic = {
@@ -803,7 +817,7 @@ def ReporteItemRiesgoStock(request):
             "stockminimo": item.stockminimo,
             "stockseguridad": item.stockseguridad,
             "es_gerente_general": str(es_gerente_general),
-            "sucursales": sucursalesIds,
+            "sucursales": sucursales,
             "sucursal_id": item.sucursal_id
         }
 
@@ -820,15 +834,15 @@ def ReporteCambiosPrecios(request):
     rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
     rolId = ""
     for rol in rolesFromQuery:
-        print(rol.id)
+        
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
+    
     reportePreciosFromQuery = ReportePrecios.objects.all()
     for fila in reportePreciosFromQuery:
         supervisorBySucursal.setdefault(fila.responsable_usuario.id,fila.responsable)
-    print(supervisorBySucursal)
+   
     if es_gerente_general or request.user.is_staff:
         es_gerente_general = True
         sucursalesQuery = Sucursal.objects.all()
@@ -838,21 +852,27 @@ def ReporteCambiosPrecios(request):
         for fila in reportePreciosFromQuery:
             # se supone que acá es el supervisor de la sucursal!!!
             
-            print("AAAAAAAAAAAAAAAAAA")
-            print(request.user.id)
-            print(supervisorBySucursal.get(request.user.id))
+            
             sucursalesIds.append(supervisorBySucursal.get(request.user.id).sucursal_id)
 
-    print("sucursalesIds: %s" % sucursalesIds)
+    
     lista = []
     for fila in reportePreciosFromQuery:
-        print(fila.responsable.sucursal_id)
+        
         if fila.responsable.sucursal_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
+            
+    sucursales = []
+    
     for fila in lista:
-        print("fila.aumento:")
-        print(fila.aumento)
+        
+        sucursalQuery = Sucursal.objects.filter(id = fila.responsable.sucursal_id)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                sucursales.append(suc)
+    
+    for fila in lista:
+        
         dic = {
             "id": fila.id,
             "fecha": fila.fecha,
@@ -861,7 +881,7 @@ def ReporteCambiosPrecios(request):
             "responsable": fila.responsable.nombre,
             "fecha_a_comparar": str(fila.fecha.date()),
             "es_gerente_general": str(es_gerente_general),
-            "sucursales": sucursalesIds,
+            "sucursales": sucursales,
             "responsable_sucursal": fila.responsable.sucursal_id
         }
         filasReporte.append(dic)
@@ -875,11 +895,11 @@ def ReporteCuentaCorrienteProveedores(request):
     rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
     rolId = ""
     for rol in rolesFromQuery:
-        print(rol.id)
+       
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
+   
     
     sucursal_asociada = ""
     PedidosFromQuery = Pedidos.objects.all()
@@ -897,17 +917,26 @@ def ReporteCuentaCorrienteProveedores(request):
         
         sucursalesIds.append(sucursal_asociada)
 
-    print("sucursalesIds: %s" % sucursalesIds)
+    
     
     lista = []
     for fila in PedidosFromQuery:
-        print(fila.sucursal_id)
-        print(sucursalesIds)
+       
         if fila.sucursal_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
+   
     
     listaPedidos = []
+    
+    sucursales = []
+    
+    for pedido in lista:
+        
+        sucursalQuery = Sucursal.objects.filter(id = pedido.sucursal_id)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                sucursales.append(suc)
+    
 
     for pedido in lista:
         dic = {
@@ -919,7 +948,7 @@ def ReporteCuentaCorrienteProveedores(request):
             "total": pedido.total,
             "fecha_a_comparar": str(pedido.fecha.date()),
             "es_gerente_general": str(es_gerente_general),
-            "sucursales": sucursalesIds,
+            "sucursales": sucursales,
             "sucursal_id": pedido.sucursal_id
         }
         listaPedidos.append(dic)
@@ -949,6 +978,7 @@ def AsignarProveedor(request):
             hist_pref.proveedor_asociado_id = int(proveedor)
             hist_pref.save()
             Categoria.objects.filter(id = int(categoria_id)).update(prov_preferido = int(proveedor))
+            
     
     
     messages.success(request, 'Proveedor asignado correctamente.')
@@ -996,13 +1026,13 @@ def RealizarPedido(request, item):
         
         cantidad = request.POST.get('cantidad_ingresada', None)
         item = request.POST.get('item', None)
-        print("$$$$$$$$$$$$$$$$$")
-        print(cantidad)
+        
+        
         if cantidad == "":
-            messages.error(request, "Sólo puedes ingresar digitos.")
+            messages.error(request, "Sólo puedes ingresar una cantidad mayor o igual a 0.")
             return HttpResponse()
         if int(cantidad) <= 0:
-            messages.error(request, "Debes solicitar una cantidad mayor a 0.")
+            messages.error(request, "No puedes ingresar digitos negativos.")
             return HttpResponse()
         
         items = Item.objects.filter(id = int(item))
@@ -1033,7 +1063,7 @@ def RealizarPedido(request, item):
             item.reintentos = 0
             item.save()
 
-        print(pedido_id)
+        
         pedidos = Pedidos.objects.filter(id = pedido_id)       
 
         for pedido in pedidos:
@@ -1045,9 +1075,9 @@ def RealizarPedido(request, item):
             try:
                 send_mail('SOLICITUD DE STOCK - SUCURSAL ' + str(pedido.sucursal_id), "Buenas tardes, esta es una solicitud de stock automática. Por favor, diríjase al siguiente link para indicar las cantidades que nos puede proveer de cada ítem:\n" +
                             "http://127.0.0.1:8000/items/pedido_proveedor/" + str(pedido.proveedor_id) + "/" + str(pedido.sucursal_id), 'tmmzprueba@gmail.com', {email})
-                print("JODERRRRRRRRRRRRRR")
+                
             except:
-                print("JODER NO FUNCIONA")
+                
                 return HttpResponseBadRequest()
     messages.success(request, "Solicitud de stock enviada correctamente.")
     return HttpResponse("JUAN")
@@ -1061,7 +1091,11 @@ def SolicitarStock(request, item):
     item = None
     for item in ItemQuery:
         item = item
-        
+    
+    if item.estado.opciones == 'INACTIVO':
+        messages.warning(request, "No puedes solicitar stock de un item inactivo.")
+        return redirect('items:listar_items')
+    
     sucursales = Sucursal.objects.filter(id = item.sucursal_id)
     sucursal = 0
     nombre = ""
@@ -1127,6 +1161,15 @@ def ReporteItemsStockFaltante(request):
     print(lista)
 
     items = []
+    
+    sucursales = []
+    
+    for item in lista:
+        
+        sucursalQuery = Sucursal.objects.filter(id = item.sucursal_id)
+        for suc in sucursalQuery:
+            if suc not in sucursales:
+                sucursales.append(suc)
 
     for item in lista:
         dic = {
@@ -1136,7 +1179,7 @@ def ReporteItemsStockFaltante(request):
             "stockminimo": item.stockminimo,
             "stockseguridad": item.stockseguridad,
             "es_gerente_general": str(es_gerente_general),
-            "sucursales": sucursalesIds,
+            "sucursales": sucursales,
             "sucursal_id": item.sucursal_id,
             "sucursal": item.sucursal,
             "precio": item.precio,

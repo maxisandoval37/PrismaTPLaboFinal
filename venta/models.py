@@ -187,7 +187,7 @@ class ComprobantePago(models.Model):
         return "Venta: {}, Total: {}".format(self.numero_venta, self.total)
     
 
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoVentaLocal(sender, instance, **kwargs):
     
     
     estados = EstadoVenta.objects.all()
@@ -202,6 +202,5 @@ def defaultActivo(sender, instance, **kwargs):
             
             instance.estado_id = activo 
             
-            
-pre_save.connect(defaultActivo, sender = VentaLocal)
+pre_save.connect(defaultActivoVentaLocal, sender = VentaLocal)
     

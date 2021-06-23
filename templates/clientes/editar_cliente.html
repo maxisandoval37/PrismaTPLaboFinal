@@ -6,8 +6,8 @@
 
 {% block content %}
 
-<div class="card" >
-    <div class="card-header">
+<div class="card bg-gray-100" style="margin:2%">
+    <div class="card-header text-center">
         <strong class="card-tittle">Cambiar estado del cliente</strong>
     </div>
 
@@ -18,7 +18,7 @@
             {{field.label_tag}}
 
             <div class="form-group">
-                {% render_field field class="select form-control" %}
+                {% render_field field class="select form-control bg-gradient-light" %}
 
                 {% endfor %}
 
@@ -31,7 +31,7 @@
             </div>
             {% endfor %}
             
-            <div class="">
+            <div class="text-center">
                 <a href="{% url 'clientes:listar_clientes' %}" class="btn btn-danger"> Cancelar </a>
                 <button type="submit" class="btn btn-success">Actualizar</button>
             </div>

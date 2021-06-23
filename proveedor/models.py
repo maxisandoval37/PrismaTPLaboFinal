@@ -30,7 +30,10 @@ class CuentaCorrienteProveedor(models.Model):
     def __str__(self):
         return "Proveedor: {}, Cuenta: {}".format(self.proveedor.razon_social, self.numero_cuenta)
 
-
+    def clean(self):
+        
+        if self.proveedor.estado.opciones == 'INACTIVO':
+            raise ValidationError('No puedes registrar una cuenta corriente para un proveedor inactivo.')
             
 class EstadoProveedor(models.Model):
     
@@ -112,7 +115,7 @@ class Proveedor(models.Model):
     def __str__(self):
         return self.razon_social
     
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoProveedor(sender, instance, **kwargs):
     
     
     estados = EstadoProveedor.objects.all()
@@ -125,12 +128,12 @@ def defaultActivo(sender, instance, **kwargs):
                 activo = estado.id 
             
             instance.estado_id = activo
+           
             
-            
-pre_save.connect(defaultActivo, sender = Proveedor)
+pre_save.connect(defaultActivoProveedor, sender = Proveedor)
 
 
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoCuentaCorriente(sender, instance, **kwargs):
     
     
     estados = EstadoCuentaCorriente.objects.all()
@@ -145,4 +148,4 @@ def defaultActivo(sender, instance, **kwargs):
             instance.estado_id = activo
             
             
-pre_save.connect(defaultActivo, sender = CuentaCorrienteProveedor)
+pre_save.connect(defaultActivoCuentaCorriente, sender = CuentaCorrienteProveedor)

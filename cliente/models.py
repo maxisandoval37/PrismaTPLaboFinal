@@ -138,6 +138,9 @@ class CuentaCorriente(models.Model):
 
     def clean(self):
         
+        if self.cliente.estado.opciones == 'INACTIVO':
+            raise ValidationError('No puedes registrar una cuenta corriente para un cliente inactivo.')
+        
         cuentas_corriente = CuentaCorriente.objects.all()
         cuenta_corriente = CuentaCorriente.objects.filter(cliente = self.cliente)
         contador = 0
@@ -160,7 +163,7 @@ class Cliente(models.Model):
     email = models.EmailField('Correo electronico', max_length=30, unique=True)
     telefono = models.CharField('Telefono', max_length=13, unique=True)
     categoria_cliente = models.ForeignKey(CategoriaCliente, on_delete=models.PROTECT)
-    estado_cliente = models.ForeignKey(EstadoCliente, on_delete=models.PROTECT)
+    estado_cliente = models.ForeignKey(EstadoCliente, on_delete=models.PROTECT, null=True)
     
     
     def __str__(self):
@@ -169,24 +172,31 @@ class Cliente(models.Model):
     
     def clean(self):
         
-        patron = '^[^ ][a-zA-Z ]+$'
-        
         clientes = Cliente.objects.all() 
         
         for cliente in clientes:
             if self.cuit == cliente.cuit and self.id != cliente.id:
                 raise ValidationError('Ya existe un cliente con el cuit ingresado.')
+            
+        for char in self.nombre:
+            
+            if not char.isalpha and char != " ":
+                raise ValidationError("El nombre solo puede contener letras y espacios.")
+            
+        for char in self.apellido:
+        
+            if not char.isalpha and char != " ":
+                raise ValidationError("El apellido solo puede contener letras y espacios.")   
+    
         
         if len(self.cuit) != 11:
             raise ValidationError('El cuit debe tener exactamente 11 digitos.')
         if not self.cuit.isdigit():
             raise ValidationError('El cuit solo puede contener números.')
-        if not (bool(re.search(patron,self.nombre))):
-            raise ValidationError('El/los nombre solo puede contener letras.')
+        
         if len(self.nombre) < 3 or len(self.nombre) > 20:
             raise ValidationError('El nombre debe tener entre 3 y 20 letras.')
-        if not (bool(re.search(patron,self.apellido))):
-            raise ValidationError('El/los apellido solo puede contener letras.')
+        
         if len(self.apellido) < 3 or len(self.apellido) > 20:
             raise ValidationError('El apellido debe tener entre 3 y 20 letras.')
         
@@ -196,37 +206,37 @@ class Cliente(models.Model):
             raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
         
         
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoCliente(sender, instance, **kwargs):
     
-    
+    print(instance)
     estados = EstadoCliente.objects.all()
     if len(estados) > 0:
-        if instance.estado_cliente_id == None:
-            
+        if instance.estado_cliente  == None:
             
             estadosQuery = EstadoCliente.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 
             
-            instance.estado_cliente_id = activo 
+            instance.estado_cliente_id = activo
             
-pre_save.connect(defaultActivo, sender = Cliente)
+           
+pre_save.connect(defaultActivoCliente, sender = Cliente)
 
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoCuentaCorriente(sender, instance, **kwargs):
     
     
     estados = EstadoCuentaCorriente.objects.all()
     if len(estados) > 0:
-        print("xddd")
+        
         if instance.estado_id == None:
-            print("holaaa")
+           
             estadosQuery = EstadoCuentaCorriente.objects.filter(opciones = 'ACTIVA')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 
             
             instance.estado_id = activo
+           
             
-            
-pre_save.connect(defaultActivo, sender = CuentaCorriente)
+pre_save.connect(defaultActivoCuentaCorriente, sender = CuentaCorriente)

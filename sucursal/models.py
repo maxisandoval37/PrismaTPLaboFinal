@@ -22,46 +22,41 @@ class Caja(models.Model):
     
     def clean(self):
         
+        
+        
         cajas = Caja.objects.all() 
         
         for caja in cajas:
             if self.codigo == caja.codigo and self.id != caja.id:
                 raise ValidationError('Ya existe una caja con el identificador ingresado.')
+            
+        if self.sucursal_id.estado.opciones == 'INACTIVA':
+            raise ValidationError('No puedes registrar una caja a una sucursal inactiva.')
         
         if not self.codigo.isalnum():
             raise ValidationError('El identificador solo puede contener letras y números.')
         if len(self.codigo) < 2 or len(self.codigo) > 4:
             raise ValidationError('El indentificador debe tener entre 2 y 4 caracteres.')
-        if self.saldo_disponible < 0:
-            raise ValidationError('El saldo disponible en pesos no puede ser negativo.')
-        if self.saldo_disponible_dolares < 0:
-            raise ValidationError('El saldo disponible en dolares no puede ser negativo.')
-        if self.saldo_disponible_euros < 0:
-            raise ValidationError('El saldo disponible en euros no puede ser negativo.')
-        if self.egresos < 0 :
-            raise ValidationError('Los egresos no pueden ser negativos.')
-        if self.ingresos_en_pesos < 0:
-            raise ValidationError('Los ingresos en pesos no pueden ser negativos.')
-        if self.ingresos_en_dolares < 0:
-            raise ValidationError('Los ingresos en dolares no pueden ser negativos.')
-        if self.ingresos_en_euros < 0:
-            raise ValidationError('Los ingresos en euros no pueden ser negativos.')
-        if self.saldo_inicial < 0 :
-            raise ValidationError('El saldo inicial no puede ser negativo.')
-        if self.saldo_final < 0:
-            raise ValidationError('El saldo final no puede ser negativo.')
+        if self.saldo_disponible == None or self.saldo_disponible < 0 :
+            raise ValidationError('El saldo disponible debe ser un número positivo, con un máximo de 7 cifras.')
+        if self.saldo_disponible_dolares == None or self.saldo_disponible_dolares < 0:
+            raise ValidationError('El saldo disponible en dolares debe ser un número positivo, con un máximo de 7 cifras.')
+        if self.saldo_disponible_euros == None or self.saldo_disponible_euros < 0:
+            raise ValidationError('El saldo disponible en euros debe ser un número positivo, con un máximo de 7 cifras.')
+        if self.egresos == None or self.egresos < 0 :
+            raise ValidationError('Los egresos deben ser un número positivo, con un máximo de 7 cifras.')
+        if self.ingresos_en_pesos == None or self.ingresos_en_pesos < 0:
+            raise ValidationError('Los ingresos en pesos deben ser un número positivo, con un máximo de 7 cifras.')
+        if self.ingresos_en_dolares == None or self.ingresos_en_dolares < 0:
+            raise ValidationError('Los ingresos en dolares deben ser un número positivo, con un máximo de 7 cifras.')
+        if self.ingresos_en_euros == None or self.ingresos_en_euros < 0:
+            raise ValidationError('Los ingresos en euros deben ser un número positivo, con un máximo de 7 cifras.')
+        if self.saldo_inicial == None or self.saldo_inicial < 0 :
+            raise ValidationError('El saldo inicial debe ser un número positivo, con un máximo de 7 cifras.')
+        if self.saldo_final == None or self.saldo_final < 0:
+            raise ValidationError('El saldo final debe ser un número positivo, con un máximo de 7 cifras.')
         
-        if self.saldo_disponible < 0 or self.saldo_disponible_dolares < 0 or self.saldo_disponible_euros < 0:
-            raise ValidationError('El saldo disponible no puede ser negativo.')
-        if self.ingresos_en_pesos < 0 or self.ingresos_en_dolares < 0 or self.ingresos_en_euros < 0:
-            raise ValidationError('Los ingresos no pueden ser negativos.')
-        
-        if self.egresos < 0:
-            raise ValidationError('Los egresos no pueden ser negativos.')
-        if self.saldo_inicial < 0:
-            raise ValidationError('El saldo inicial no puede ser negativo.')
-        if self.saldo_final < 0:
-            raise ValidationError('El saldo final no puede ser negativo.')
+    
     
     class Meta:
         
@@ -169,7 +164,7 @@ class Operacion(models.Model):
         
         
         
-def defaultActivo(sender, instance, **kwargs):
+def defaultActivoSucursal(sender, instance, **kwargs):
     
     
     estados = EstadoSucursal.objects.all()
@@ -183,4 +178,5 @@ def defaultActivo(sender, instance, **kwargs):
             
             instance.estado_id = activo 
             
-post_save.connect(defaultActivo, sender = Sucursal)
+            
+post_save.connect(defaultActivoSucursal, sender = Sucursal)
