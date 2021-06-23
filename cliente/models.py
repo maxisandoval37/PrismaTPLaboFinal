@@ -138,7 +138,7 @@ class CuentaCorriente(models.Model):
 
     def clean(self):
         
-        if self.cliente.estado.opciones == 'INACTIVO':
+        if self.cliente.estado_cliente.opciones == 'INACTIVO':
             raise ValidationError('No puedes registrar una cuenta corriente para un cliente inactivo.')
         
         cuentas_corriente = CuentaCorriente.objects.all()

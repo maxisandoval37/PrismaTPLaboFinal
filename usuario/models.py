@@ -54,7 +54,7 @@ class Rol(models.Model):
    
    
         
-class Estado(models.Model):
+class EstadoUsuario(models.Model):
     
     class opcionesEstado(models.TextChoices):
         
@@ -103,7 +103,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     apellido = models.CharField('Apellido', max_length=16, null = True)
     rol = models.ForeignKey(Rol, on_delete=models.PROTECT, null=True)
     telefono = models.CharField('Telefono', null = True, max_length=13)
-    estado = models.ForeignKey(Estado, on_delete=models.PROTECT ,null=True)
+    estado = models.ForeignKey(EstadoUsuario, on_delete=models.PROTECT ,null=True)
     
     calle = models.CharField('Calle', max_length=20, blank = True,null=True)
     numero = models.CharField('Numero',blank = True,null=True, max_length=4)
@@ -312,11 +312,11 @@ class Administrativo(Usuario):
 def defaultActivoUsuario(sender, instance, **kwargs):
     
     
-    estados = Estado.objects.all()
+    estados = EstadoUsuario.objects.all()
     if len(estados) > 0:
         if instance.estado_id == None:
             
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            estadosQuery = EstadoUsuario.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 
@@ -329,11 +329,11 @@ pre_save.connect(defaultActivoUsuario, sender = Usuario)
 def defaultActivoVendedor(sender, instance, **kwargs):
     
     
-    estados = Estado.objects.all()
+    estados = EstadoUsuario.objects.all()
     if len(estados) > 0:
         if instance.estado_id == None:
             
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            estadosQuery = EstadoUsuario.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 
@@ -346,11 +346,11 @@ pre_save.connect(defaultActivoVendedor, sender = Vendedor)
 def defaultActivoSupervisor(sender, instance, **kwargs):
     
     
-    estados = Estado.objects.all()
+    estados = EstadoUsuario.objects.all()
     if len(estados) > 0:
         if instance.estado_id == None:
             
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            estadosQuery = EstadoUsuario.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 
@@ -364,11 +364,11 @@ pre_save.connect(defaultActivoSupervisor, sender = Supervisor)
 def defaultActivoGerenteGeneral(sender, instance, **kwargs):
     
     
-    estados = Estado.objects.all()
+    estados = EstadoUsuario.objects.all()
     if len(estados) > 0:
         if instance.estado_id == None:
             
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            estadosQuery = EstadoUsuario.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 
@@ -381,11 +381,11 @@ pre_save.connect(defaultActivoGerenteGeneral, sender = GerenteGeneral)
 def defaultActivoCajero(sender, instance, **kwargs):
     
     
-    estados = Estado.objects.all()
+    estados = EstadoUsuario.objects.all()
     if len(estados) > 0:
         if instance.estado_id == None:
             
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            estadosQuery = EstadoUsuario.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 
@@ -398,11 +398,11 @@ pre_save.connect(defaultActivoCajero, sender = Cajero)
 def defaultActivoAdministrativo(sender, instance, **kwargs):
     
     
-    estados = Estado.objects.all()
+    estados = EstadoUsuario.objects.all()
     if len(estados) > 0:
         if instance.estado_id == None:
             
-            estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
+            estadosQuery = EstadoUsuario.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
                 activo = estado.id 

@@ -1077,13 +1077,13 @@ def RealizarPedido(request, item):
                 
             try:
                 send_mail('SOLICITUD DE STOCK - SUCURSAL ' + str(pedido.sucursal_id), "Buenas tardes, esta es una solicitud de stock automática. Por favor, diríjase al siguiente link para indicar las cantidades que nos puede proveer de cada ítem:\n" +
-                            "http://127.0.0.1:8000/items/pedido_proveedor/" + str(pedido.proveedor_id) + "/" + str(pedido.sucursal_id), 'tmmzprueba@gmail.com', {email})
+                            "https://prismatechnology.herokuapp.com/items/pedido_proveedor/" + str(pedido.proveedor_id) + "/" + str(pedido.sucursal_id), 'tmmzprueba@gmail.com', {email})
                 
             except:
                 
                 return HttpResponseBadRequest()
     messages.success(request, "Solicitud de stock enviada correctamente.")
-    return HttpResponse("JUAN")
+    return HttpResponse()
 
 
 def SolicitarStock(request, item):

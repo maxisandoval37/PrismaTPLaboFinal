@@ -18,7 +18,7 @@ from decimal import Decimal
 import json
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import EmailMultiAlternatives
-from usuario.models import Supervisor, Rol, Cajero, Administrativo
+from usuario.models import Supervisor, Rol, Cajero, Administrativo, EstadoUsuario
 from django.db.models import Count
 
 
@@ -257,7 +257,7 @@ class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,Cr
         estados_cliente2 = EstadoCliente.objects.filter(opciones = 'DEUDOR')
         estados_cuenta = EstadoCuentaCorriente.objects.filter(opciones = 'ACTIVA')
         estados_sucursal = EstadoSucursal.objects.filter(opciones = 'ACTIVA')
-        estados_vendedor = Estado.objects.filter(opciones = 'ACTIVO')
+        estados_vendedor = EstadoUsuario.objects.filter(opciones = 'ACTIVO')
         cliente = 0
         cliente2 = 0
         cuenta_corriente = 0
