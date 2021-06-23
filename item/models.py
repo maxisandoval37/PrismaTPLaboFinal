@@ -462,13 +462,14 @@ class HistorialPref(models.Model):
     
     fecha = models.DateTimeField('Fecha de asignación', auto_now_add=True)
     proveedor_asociado = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
+    categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
     
     class Meta:
         verbose_name = 'historial de preferenciados'
         verbose_name_plural = 'historiales de preferenciados'
         
     def __str__(self):
-        return "Fecha: {} , Proveedor: {}".format(self.fecha, self.proveedor_asociado)
+        return "Fecha: {} , Proveedor: {}, Categoria: {}".format(self.fecha, self.proveedor_asociado, self.categoria)
     
     
 def defaultActivoItem(sender, instance, **kwargs):

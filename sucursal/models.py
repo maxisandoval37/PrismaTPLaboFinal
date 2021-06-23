@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models.enums import TextChoices
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save
 
 
 
@@ -169,7 +169,7 @@ def defaultActivoSucursal(sender, instance, **kwargs):
     
     estados = EstadoSucursal.objects.all()
     if len(estados) > 0:
-        if instance.DoesNotExist:
+        if instance.estado_id == None:
             
             estadosQuery = EstadoSucursal.objects.filter(opciones = 'ACTIVA')
             activo = ""
@@ -179,4 +179,4 @@ def defaultActivoSucursal(sender, instance, **kwargs):
             instance.estado_id = activo 
             
             
-post_save.connect(defaultActivoSucursal, sender = Sucursal)
+pre_save.connect(defaultActivoSucursal, sender = Sucursal)

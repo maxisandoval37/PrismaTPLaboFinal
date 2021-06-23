@@ -65,7 +65,7 @@ urlpatterns = [
          name='listar_item_stockminimo'),
     path('listar_item_stockseguridad/', login_required(ordenarPorStockSeguridad),
          name='listar_item_stockseguridad'),
-    path('historial_preferenciados/', login_required(HistorialPreferenciados.as_view()),
+    path('historial_preferenciados/<int:proveedor>/<int:categoria>/', login_required(HistorialPreferenciados),
          name='historial_preferenciados'),
     path('solicitar_stock/<int:item>/', login_required(SolicitarStock), name= 'solicitar_stock'),
     path('solicitar_stock/<int:item>/RealizarPedido/', login_required(RealizarPedido), name = 'realizar_pedido'),

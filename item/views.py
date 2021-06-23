@@ -955,12 +955,14 @@ def ReporteCuentaCorrienteProveedores(request):
 
     return render(request,'items/reporte_cuenta_corriente_proveedores.html',locals())
 
-class HistorialPreferenciados(ValidarLoginYPermisosRequeridos, ListView):
+def HistorialPreferenciados(request, proveedor, categoria):
     
-    permission_required = ['item.view_categoria',]
-    model = HistorialPref
-    template_name = 'items/historial_pref.html'
-    query = HistorialPref.objects.all().order_by('fecha')
+    query = HistorialPref.objects.filter(proveedor_asociado_id = proveedor, categoria_id = categoria).order_by('fecha')
+    lista = []
+    for info in query:
+        lista.append(info)
+        
+    return render(request, 'items/historial_pref.html', locals())
 
 def AsignarProveedor(request):
     
@@ -976,6 +978,7 @@ def AsignarProveedor(request):
         else:
             hist_pref = HistorialPref()
             hist_pref.proveedor_asociado_id = int(proveedor)
+            hist_pref.categoria_id = int(categoria_id)
             hist_pref.save()
             Categoria.objects.filter(id = int(categoria_id)).update(prov_preferido = int(proveedor))
             
