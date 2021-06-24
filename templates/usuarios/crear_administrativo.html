@@ -20,9 +20,10 @@
             <div class="form-group">
                 {% render_field field class="select form-control bg-gray-100" %}
 
-                {% endfor %}
+               
 
             </div>
+            {% endfor %}
             {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>

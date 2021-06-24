@@ -121,8 +121,22 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     
     def clean(self):
         
-        patron = '^[^ ][a-zA-Z ]+$'
+        usuarios = Usuario.objects.all()
         
+        for usuario in usuarios:
+            if self.cuit == usuario.cuit and self.id != usuario.id:
+                raise ValidationError("El cuit ya se encuentra en uso.")
+            
+            
+        for char in self.nombre:
+            
+            if not char.isalpha and char != " ":
+                raise ValidationError("El nombre solo puede contener letras y espacios.")
+            
+        for char in self.apellido:
+        
+            if not char.isalpha and char != " ":
+                raise ValidationError("El apellido solo puede contener letras y espacios.")
         
         if not self.username.isalnum():
             raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
@@ -135,11 +149,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         if len(self.cuit) != 11:
             raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
     
-        if not (bool(re.search(patron,self.nombre))):
-            raise ValidationError('El/los nombre solo puede contener letras.')
-        
-        if not (bool(re.search(patron,self.apellido))):
-            raise ValidationError('El/los apellido solo puede contener letras.')
         
         if len(self.nombre) < 3 and len(self.nombre) > 16:
             raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
@@ -237,6 +246,67 @@ class GerenteGeneral(Usuario):
     
         if self.rol.opciones != 'GERENTE GENERAL':
          raise ValidationError('El rol debe ser GERENTE GENERAL')
+     
+     
+        for char in self.nombre:
+            
+            if not char.isalpha and char != " ":
+                raise ValidationError("El nombre solo puede contener letras y espacios.")
+            
+        for char in self.apellido:
+        
+            if not char.isalpha and char != " ":
+                raise ValidationError("El apellido solo puede contener letras y espacios.")
+        
+        if not self.username.isalnum():
+            raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
+        if len(self.username) < 6 and len(self.username) > 20:
+            raise ValidationError('El nombre de usuario debe tener entre 6 y 20 caracteres.')
+        
+        if not self.cuit.isdigit():
+            raise ValidationError('Cuit inválido.')
+        
+        if len(self.cuit) != 11:
+            raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
+    
+        
+        if len(self.nombre) < 3 and len(self.nombre) > 16:
+            raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
+        
+        if len(self.apellido) < 3 and len(self.apellido) > 16:
+            raise ValidationError('El apellido debe tener entre 3 y 16 letras.') 
+        
+        if not self.telefono.isdigit():
+            raise ValidationError('El telefono solo puede contener digitos')
+        
+        if len(self.telefono) < 3 and len(self.telefono) > 13:
+            raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
+        
+        if self.calle is not None:
+            if len(self.calle) < 4 and len(self.calle) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.numero is not None:   
+            if not self.numero.isdigit():
+                raise ValidationError('El número solo puede contener digitos.') 
+            
+            if len(self.numero) < 2 and len(self.numero) > 4:
+                raise ValidationError('El número debe tener entre 1 y 4 digitos.')
+         
+        if self.localidad is not None:   
+            if len(self.localidad) < 4 and len(self.localidad) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.provincia is not None:        
+            if len(self.provincia) < 4 and len(self.provincia) > 20:
+                raise ValidationError('La provincia debe tener entre 4 y 20 letras')
+        
+        if self.cod_postal is not None:    
+            if not self.cod_postal.isdigit():
+                raise ValidationError('El código postal solo puede contener digitos.')
+            
+            if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
+                raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
 
 class Supervisor(Usuario):
     
@@ -253,8 +323,75 @@ class Supervisor(Usuario):
     
     def clean(self):
         
-     if self.rol.opciones != 'SUPERVISOR':
-         raise ValidationError('El rol debe ser SUPERVISOR')
+        usuarios = Supervisor.objects.all()
+            
+        for usuario in usuarios:
+            if self.cuit == usuario.cuit and self.id != usuario.id:
+                raise ValidationError("El cuit ya se encuentra en uso.")
+        
+        if self.rol.opciones != 'SUPERVISOR':
+            raise ValidationError('El rol debe ser SUPERVISOR')
+        
+        for char in self.nombre:
+            
+            if not char.isalpha and char != " ":
+                raise ValidationError("El nombre solo puede contener letras y espacios.")
+            
+        for char in self.apellido:
+        
+            if not char.isalpha and char != " ":
+                raise ValidationError("El apellido solo puede contener letras y espacios.")
+        
+        if not self.username.isalnum():
+            raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
+        if len(self.username) < 6 and len(self.username) > 20:
+            raise ValidationError('El nombre de usuario debe tener entre 6 y 20 caracteres.')
+        
+        if not self.cuit.isdigit():
+            raise ValidationError('Cuit inválido.')
+        
+        if len(self.cuit) != 11:
+            raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
+    
+        
+        if len(self.nombre) < 3 and len(self.nombre) > 16:
+            raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
+        
+        if len(self.apellido) < 3 and len(self.apellido) > 16:
+            raise ValidationError('El apellido debe tener entre 3 y 16 letras.') 
+        
+        if not self.telefono.isdigit():
+            raise ValidationError('El telefono solo puede contener digitos')
+        
+        if len(self.telefono) < 3 and len(self.telefono) > 13:
+            raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
+        
+        if self.calle is not None:
+            if len(self.calle) < 4 and len(self.calle) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.numero is not None:   
+            if not self.numero.isdigit():
+                raise ValidationError('El número solo puede contener digitos.') 
+            
+            if len(self.numero) < 2 and len(self.numero) > 4:
+                raise ValidationError('El número debe tener entre 1 y 4 digitos.')
+         
+        if self.localidad is not None:   
+            if len(self.localidad) < 4 and len(self.localidad) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.provincia is not None:        
+            if len(self.provincia) < 4 and len(self.provincia) > 20:
+                raise ValidationError('La provincia debe tener entre 4 y 20 letras')
+        
+        if self.cod_postal is not None:    
+            if not self.cod_postal.isdigit():
+                raise ValidationError('El código postal solo puede contener digitos.')
+            
+            if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
+                raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
+
 
 class Vendedor(Usuario):
     
@@ -269,9 +406,76 @@ class Vendedor(Usuario):
         return self.username
     
     def clean(self):
+            
+        usuarios = Vendedor.objects.all()
+            
+        for usuario in usuarios:
+            if self.cuit == usuario.cuit and self.id != usuario.id:
+                raise ValidationError("El cuit ya se encuentra en uso.")
+            
+        if self.rol.opciones != 'VENDEDOR':
+                raise ValidationError('El rol debe ser VENDEDOR')
+            
+            
+        for char in self.nombre:
+            
+            if not char.isalpha and char != " ":
+                raise ValidationError("El nombre solo puede contener letras y espacios.")
+            
+        for char in self.apellido:
         
-     if self.rol.opciones != 'VENDEDOR':
-         raise ValidationError('El rol debe ser VENDEDOR')
+            if not char.isalpha and char != " ":
+                raise ValidationError("El apellido solo puede contener letras y espacios.")
+        
+        if not self.username.isalnum():
+            raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
+        if len(self.username) < 6 and len(self.username) > 20:
+            raise ValidationError('El nombre de usuario debe tener entre 6 y 20 caracteres.')
+        
+        if not self.cuit.isdigit():
+            raise ValidationError('Cuit inválido.')
+        
+        if len(self.cuit) != 11:
+            raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
+    
+        
+        if len(self.nombre) < 3 and len(self.nombre) > 16:
+            raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
+        
+        if len(self.apellido) < 3 and len(self.apellido) > 16:
+            raise ValidationError('El apellido debe tener entre 3 y 16 letras.') 
+        
+        if not self.telefono.isdigit():
+            raise ValidationError('El telefono solo puede contener digitos')
+        
+        if len(self.telefono) < 3 and len(self.telefono) > 13:
+            raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
+        
+        if self.calle is not None:
+            if len(self.calle) < 4 and len(self.calle) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.numero is not None:   
+            if not self.numero.isdigit():
+                raise ValidationError('El número solo puede contener digitos.') 
+            
+            if len(self.numero) < 2 and len(self.numero) > 4:
+                raise ValidationError('El número debe tener entre 1 y 4 digitos.')
+         
+        if self.localidad is not None:   
+            if len(self.localidad) < 4 and len(self.localidad) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.provincia is not None:        
+            if len(self.provincia) < 4 and len(self.provincia) > 20:
+                raise ValidationError('La provincia debe tener entre 4 y 20 letras')
+        
+        if self.cod_postal is not None:    
+            if not self.cod_postal.isdigit():
+                raise ValidationError('El código postal solo puede contener digitos.')
+            
+            if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
+                raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
     
 class Cajero(Usuario):
     
@@ -287,8 +491,74 @@ class Cajero(Usuario):
     
     def clean(self):
         
-     if self.rol.opciones != 'CAJERO':
-         raise ValidationError('El rol debe ser CAJERO')
+        usuarios = Cajero.objects.all()
+            
+        for usuario in usuarios:
+            if self.cuit == usuario.cuit and self.id != usuario.id:
+                raise ValidationError("El cuit ya se encuentra en uso.")
+        
+        if self.rol.opciones != 'CAJERO':
+            raise ValidationError('El rol debe ser CAJERO')
+        
+        for char in self.nombre:
+            
+            if not char.isalpha and char != " ":
+                raise ValidationError("El nombre solo puede contener letras y espacios.")
+            
+        for char in self.apellido:
+        
+            if not char.isalpha and char != " ":
+                raise ValidationError("El apellido solo puede contener letras y espacios.")
+        
+        if not self.username.isalnum():
+            raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
+        if len(self.username) < 6 and len(self.username) > 20:
+            raise ValidationError('El nombre de usuario debe tener entre 6 y 20 caracteres.')
+        
+        if not self.cuit.isdigit():
+            raise ValidationError('Cuit inválido.')
+        
+        if len(self.cuit) != 11:
+            raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
+    
+        
+        if len(self.nombre) < 3 and len(self.nombre) > 16:
+            raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
+        
+        if len(self.apellido) < 3 and len(self.apellido) > 16:
+            raise ValidationError('El apellido debe tener entre 3 y 16 letras.') 
+        
+        if not self.telefono.isdigit():
+            raise ValidationError('El telefono solo puede contener digitos')
+        
+        if len(self.telefono) < 3 and len(self.telefono) > 13:
+            raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
+        
+        if self.calle is not None:
+            if len(self.calle) < 4 and len(self.calle) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.numero is not None:   
+            if not self.numero.isdigit():
+                raise ValidationError('El número solo puede contener digitos.') 
+            
+            if len(self.numero) < 2 and len(self.numero) > 4:
+                raise ValidationError('El número debe tener entre 1 y 4 digitos.')
+         
+        if self.localidad is not None:   
+            if len(self.localidad) < 4 and len(self.localidad) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.provincia is not None:        
+            if len(self.provincia) < 4 and len(self.provincia) > 20:
+                raise ValidationError('La provincia debe tener entre 4 y 20 letras')
+        
+        if self.cod_postal is not None:    
+            if not self.cod_postal.isdigit():
+                raise ValidationError('El código postal solo puede contener digitos.')
+            
+            if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
+                raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
     
 class Administrativo(Usuario):
     
@@ -304,8 +574,74 @@ class Administrativo(Usuario):
     
     def clean(self):
         
-     if self.rol.opciones != 'ADMINISTRATIVO':
-         raise ValidationError('El rol debe ser ADMINISTRATIVO')
+        usuarios = Administrativo.objects.all()
+            
+        for usuario in usuarios:
+            if self.cuit == usuario.cuit and self.id != usuario.id:
+                raise ValidationError("El cuit ya se encuentra en uso.")
+        
+        if self.rol.opciones != 'ADMINISTRATIVO':
+            raise ValidationError('El rol debe ser ADMINISTRATIVO')
+        
+        for char in self.nombre:
+            
+            if not char.isalpha and char != " ":
+                raise ValidationError("El nombre solo puede contener letras y espacios.")
+            
+        for char in self.apellido:
+        
+            if not char.isalpha and char != " ":
+                raise ValidationError("El apellido solo puede contener letras y espacios.")
+        
+        if not self.username.isalnum():
+            raise ValidationError('El nombre de usuario solo puede contener letras y números, sin espacios.')
+        if len(self.username) < 6 and len(self.username) > 20:
+            raise ValidationError('El nombre de usuario debe tener entre 6 y 20 caracteres.')
+        
+        if not self.cuit.isdigit():
+            raise ValidationError('Cuit inválido.')
+        
+        if len(self.cuit) != 11:
+            raise ValidationError('El Cuit debe tener exactamente 11 digitos.')
+    
+        
+        if len(self.nombre) < 3 and len(self.nombre) > 16:
+            raise ValidationError('El nombre debe tener entre 3 y 16 letras.')
+        
+        if len(self.apellido) < 3 and len(self.apellido) > 16:
+            raise ValidationError('El apellido debe tener entre 3 y 16 letras.') 
+        
+        if not self.telefono.isdigit():
+            raise ValidationError('El telefono solo puede contener digitos')
+        
+        if len(self.telefono) < 3 and len(self.telefono) > 13:
+            raise ValidationError('El telefono debe tener entre 3 y 13 digitos.')
+        
+        if self.calle is not None:
+            if len(self.calle) < 4 and len(self.calle) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.numero is not None:   
+            if not self.numero.isdigit():
+                raise ValidationError('El número solo puede contener digitos.') 
+            
+            if len(self.numero) < 2 and len(self.numero) > 4:
+                raise ValidationError('El número debe tener entre 1 y 4 digitos.')
+         
+        if self.localidad is not None:   
+            if len(self.localidad) < 4 and len(self.localidad) > 20:
+                raise ValidationError('La calle debe tener entre 4 y 20 letras')
+         
+        if self.provincia is not None:        
+            if len(self.provincia) < 4 and len(self.provincia) > 20:
+                raise ValidationError('La provincia debe tener entre 4 y 20 letras')
+        
+        if self.cod_postal is not None:    
+            if not self.cod_postal.isdigit():
+                raise ValidationError('El código postal solo puede contener digitos.')
+            
+            if len(self.cod_postal) < 1 and len(self.cod_postal) > 4:
+                raise ValidationError('El código postal debe tener entre 1 y 4 digitos.')
      
      
 
