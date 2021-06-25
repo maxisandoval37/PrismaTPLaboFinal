@@ -1,15 +1,13 @@
-from email.mime.nonmultipart import MIMENonMultipart
 from proveedor.models import EstadoCuentaCorriente
-from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.shortcuts import render, redirect
 from django.views.generic.edit import UpdateView
 from .forms import VentaLocalForm
-from .models import ComprobantePago, EstadoVenta, VentaLocal, VentaVirtual, Venta, ItemVenta, Cotizacion
-from django.views.generic import  CreateView,  DeleteView, ListView
+from .models import ComprobantePago, EstadoVenta, VentaLocal, Venta, ItemVenta, Cotizacion
+from django.views.generic import  CreateView
 from usuario.mixins import ValidarLoginYPermisosRequeridos
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.db.models import ProtectedError
-from cliente.models import Cliente, CuentaCorriente, EstadoCliente,MedioDePago, Deuda, EstadoDeuda, CategoriaCliente, TipoDeMoneda
+from cliente.models import Cliente, CuentaCorriente, EstadoCliente,MedioDePago, Deuda, EstadoDeuda, TipoDeMoneda
 from sucursal.models import EstadoSucursal, Sucursal, Caja, Operacion
 from usuario.models import Vendedor
 from item.models import Item, Estado
@@ -230,15 +228,7 @@ def ListadoVentaCajero(request):
             
     return render(request, 'ventas/listar_venta_cajero.html', locals())
     
-
-
-# class ListadoVentaCajero(ValidarLoginYPermisosRequeridos,ListView):
     
-#     permission_required = ('venta.view_ventavirtual','venta.add_ventavirtual',)
-#     model = Venta 
-#     template_name = 'ventas/listar_venta_cajero.html'
-#     queryset = Venta.objects.all().order_by('numero_comprobante')
-
 class RegistrarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     
     permission_required = ('venta.view_venta','venta.add_venta',)
@@ -296,28 +286,8 @@ class EditarVentaLocal(ValidarLoginYPermisosRequeridos,SuccessMessageMixin, Upda
     success_url = reverse_lazy('ventas:listar_ventas')
     success_message = 'Monto ingresado correctamente.'
     
-# class EliminarVenta(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,DeleteView):
-    
-#     permission_required = ('venta.view_venta','venta.delete_venta',)
-#     model = Venta
-#     template_name = 'ventas/eliminar_venta.html'
-#     success_url = reverse_lazy('ventas:listar_ventas')
-#     success_message = 'Se eliminó la venta correctamente.'
-                                    
-#     def delete(self, request, *args, **kwargs):
-        
-#         self.object = self.get_object()
-#         success_url = self.get_success_url()
+                            
 
-#         try:
-#             self.object.delete()
-#         except ProtectedError:
-#             messages.add_message(request, messages.ERROR, 'No se puede eliminar: Ésta venta está relacionada.')
-#             return redirect('ventas:listar_ventas')
-
-#         return HttpResponseRedirect(success_url)                                
-    
-    
 
 def ListarItem(request, venta):
     
@@ -516,32 +486,31 @@ def AgregarItem(request, sucursal, venta):
             mensaje = mensaje[0:len(mensaje)-18] 
         else:
             mensaje = mensaje[0:len(mensaje)-2] + "."
-        print(lista_success)
-        print(lista_errores)
-        #messages.success(request, "Item agregado correctamente.")
+        
+    
         return HttpResponse(mensaje)
     
 
 def validar(request, item_venta):
     
     if item_venta.item.cantidad == 0:
-        #messages.error(request, "No hay stock del item solicitado.")
+       
         return item_venta.item.nombre + " (No hay stock del item solicitado)"
         
         
     if item_venta.venta_asociada.cliente_asociado.nombre == 'CONSUMIDOR FINAL' and item_venta.item.precio >= 10000:
         
-         #messages.error(request, "Es necesario registrar al cliente para agregar el item.")
+      
          return item_venta.item.nombre + " (Es necesario registrar al cliente para agregar el item)"
     
     
     if item_venta.item.cantidad < item_venta.cantidad_solicitada:
-        #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad))
+     
         return item_venta.item.nombre + " (No disponemos de la cantidad solicitada. Stock actual: " + str(item_venta.item.cantidad) + ")"
     
     
     if item_venta.cantidad_solicitada < 0:
-        #messages.error(request,"La cantidad no puede ser negativa.") 
+      
         return item_venta.item.nombre + " (La cantidad no puede ser negativa)"
     
     if item_venta.cantidad_solicitada == 0:
@@ -567,7 +536,7 @@ def AnularVenta(request, venta):
                 venta.estado_id = rechazada
                 venta.save()
                 messages.success(request, "Venta anulada.")
-                print("hola")
+               
                 return redirect('ventas:listar_ventas')
                 
                 
@@ -607,7 +576,7 @@ def AnularVentaCajero(request, venta):
                 venta.estado_id = rechazada
                 venta.save()
                 messages.success(request, "Venta anulada.")
-                print("hola")
+              
                 return redirect('ventas:listar_ventas_cajero')
                 
                 
@@ -1098,11 +1067,6 @@ def FinalizarVenta(request, venta):
     for cliente in querycliente:
         cliente = cliente
     
-    
-    # email = EmailMessage("Venta realizada - Prisma Technology",
-    #                              "Hola {}.\n\n {} ".format(cliente.nombre,"Felicidades, te queremos informar que la venta ha sido procesada y se encuentra pagada.\n Gracias por confiar en nosotros.\n [Aquí estaría el comprobante de pago - SPRINT 4]" ),
-    #                              "",[cliente.email], reply_to=["VENTA REALIZADA"])
-    
     subject, from_email, to = 'Venta realizada - Prisma Technology ', 'tmmzprueba@gmail.com', cliente.email
     text_content = 'Felicidades, te queremos informar que la venta ha sido procesada y se encuentra pagada.\n Gracias por confiar en nosotros.'
     html_content = '<div id="comprobante" class="text-center"> <p>' + text_content + '</p><br><p><b> Comprobante de pago: </b> </p><br> <ul> <li> N° de venta: ' + str(comprobante_de_pago.numero_venta) + '</li><li> Medio de pago: ' + comprobante_de_pago.mediodepago + '</li><li> Moneda: ' + comprobante_de_pago.moneda + '</li><li> Vendedor Asignado: '+ comprobante_de_pago.vendedor + '</li><li> Sucursal Asignada: ' + comprobante_de_pago.sucursal +'</li><li> Total: '+ comprobante_de_pago.total + '</li></ul>' 
@@ -1110,13 +1074,6 @@ def FinalizarVenta(request, venta):
     email = EmailMultiAlternatives(subject, text_content, from_email, [to])
     email.attach_alternative(html_content, "text/html")
     
-    # urllib.request.urlretrieve(
-    # 'https://image.pngaaa.com/426/34426-middle.png',
-    # "comprobantes/doge.png")
-  
-    # img = Image.open("comprobantes/doge.png")
-    
-    # email.attach_file(img.filename)
     
     try:
         email.send()
@@ -1217,11 +1174,11 @@ def ReporteVentasVendedores(request):
     rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
     rolId = ""
     for rol in rolesFromQuery:
-        print(rol.id)
+       
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
+    
     
     sucursal_asociada = ""
 
@@ -1256,15 +1213,12 @@ def ReporteVentasVendedores(request):
     for suc in sucursalesIds:
         
         sucursalQuery = Sucursal.objects.filter(id = suc)
-        print(sucursalQuery)
+     
         for suc in sucursalQuery:
             if suc not in sucursales:
                 dic_sucursales_cod.update({suc.id:suc.codigo})
                 sucursales.append(suc)
 
-    
-    
-    print("sucursalesIds: %s" % sucursalesIds)
     
     ventas = []
     dic_vendedores = {}
@@ -1301,11 +1255,10 @@ def ReporteVentasVendedores(request):
     
     lista = []
     for fila in vendedor_obtenido:
-        print(fila.sucursal_id)
-        print(sucursalesIds)
+        
         if fila.sucursal_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
+    
     
     items = []
     
@@ -1367,7 +1320,7 @@ def reporteVentasPorSucursal(request):
     for suc in sucursalesIds:
         
         sucursalQuery = Sucursal.objects.filter(id = suc)
-        print(sucursalQuery)
+        
         for suc in sucursalQuery:
             if suc not in sucursales:
                 dic_sucursales_cod.update({suc.id:suc.codigo})

@@ -1,4 +1,3 @@
-from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
@@ -6,12 +5,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, ListView, FormView
+from django.views.generic import TemplateView, CreateView, UpdateView, ListView, FormView
 from .models import Administrativo, GerenteGeneral, Usuario, Vendedor, Supervisor, Cajero
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import FormularioLogin, FormularioUsuario, FormularioVendedor, FormularioSupervisor, FormularioCajero, FormularioAdministrativo, FormularioGerenteGeneral
 from .mixins import ValidarLoginYPermisosRequeridos
-from django.core.exceptions import ValidationError
 from django.contrib.messages.views import SuccessMessageMixin
 
 class Login(FormView):

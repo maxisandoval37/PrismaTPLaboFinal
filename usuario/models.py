@@ -4,7 +4,6 @@ from django.contrib.auth.models import Permission,Group
 from django.contrib.contenttypes.models import ContentType     
 from django.core.exceptions import ValidationError
 from sucursal.models import Sucursal
-import re
 from django.db.models.signals import pre_save
 
 

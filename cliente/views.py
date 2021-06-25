@@ -55,28 +55,6 @@ class DesactivarCliente(ValidarLoginYPermisosRequeridos, SuccessMessageMixin, Up
  
     
     
-    
-    
-# class EliminarCliente(ValidarLoginYPermisosRequeridos,DeleteView):
-    
-#     permission_required = ('cliente.view_cliente','cliente.add_cliente',)
-#     model = Cliente
-#     template_name = 'clientes/eliminar_proveedor.html'
-#     success_url = reverse_lazy('proveedores:listar_clientes')
-                                    
-#     def delete(self, request, *args, **kwargs):
-        
-#         self.object = self.get_object()
-#         success_url = self.get_success_url()
-
-#         try:
-#             self.object.delete()
-#         except ProtectedError:
-#             messages.add_message(request, messages.ERROR, 'No se puede eliminar: Este Cliente esta relacionado.')
-#             return redirect('clientes:listar_clientes')
-
-#         return HttpResponseRedirect(success_url)  
-
 
 class RegistrarMDP(ValidarLoginYPermisosRequeridos,SuccessMessageMixin,CreateView):
     permission_required = ('cliente.view_mediodepago','cliente.add_mediodepago',)
@@ -135,7 +113,6 @@ def verRegistro(request, cuentacorriente):
     
     for registro in queryset:
         
-        print(registro.estado.opciones)
         
         if registro.estado.opciones == 'PAGADA':
             lista.append(registro)

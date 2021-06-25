@@ -208,7 +208,7 @@ class Cliente(models.Model):
         
 def defaultActivoCliente(sender, instance, **kwargs):
     
-    print(instance)
+   
     estados = EstadoCliente.objects.all()
     if len(estados) > 0:
         if instance.estado_cliente  == None:

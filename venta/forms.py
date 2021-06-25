@@ -1,6 +1,5 @@
 from django import forms
 from .models import VentaLocal, ItemVenta
-from django.core.exceptions import ValidationError
 
 class VentaLocalForm(forms.ModelForm):
     

@@ -769,7 +769,7 @@ def ReporteItemRiesgoStock(request):
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
+ 
     
     sucursal_asociada = ""
     ItemFromQuery = Item.objects.all()
@@ -787,15 +787,15 @@ def ReporteItemRiesgoStock(request):
         
         sucursalesIds.append(sucursal_asociada)
 
-    print("sucursalesIds: %s" % sucursalesIds)
+  
     
     lista = []
     for fila in ItemFromQuery:
         
-        print(sucursalesIds)
+       
         if fila.sucursal_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
+   
     
     items = []
     
@@ -1125,11 +1125,11 @@ def ReporteItemsStockFaltante(request):
     rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
     rolId = ""
     for rol in rolesFromQuery:
-        print(rol.id)
+      
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
+   
 
     sucursal_asociada = ""
     estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
@@ -1153,15 +1153,14 @@ def ReporteItemsStockFaltante(request):
 
         sucursalesIds.append(sucursal_asociada)
 
-    print("sucursalesIds: %s" % sucursalesIds)
+   
 
     lista = []
     for fila in ItemFromQuery:
-        print(fila.sucursal_id)
-        print(sucursalesIds)
+      
         if fila.sucursal_id in sucursalesIds:
             lista.append(fila)
-    print(lista)
+    
 
     items = []
     

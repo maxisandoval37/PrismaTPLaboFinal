@@ -1,7 +1,5 @@
-from django.shortcuts import redirect
 from django.db import models
 from sucursal.models import Sucursal
-from django.db.models.signals import post_save
 from proveedor.models import Proveedor
 from django.core.exceptions import ValidationError
 from proveedor.models import CuentaCorrienteProveedor
@@ -477,9 +475,9 @@ def defaultActivoItem(sender, instance, **kwargs):
     
     estados = Estado.objects.all()
     if len(estados) > 0:
-        print("hola xxddx")
+      
         if instance.estado_id == None:
-            print("joder llege")
+        
             estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:
@@ -495,9 +493,9 @@ def defaultActivoPintura(sender, instance, **kwargs):
     
     estados = Estado.objects.all()
     if len(estados) > 0:
-        print("hola xxddx")
+    
         if instance.estado_id == None:
-            print("joder llege")
+          
             estadosQuery = Estado.objects.filter(opciones = 'ACTIVO')
             activo = ""
             for estado in estadosQuery:

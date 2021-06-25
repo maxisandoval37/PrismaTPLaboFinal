@@ -137,11 +137,6 @@ class VentaVirtual(Venta):
     def __str__(self):
         return "Venta virtual, número de comprobrante {}".format(self.numero_comprobante)
     
-    # def clean(self):
-        
-          
-        #if self.estado.opciones == 'PENDIENTE DE RETIRO':
-        #if self.estado.opciones == 'NO RETIRADO':
                
 
 class VentaLocal(Venta):

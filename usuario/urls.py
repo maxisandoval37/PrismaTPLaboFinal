@@ -1,7 +1,5 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView
 from usuario.views import InicioUsuarios,ListadoUsuario,EditarUsuario,CambiarEstadoUsuario, RegistrarVendedor, RegistrarSupervisor, RegistrarCajero, RegistrarAdministrativo, RegistrarGerenteGeneral
 urlpatterns = [
     

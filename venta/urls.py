@@ -1,5 +1,4 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero,AnularVentaCajero,ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores, AnularVenta, reporteVentasPorSucursal
 

@@ -1,5 +1,4 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from proveedor.views import ListadoProveedor, RegistrarProveedor, EditarProveedor, CambiarEstadoCuentaCorriente,CambiarEstadoProveedor, RegistrarCuentaCorrienteProveedor, ListadoCuentasCorriente, EliminarCuentaCorrienteProveedor, verRegistro
 

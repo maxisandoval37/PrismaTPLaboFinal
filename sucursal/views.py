@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
-from django.views.generic import CreateView,DeleteView,ListView,UpdateView, DetailView
+from django.shortcuts import render
+from django.views.generic import CreateView,UpdateView
 from django.urls import reverse_lazy
 from .forms import SucursalForm, CajaForm
 from .models import Sucursal, Caja, Operacion
@@ -8,7 +8,7 @@ from item.models import Item
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from usuario.models import Rol, Supervisor
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse
 
 def ListarSucursal(request):
     
@@ -188,11 +188,11 @@ def ReporteTransaccionesVentaCompra(request):
     rolesFromQuery = Rol.objects.filter(opciones='GERENTE GENERAL')
     rolId = ""
     for rol in rolesFromQuery:
-        print(rol.id)
+        
         rolId = rol.id
 
     es_gerente_general = request.user.rol_id == rolId
-    print("es_gerente_general: " + str(es_gerente_general))
+    
     
     sucursal_asociada = ""
     OperacionFromQuery = Operacion.objects.all()
@@ -258,7 +258,7 @@ def ExtraerDinero(request, id):
         caja = request.POST.get('caja', None)
         
         QueryCaja = Caja.objects.filter(codigo = caja)
-        print(QueryCaja)
+    
         
         if cantidad.isalpha():
            messages.error(request, "El monto sólo puede contener dígitos.")

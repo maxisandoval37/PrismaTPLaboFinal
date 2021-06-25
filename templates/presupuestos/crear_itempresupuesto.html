@@ -40,7 +40,9 @@
                     <td>
                         <input value="0" type="Integer" class="form-control-user bg-gray-100"" id="{{item.id}}cantidad_solicitada" placeholder="Ingrese la cantidad"> 
                     </td>
-                    
+                    <td>
+                        <a onclick="AgregarItem(this.id)" id="{{item.id}}" class="btn btn-primary">Agregar items</a>   
+                    </td>
                 </tr>
                 {% endfor %}
                 
@@ -49,10 +51,10 @@
     </div>
     
 </div>
-<div class="text-center">
+
               
-    <button type="submit" onclick="AgregarItem()" class="btn btn-primary">Agregar items</button>   
- </div>
+   
+ 
 </div>
 
 <div class="text-center">
@@ -80,7 +82,7 @@
 
 <script>
 
-function AgregarItem() {
+function AgregarItem(boton_id) {
         
       
         let items = [];
@@ -88,12 +90,12 @@ function AgregarItem() {
 
         for(item of document.getElementsByClassName("items")){
 
-            let item_obtenido = document.getElementById(item.id).innerText;
-            let item_nombre = document.getElementById(item.id+"nombre").innerText;
-            let cantidad_obtenida = document.getElementById(item.id+"cantidad_solicitada").value;
-            let sucursal_obtenida = document.getElementById(item.id+"sucursal").innerText;
-            let presupuesto_obtenido = document.getElementById(item.id+"presupuesto").innerText;
-            let precio_obtenido = document.getElementById(item.id+"precio").innerText;
+            let item_obtenido = document.getElementById(boton_id).innerText;
+            let item_nombre = document.getElementById(boton_id+"nombre").innerText;
+            let cantidad_obtenida = document.getElementById(boton_id+"cantidad_solicitada").value;
+            let sucursal_obtenida = document.getElementById(boton_id+"sucursal").innerText;
+            let presupuesto_obtenido = document.getElementById(boton_id+"presupuesto").innerText;
+            let precio_obtenido = document.getElementById(boton_id+"precio").innerText;
 
             let objeto = '{"item":"' + item_obtenido + '","cantidad":"' + cantidad_obtenida + '","sucursal":"' + sucursal_obtenida + '","presupuesto":"' + presupuesto_obtenido + '","precio":"' + precio_obtenido + '"}'
             console.log(JSON.parse(objeto).sucursal)
@@ -116,7 +118,7 @@ data:{
 },
 dataType: "text",
 success: function(data) {
-    // location.reload()
+   
     Swal.fire({
                 "title": "Acción realizada",
                 "text": data,

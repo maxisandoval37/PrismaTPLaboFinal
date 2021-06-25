@@ -167,26 +167,25 @@ def AgregarItem(request, sucursal, presupuesto):
             mensaje = mensaje[0:len(mensaje)-18] 
         else:
             mensaje = mensaje[0:len(mensaje)-2] + "."
-        print(lista_success)
-        print(lista_errores)
-        #messages.success(request, "Item agregado correctamente.")
+        
+       
         return HttpResponse(mensaje)
     
 
 def validar(request, item_presupuesto):
     
     if item_presupuesto.item.cantidad == 0:
-        #messages.error(request, "No hay stock del item solicitado.")
+       
         return item_presupuesto.item.nombre + " (No hay stock del item solicitado)"
         
     
     if item_presupuesto.item.cantidad < item_presupuesto.cantidad_solicitada:
-        #messages.error(request,"No disponemos de la cantidad solicitada. Stock actual: " + str(item_presupuesto.item.cantidad))
+        
         return item_presupuesto.item.nombre + " (No disponemos de la cantidad solicitada. Stock actual: " + str(item_presupuesto.item.cantidad) + ")"
     
     
     if item_presupuesto.cantidad_solicitada < 0:
-        #messages.error(request,"La cantidad no puede ser negativa.") 
+        
         return item_presupuesto.item.nombre + " (La cantidad no puede ser negativa)"
     
     if item_presupuesto.cantidad_solicitada == 0:

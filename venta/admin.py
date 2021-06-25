@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
 from .models import Venta, EstadoVenta, VentaLocal, ItemVenta, Cotizacion, ComprobantePago
-# Register your models here.
+
 
 
 @register(Venta)
