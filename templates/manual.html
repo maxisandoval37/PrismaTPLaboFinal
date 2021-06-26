@@ -1,0 +1,43 @@
+{% extends 'index.html' %}
+
+
+{% block title %} Manuales de usuario {% endblock title %}
+
+
+{% block content %}
+
+{% if user.is_staff %}
+
+<div class="text-center" style="margin:5%">
+    <header class="masthead">
+        <div class="container d-flex h-100 align-items-center"> 
+            <div class="mx-auto text-center">
+                <h1 class="mx-auto my-0 text-uppercase text-black-50">Manual de usuario</h1>
+                <h2 class="text-black-50 mx-auto mt-2 mb-5">Demo.</h2>
+                <hr>
+            </div>
+        </div>
+    </header>
+<iframe class="img-responsive" width="700" height="450" src="https://www.youtube.com/embed/ueh_16tEmAU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+</div>
+{% endif %}
+
+{% if user.rol.opciones == 'SUPERVISOR' %} 
+<div class="text-center" style="margin:5%">
+    <header class="masthead">
+        <div class="container d-flex h-100 align-items-center"> 
+            <div class="mx-auto text-center">
+                <h1 class="mx-auto my-0 text-uppercase text-black-50">Manual del supervisor</h1>
+            
+            <hr>
+            </div>
+        </div>
+    </header>
+<iframe class="img-responsive" width="500" height="350" src="https://www.youtube.com/embed/e2Tdtw9RRyw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+</div>
+{% endif %}
+{% endblock %}

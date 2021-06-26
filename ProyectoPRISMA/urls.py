@@ -3,7 +3,7 @@ from django.conf import settings
 from django.views.static import serve
 from django.urls import path,include
 from django.contrib.auth.decorators import login_required
-from usuario.views import Inicio,Login,logoutUsuario
+from usuario.views import Inicio,Login,logoutUsuario, Manual
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -16,6 +16,7 @@ urlpatterns = [
     path('ventas/', include(('venta.urls', 'ventas'))),
     path('presupuestos/', include(('presupuesto.urls', 'presupuestos'))),
     path('',login_required(Inicio.as_view()), name = 'index'),
+    path('manual/',login_required(Manual.as_view()), name = 'manual_usuario'),
     path('accounts/login/',Login.as_view(), name = 'login'),
     path('logout/',login_required(logoutUsuario),name = 'logout'),
     path('reset_password/', auth_views.PasswordResetView.as_view(), name = 'reset_password'),

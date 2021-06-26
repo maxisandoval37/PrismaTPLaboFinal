@@ -94,7 +94,7 @@ class CambiarEstadoProveedor(ValidarLoginYPermisosRequeridos, SuccessMessageMixi
 
 def verRegistro(request, cuentacorriente):
     
-    queryset = Pedidos.objects.filter(cuenta_corriente = cuentacorriente)
+    queryset = Pedidos.objects.filter(cuenta_corriente = cuentacorriente).order_by('id')
     lista = []
     
     for registro in queryset:

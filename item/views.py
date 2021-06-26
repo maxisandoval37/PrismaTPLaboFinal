@@ -1095,6 +1095,10 @@ def SolicitarStock(request, item):
     for item in ItemQuery:
         item = item
     
+    if item.categoria.prov_preferido == None:
+        messages.warning(request, "Debes asignar un proveedor preferido a la categoria que pertenece el item.")
+        return redirect('items:listar_items')
+    
     if item.estado.opciones == 'INACTIVO':
         messages.warning(request, "No puedes solicitar stock de un item inactivo.")
         return redirect('items:listar_items')

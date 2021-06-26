@@ -39,6 +39,9 @@ def logoutUsuario(request):
 class Inicio(TemplateView):
     template_name = 'index.html'
     
+class Manual(TemplateView):
+    template_name = 'manual.html'
+    
 class InicioUsuarios(ValidarLoginYPermisosRequeridos, TemplateView):
    
     permission_required = ('usuario.view_usuario',)
