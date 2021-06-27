@@ -20,7 +20,88 @@ from usuario.models import Supervisor, Rol, Cajero, Administrativo, EstadoUsuari
 from django.db.models import Count
 
 
-
+def FiltrarPorEstado(request):
+    
+    
+    if request.user.is_staff:
+        
+        estados = EstadoVenta.objects.filter(opciones = 'EN PREPARACION')
+        en_preparacion = 0 
+        for estado in estados:
+            en_preparacion = estado.id
+        
+        
+        ventas = Venta.objects.filter(estado = en_preparacion).order_by('numero_comprobante','fecha','sucursal_asociada')
+            
+        lista = []
+        
+        
+        for venta in ventas:
+            
+            dic = {
+                "numero_comprobante": venta.numero_comprobante,
+                "fecha": venta.fecha,
+                "cliente_asociado": venta.cliente_asociado,
+                "vendedor_asociado": venta.vendedor_asociado,
+                "sucursal_asociada": venta.sucursal_asociada,
+                "mediodepago": venta.mediodepago,
+                "estado": venta.estado,
+                "tipo_de_venta": venta.tipo_de_venta,
+                "monto_ingresado": venta.monto_ingresado,
+                "tipo_de_moneda": venta.tipo_de_moneda,
+                "total_dolar": venta.total_dolar,
+                "total_euro": venta.total_euro,
+                "total_peso": venta.total_peso,
+                
+            }
+            lista.append(dic)
+        
+    elif request.user.rol.opciones == 'VENDEDOR':
+        
+        estados = EstadoVenta.objects.filter(opciones = 'EN PREPARACION')
+        en_preparacion = 0 
+        for estado in estados:
+            en_preparacion = estado.id
+        
+        vendedorQuery = Vendedor.objects.filter(id = request.user.id)
+        cod = ""
+        for vendedor in vendedorQuery:
+            
+            cod = vendedor.sucursal_id
+            
+        sucursalQuery = Sucursal.objects.filter(id = cod)
+        
+        sucursal = None
+        for suc in sucursalQuery:
+            sucursal = suc
+        
+        ventas = Venta.objects.filter(sucursal_asociada_id = sucursal.id, estado = en_preparacion).order_by('numero_comprobante','fecha','sucursal_asociada')
+        
+        lista = []
+       
+        
+        for venta in ventas:
+            
+            dic = {
+                "numero_comprobante": venta.numero_comprobante,
+                "fecha": venta.fecha,
+                "cliente_asociado": venta.cliente_asociado,
+                "vendedor_asociado": venta.vendedor_asociado,
+                "sucursal_asociada": venta.sucursal_asociada,
+                "mediodepago": venta.mediodepago,
+                "estado": venta.estado,
+                "tipo_de_venta": venta.tipo_de_venta,
+                "monto_ingresado": venta.monto_ingresado,
+                "tipo_de_moneda": venta.tipo_de_moneda,
+                "total_dolar": venta.total_dolar,
+                "total_euro": venta.total_euro,
+                "total_peso": venta.total_peso,
+                
+            }
+            lista.append(dic)
+        
+        
+    return render(request, 'ventas/listar_venta_por_estado.html', locals())
 
 
 def ListadoVenta(request):

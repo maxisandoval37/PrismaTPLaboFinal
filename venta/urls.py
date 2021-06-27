@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-from .views import ListadoVenta, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero,AnularVentaCajero,ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores, AnularVenta, reporteVentasPorSucursal
+from .views import ListadoVenta,FiltrarPorEstado, RegistrarVentaLocal, EditarVentaLocal, eliminarItemCajero,AnularVentaCajero,ListarItem, VerDetalle, AgregarItem, CambiarEstado, eliminarItem, ListadoVentaCajero, FinalizarVenta, VerItems, ReporteCuentaCorrienteClientes, verComprobantePago, ReporteVentasVendedores, AnularVenta, reporteVentasPorSucursal
 
 urlpatterns = [
 
@@ -12,6 +12,7 @@ urlpatterns = [
          login_required(EditarVentaLocal.as_view()), name='ingresar_monto'),
     path('listado_itemsventa/<int:venta>/',
          login_required(ListarItem), name='listar_itemsventa'),
+    path('listar_ventas_por_estado/', login_required(FiltrarPorEstado), name="listar_ventas_por_estado"),
     path('registrar_itemventa/<int:sucursal>/<int:venta>',
          login_required(VerDetalle), name='registrar_itemventa'),
     path('registrar_itemventa/<int:sucursal>/<int:venta>/AgregarItem/',
