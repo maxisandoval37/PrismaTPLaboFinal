@@ -108,7 +108,7 @@ class EliminarCuentaCorriente(ValidarLoginYPermisosRequeridos,SuccessMessageMixi
 
 def verRegistro(request, cuentacorriente):
     
-    queryset = Venta.objects.filter(cuenta_corriente = cuentacorriente)
+    queryset = Venta.objects.filter(cuenta_corriente = cuentacorriente).order_by('numero_comprobante')
     lista = []
     
     for registro in queryset:

@@ -43,7 +43,7 @@ Listado de Items
                     {% if user.rol.opciones == 'CAJERO' or user.is_staff %}
                     {% if item.venta_asociada.estado.opciones == 'LISTA' %}
                    <td>
-                       <a href="{% url 'ventas:eliminar_item_cajero' venta item.id %}" class="btn btn-danger">Quitar Item</a>
+                       <a href="{% url 'ventas:eliminar_item_cajero' item.venta_asociada item.id %}" class="btn btn-danger">Quitar Item</a>
                    </td>
                    {% else %} 
                    <td>

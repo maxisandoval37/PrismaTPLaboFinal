@@ -14,7 +14,7 @@ Historial de Preferenciados
 <div class="bg-gray-100" style="margin:2%">
     <div class="card">
         <div class="card-header text-center">
-            <strong class="card-title">Historial de la categoria: {{object}}</strong>
+            <strong class="card-title">Historial de proveedores preferenciados</strong>
         </div>
     
 
@@ -30,8 +30,8 @@ Historial de Preferenciados
                 </tr>
             </thead>
             <tbody>
-                {% if object_list %}
-                {% for cat in object_list %}
+                {% if lista %}
+                {% for cat in lista %}
                 <tr>
                     <td></td>
                     <td>{{cat.fecha}}</td>

@@ -1077,7 +1077,7 @@ def RealizarPedido(request, item):
                 
             try:
                 send_mail('SOLICITUD DE STOCK - SUCURSAL ' + str(pedido.sucursal_id), "Buenas tardes, esta es una solicitud de stock automática. Por favor, diríjase al siguiente link para indicar las cantidades que nos puede proveer de cada ítem:\n" +
-                            "https://prismatechnology.herokuapp.com/items/pedido_proveedor/" + str(pedido.proveedor_id) + "/" + str(pedido.sucursal_id), 'tmmzprueba@gmail.com', {email})
+                            "localhost:8000/items/pedido_proveedor/" + str(pedido.proveedor_id) + "/" + str(pedido.sucursal_id), 'tmmzprueba@gmail.com', {email})
                 
             except:
                 
@@ -1094,6 +1094,18 @@ def SolicitarStock(request, item):
     item = None
     for item in ItemQuery:
         item = item
+    
+    cuentas = []
+    QueryCuentasCorriente = CuentaCorrienteProveedor.objects.filter(proveedor = item.categoria.prov_preferido)
+    
+    for cuenta in QueryCuentasCorriente:
+        
+        if cuenta.estado.opciones == 'ACTIVA':
+            cuentas.append(cuenta)
+    
+    if len(cuentas) == 0:
+        messages.warning(request, "Es necesario registrar una cuenta corriente para el proveedor para realizar ésta acción.")
+        return redirect('items:listar_items')
     
     if item.sucursal.estado.opciones == 'INACTIVA':
         messages.warning(request, "La sucursal del item seleccionado se encuentra inactiva.")
@@ -1124,6 +1136,7 @@ def SolicitarStock(request, item):
         
         lista.append(item)
     
+    messages.sucess(request, "Se solicitó stock del item correctamente.")
     return render(request, 'items/solicitar_stock.html', locals())
 
 
